@@ -18,3 +18,12 @@ verify_*.png
 
 # 调试残留脚本（不入库）
 scripts/dbg*.js
+scripts/test_*.js
+scripts/probe_*.js
+_debug*.js
+_debug*.html
+__tmp*
+__push*
+cron-job*
+*.bat
+.cache/

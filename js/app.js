@@ -14,7 +14,10 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v31';
+const APP_VERSION = '2026-08-05-v32';
+
+// 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
+window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -196,7 +199,7 @@ function registerSW() {
         // 注册/更新 SW（URL 带版本戳确保浏览器不复用 HTTP 缓存的旧 sw.js 字节）
         return navigator.serviceWorker.register(swUrl);
     }).then(reg => {
-        console.log('PWA SW registered:', reg.scope, 'url=', swUrl, 'version=', APP_VERSION);
+        if (window.__DEBUG__) console.log('PWA SW registered:', reg.scope, 'url=', swUrl, 'version=', APP_VERSION);
 
         // ★ 关键：新 SW 安装完成后立即激活，不让它进入 waiting 状态
         function activateNew(sw) {
@@ -209,7 +212,7 @@ function registerSW() {
             const installing = reg.installing;
             if (installing) {
                 installing.onstatechange = () => {
-                    console.log('SW state:', installing.state);
+                    if (window.__DEBUG__) console.log('SW state:', installing.state);
                     if (installing.state === 'installed') {
                         // 有活跃 controller 说明是更新（非首次安装）→ 立即激活
                         if (navigator.serviceWorker.controller) {
@@ -217,7 +220,7 @@ function registerSW() {
                             // ★ 延迟刷新页面，让新 SW 接管后重新加载最新资源
                             setTimeout(() => {
                                 if (!navigator.serviceWorker.controller || navigator.serviceWorker.controller.state === 'activated') {
-                                    console.log('v25: SW 已更新，建议用户刷新');
+                                    if (window.__DEBUG__) console.log('v25: SW 已更新，建议用户刷新');
                                 }
                             }, 1000);
                         }
@@ -231,14 +234,14 @@ function registerSW() {
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (!refreshing) {
                 refreshing = true;
-                console.log('v25: 新 SW 已接管，刷新页面获取最新资源');
+                if (window.__DEBUG__) console.log('v25: 新 SW 已接管，刷新页面获取最新资源');
                 window.location.reload();
             }
         });
 
         if (reg.update) { try { reg.update(); } catch (e) {} }
     }).catch(err => {
-        console.log('SW registration failed:', err);
+        if (window.__DEBUG__) console.log('SW registration failed:', err);
     });
 }
 
@@ -306,8 +309,8 @@ function switchModule(moduleName) {
 
     // 进入收藏夹时刷新列表
     if (moduleName === 'favbox') renderFavBox();
-    // 进入数据备份页时刷新统计
-    if (moduleName === 'settings') renderDataStats();
+    // 进入数据备份页时刷新统计与云同步配置
+    if (moduleName === 'settings') { renderDataStats(); renderCloudConfig(); }
     // 进入工作台时刷新数据（打卡改为手动，不自动触发）
     if (moduleName === 'home') { renderHome(); }
 }
@@ -481,7 +484,7 @@ function manualCheckin() {
     d.history = uniq;
     _saveStreakData(d);
 
-    console.log('[checkin v28] 打卡成功, history=', JSON.stringify(d.history), ', 连续=', _calcStreak(d.history));
+    if (window.__DEBUG__) console.log('[checkin v28] 打卡成功, history=', JSON.stringify(d.history), ', 连续=', _calcStreak(d.history));
     renderHome();
     if (typeof showToast === 'function') showToast('✅ 打卡成功！已记录到热力图 🔥');
 }
@@ -525,6 +528,24 @@ function renderHome() {
         '</div>';
     });
     html += '</div>';
+
+    // ★ 驾驶舱：常用模块快捷入口（一键直达高频场景）
+    const quickEntries = [
+        { icon: '🔢', label: '速算练习', act: "switchModule('susuan');switchSusuanTab('practice');setTimeout(startPractice,250);" },
+        { icon: '📚', label: '多解法', act: "switchModule('susuan');switchSusuanTab('multimethod');" },
+        { icon: '🌅', label: '晨读', act: "switchModule('morning');" },
+        { icon: '📌', label: '收藏夹', act: "switchModule('favbox');" },
+        { icon: '📊', label: '模考成绩', act: "switchModule('mock');" },
+        { icon: '🀄', label: '高频成语', act: "switchModule('idioms');" },
+        { icon: '🎤', label: '面试短句', act: "switchModule('interview');" },
+        { icon: '🗞️', label: '时政热点', act: "switchModule('shizheng');" }
+    ];
+    html += '<div class="home-quick"><div class="home-quick-title">🚀 快捷入口</div><div class="home-quick-grid">';
+    quickEntries.forEach(q => {
+        html += '<button class="home-quick-btn" onclick="' + q.act + '"><span class="home-quick-icon">' + q.icon + '</span>' + q.label + '</button>';
+    });
+    html += '</div></div>';
+
     statsEl.innerHTML = html;
 
     renderStreakHeatmap();
@@ -731,42 +752,72 @@ function initGlobalSearch() {
 }
 
 function performGlobalSearch(query) {
+    const q = query.toLowerCase();
+    const hit = (text) => String(text || '').toLowerCase().indexOf(q) >= 0;
     const results = [];
+    const DB = (name) => (typeof name !== 'undefined' ? name : []);
+
     // 搜索时政热点
-    SHIZHENG_NEWS.forEach(item => {
-        if (item.title.includes(query) || item.summary.includes(query)) {
-            results.push({ type: '时政热点', title: item.title, source: item.source, module: 'shizheng' });
-        }
+    DB(SHIZHENG_NEWS).forEach(item => {
+        if (hit(item.title) || hit(item.summary)) results.push({ type: '时政热点', title: item.title, source: item.source, module: 'shizheng' });
     });
     // 搜索申论范文
-    ESSAYS_DB.forEach(item => {
-        if (item.title.includes(query) || item.content.includes(query)) {
-            results.push({ type: '申论范文', title: item.title, source: item.source, module: 'shenlun' });
-        }
+    DB(ESSAYS_DB).forEach(item => {
+        if (hit(item.title) || hit(item.content)) results.push({ type: '申论范文', title: item.title, source: item.source, module: 'shenlun' });
     });
     // 搜索求是网文章
-    QIUSHI_ARTICLES.forEach(item => {
-        if (item.title.includes(query)) {
-            results.push({ type: '求是网文章', title: item.title, source: '求是网', module: 'qiushi' });
-        }
+    DB(QIUSHI_ARTICLES).forEach(item => {
+        if (hit(item.title) || hit(item.summary)) results.push({ type: '求是网文章', title: item.title, source: '求是网', module: 'qiushi' });
     });
     // 搜索人物素材
-    RENWU_DATABASE.forEach(item => {
-        if (item.name.includes(query) || item.story.includes(query)) {
-            results.push({ type: '人物素材', title: item.name, source: item.categoryName, module: 'renwu' });
-        }
+    DB(RENVU_DATABASE).forEach(item => {
+        if (hit(item.name) || hit(item.story) || hit(item.categoryName)) results.push({ type: '人物素材', title: item.name, source: item.categoryName, module: 'renwu' });
     });
     // 搜索今日晨读
-    MORNING_DB.forEach(item => {
-        if (item.title.includes(query) || (item.content && item.content.includes(query))) {
-            results.push({ type: '今日晨读', title: item.title, source: item.source, module: 'morning' });
+    DB(MORNING_DB).forEach(item => {
+        if (hit(item.title) || hit(item.content)) results.push({ type: '今日晨读', title: item.title, source: item.source, module: 'morning' });
+    });
+    // 搜索金句
+    DB(QUOTES_DB).forEach(item => {
+        if (hit(item.text) || hit(item.themeName) || hit(item.category) || hit(item.source)) {
+            const t = (item.text || '').slice(0, 42);
+            results.push({ type: '金句', title: t + (item.text && item.text.length > 42 ? '…' : ''), source: item.source || item.category, module: 'shenlun' });
         }
     });
+    // 搜索高频成语
+    DB(IDIOMS_DB).forEach(item => {
+        if (hit(item.word) || hit(item.pinyin) || hit(item.meaning)) results.push({ type: '高频成语', title: item.word + '（' + item.pinyin + '）', source: item.tier, module: 'idioms' });
+    });
+    // 搜索成语混淆配对
+    DB(IDIOM_PAIRS_DB).forEach(item => {
+        if (hit(item.a && item.a.word) || hit(item.b && item.b.word) || hit(item.note) || hit((item.tags || []).join(' '))) {
+            results.push({ type: '成语辨析', title: (item.a && item.a.word) + ' vs ' + (item.b && item.b.word), source: (item.tags || []).join('/'), module: 'idiomPairs' });
+        }
+    });
+    // 搜索逻辑口诀
+    DB(LOGIC_DB).forEach(item => {
+        if (hit(item.title) || hit(item.content) || hit(item.category)) results.push({ type: '逻辑口诀', title: item.title, source: item.category, module: 'logic' });
+    });
+    // 搜索面试短句
+    DB(INTERVIEW_DB).forEach(item => {
+        if (hit(item.text) || hit(item.type) || hit(item.tag)) {
+            const t = (item.text || '').slice(0, 42);
+            results.push({ type: '面试短句', title: t + (item.text && item.text.length > 42 ? '…' : ''), source: item.type, module: 'interview' });
+        }
+    });
+    // 搜索速算题（远程每日生成 + 累积）
+    const susuan = (typeof window !== 'undefined' && window.__SUSUAN_REMOTE__) || [];
+    susuan.forEach(item => {
+        if (hit(item.question) || hit(item.category)) results.push({ type: '速算题', title: (item.question || '').slice(0, 50), source: item.category, module: 'susuan' });
+    });
 
-    showSearchResults(results, query);
+    // 结果过多时截断，避免弹窗 DOM 过大
+    let truncated = false;
+    if (results.length > 80) { results.length = 80; truncated = true; }
+    showSearchResults(results, query, truncated);
 }
 
-function showSearchResults(results, query) {
+function showSearchResults(results, query, truncated) {
     const modal = document.getElementById('searchModal');
     const body = document.getElementById('searchResults');
     modal.style.display = 'flex';
@@ -776,7 +827,8 @@ function showSearchResults(results, query) {
         return;
     }
 
-    body.innerHTML = results.map(r => `
+    const header = `<div style="font-size:13px;color:#C2185B;font-weight:600;margin-bottom:10px;">🔍 共找到 ${results.length} 条${truncated ? '（已截断显示前 80 条，请缩小关键词）' : ''}</div>`;
+    body.innerHTML = header + results.map(r => `
         <div class="news-card" style="cursor:pointer;margin-bottom:10px;" onclick="switchModule('${r.module}');closeSearchModal();">
             <span class="news-tag">${r.type}</span>
             <div class="news-title" style="font-size:14px;">${r.title}</div>
@@ -820,6 +872,12 @@ function renderShizhengSources() {
     });
 }
 
+// 时政列表分页状态：避免一次渲染几百张卡片卡顿
+let shizhengFiltered = [];
+let shizhengRendered = 0;
+let shizhengSig = '';
+const SHIZHENG_PAGE = 24;
+
 function renderShizhengList() {
     const container = document.getElementById('shizhengList');
     if (!container) return;
@@ -836,6 +894,15 @@ function renderShizhengList() {
         filtered = filtered.filter(n => n.sourceType === currentShizhengFilter);
     }
 
+    // 列表内容未变（如点赞/收藏后局部刷新、或远程数据未变动）时保持已渲染进度，不重置滚动位置
+    const sig = currentShizhengSource + '|' + currentShizhengFilter + '|' + filtered.length;
+    if (sig === shizhengSig && shizhengRendered > 0 && filtered.length >= shizhengRendered) return;
+
+    shizhengSig = sig;
+    shizhengFiltered = filtered;
+    shizhengRendered = 0;
+    container.innerHTML = '';
+
     if (filtered.length === 0) {
         const hint = (currentShizhengSource !== 'all' && currentShizhengFilter !== 'all')
             ? `「${currentShizhengSource}」+「${currentShizhengFilter === 'guokao' ? '国考考点' : '湖北省情'}」暂无交叉文章<br/><span style="font-size:12px;">试试切换来源或方向</span>`
@@ -846,40 +913,63 @@ function renderShizhengList() {
         return;
     }
 
-    container.innerHTML = filtered.map(function(item, idx) {
-        var shortSummary = (item.summary || '').slice(0, 100);
-        return '<div class="news-card" id="news-' + item.id + '">' +
-            '<div class="news-card-header">' +
-                '<span class="news-tag ' + (item.sourceType === 'hubao' ? 'hubao' : '') + '">' + (item.sourceType === 'guokao' ? '国考考点' : '湖北省情') + '</span>' +
-                '<div class="news-actions">' +
-                    '<button class="action-btn ' + (isFaved('shizheng', item.id) ? 'liked' : '') + '" onclick="toggleLike(' + item.id + ', this)">👍 ' + (Number(item.likes) || 0) + '</button>' +
-                    '<button class="action-btn ' + (isFaved('shizheng', item.id) ? 'favorited' : '') + '" onclick="toggleFavNews(' + item.id + ', this)">' + (isFaved('shizheng', item.id) ? '❤️' : '🤍') + '</button>' +
-                '</div>' +
-            '</div>' +
-            '<div class="news-title" style="cursor:pointer;" onclick="toggleShizhengExpand(\'' + item.id + '\')">' + item.title + '</div>' +
-            '<div style="display:flex;gap:6px;align-items:center;margin:4px 0;">' +
-                '<span style="font-size:11px;color:#999;">来源: ' + (item.source || '') + ' · ' + (item.date || '') + '</span>' +
-                '<button class="btn-outline btn-sm" onclick="toggleShizhengExpand(\'' + item.id + '\')" style="font-size:11px;padding:1px 8px;margin-left:auto;">展开 ▾</button>' +
-            '</div>' +
+    appendShizhengChunk();
+}
 
-            /* 默认显示的短摘要 */
-            '<div class="news-brief" id="news-brief-' + item.id + '">' + shortSummary + (shortSummary.length >= 100 ? '...' : '') + '</div>' +
+function appendShizhengChunk() {
+    const container = document.getElementById('shizhengList');
+    if (!container) return;
+    const total = shizhengFiltered.length;
+    const start = shizhengRendered;
+    if (start >= total) return;
+    const end = Math.min(start + SHIZHENG_PAGE, total);
+    const slice = shizhengFiltered.slice(start, end);
+    const oldMore = document.getElementById('shizhengMore');
+    if (oldMore) oldMore.remove();
+    container.insertAdjacentHTML('beforeend', slice.map(function (item) {
+        return buildNewsCardHtml(item);
+    }).join(''));
+    shizhengRendered = end;
+    if (end < total) {
+        const more = document.createElement('button');
+        more.id = 'shizhengMore';
+        more.className = 'btn-outline btn-sm';
+        more.style.cssText = 'display:block;margin:16px auto;';
+        more.textContent = '加载更多 (' + (total - end) + ')';
+        more.onclick = appendShizhengChunk;
+        container.appendChild(more);
+    }
+}
 
-            /* 展开后的完整内容（默认隐藏） */
-            '<div class="news-detail" id="news-detail-' + item.id + '" style="display:none;">' +
-                '<div class="ai-insight">' +
-                    '<div class="ai-insight-title">💡 AI 提炼</div>' +
-                    sanitizeAnalysis(item.aiInsight).replace(/\n/g, '<br>') +
-                '</div>' +
-                '<div class="news-summary">' + item.summary + '</div>' +
-                '<div class="news-full-text" id="fulltext-' + item.id + '">' + item.fullText + '</div>' +
-                '<div class="news-footer">' +
-                    '<span>来源: ' + (item.source || '') + ' · ' + (item.date || '') + '</span>' +
-                    '<button class="expand-btn" onclick="toggleFullText(' + item.id + ')">展开全文</button>' +
-                '</div>' +
+function buildNewsCardHtml(item) {
+    var shortSummary = (item.summary || '').slice(0, 100);
+    return '<div class="news-card" id="news-' + item.id + '">' +
+        '<div class="news-card-header">' +
+            '<span class="news-tag ' + (item.sourceType === 'hubao' ? 'hubao' : '') + '">' + (item.sourceType === 'guokao' ? '国考考点' : '湖北省情') + '</span>' +
+            '<div class="news-actions">' +
+                '<button class="action-btn ' + (isFaved('shizheng', item.id) ? 'liked' : '') + '" onclick="toggleLike(' + item.id + ', this)">👍 ' + (Number(item.likes) || 0) + '</button>' +
+                '<button class="action-btn ' + (isFaved('shizheng', item.id) ? 'favorited' : '') + '" onclick="toggleFavNews(' + item.id + ', this)">' + (isFaved('shizheng', item.id) ? '❤️' : '🤍') + '</button>' +
             '</div>' +
-        '</div>';
-    }).join('');
+        '</div>' +
+        '<div class="news-title" style="cursor:pointer;" onclick="toggleShizhengExpand(\'' + item.id + '\')">' + item.title + '</div>' +
+        '<div style="display:flex;gap:6px;align-items:center;margin:4px 0;">' +
+            '<span style="font-size:11px;color:#999;">来源: ' + (item.source || '') + ' · ' + (item.date || '') + '</span>' +
+            '<button class="btn-outline btn-sm" onclick="toggleShizhengExpand(\'' + item.id + '\')" style="font-size:11px;padding:1px 8px;margin-left:auto;">展开 ▾</button>' +
+        '</div>' +
+        '<div class="news-brief" id="news-brief-' + item.id + '">' + shortSummary + (shortSummary.length >= 100 ? '...' : '') + '</div>' +
+        '<div class="news-detail" id="news-detail-' + item.id + '" style="display:none;">' +
+            '<div class="ai-insight">' +
+                '<div class="ai-insight-title">💡 AI 提炼</div>' +
+                sanitizeAnalysis(item.aiInsight).replace(/\n/g, '<br>') +
+            '</div>' +
+            '<div class="news-summary">' + item.summary + '</div>' +
+            '<div class="news-full-text" id="fulltext-' + item.id + '">' + item.fullText + '</div>' +
+            '<div class="news-footer">' +
+                '<span>来源: ' + (item.source || '') + ' · ' + (item.date || '') + '</span>' +
+                '<button class="expand-btn" onclick="toggleFullText(' + item.id + ')">展开全文</button>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
 }
 
 function toggleFullText(id) {
@@ -1015,8 +1105,8 @@ function clearAllCache() {
     setTimeout(finish, 1200);
 }
 
-/* ---------------- 全量学习数据备份 / 导入 ---------------- */
-function exportAllData() {
+/* ---------------- 全量学习数据备份 / 导入 / 云同步 ---------------- */
+function buildBackupPayload() {
     const data = {};
     for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
@@ -1024,7 +1114,20 @@ function exportAllData() {
         const raw = localStorage.getItem(k);
         try { data[k] = JSON.parse(raw); } catch (e) { data[k] = raw; }
     }
-    const payload = { app: '莲莲工作台', version: APP_VERSION, exportedAt: new Date().toISOString(), data };
+    return { app: '莲莲工作台', version: APP_VERSION, exportedAt: new Date().toISOString(), data };
+}
+function applyBackupData(parsed) {
+    const data = parsed.data || parsed; // 兼容直接导出的 localStorage 快照
+    let n = 0;
+    for (const k in data) {
+        const v = data[k];
+        localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+        n++;
+    }
+    return n;
+}
+function exportAllData() {
+    const payload = buildBackupPayload();
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1032,7 +1135,8 @@ function exportAllData() {
     a.download = '莲莲工作台_学习数据_' + new Date().toISOString().slice(0, 10) + '.json';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
-    alert('已导出 ' + Object.keys(data).length + ' 项学习数据 ✅\n（含收藏/成语错词/打卡/待办/速算错题/模考记录等）');
+    if (typeof showToast === 'function') showToast('已导出 ' + Object.keys(payload.data).length + ' 项学习数据 ✅');
+    else alert('已导出 ' + Object.keys(payload.data).length + ' 项学习数据 ✅\n（含收藏/成语错词/打卡/待办/速算错题/模考记录等）');
 }
 function importAllData(input) {
     const file = input.files && input.files[0];
@@ -1041,21 +1145,114 @@ function importAllData(input) {
     reader.onload = function (e) {
         try {
             const parsed = JSON.parse(e.target.result);
-            const data = parsed.data || parsed; // 兼容直接导出的 localStorage 快照
-            let n = 0;
-            for (const k in data) {
-                const v = data[k];
-                localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
-                n++;
-            }
-            alert('已导入 ' + n + ' 项数据，即将刷新页面恢复～');
-            location.reload();
+            const n = applyBackupData(parsed);
+            if (typeof showToast === 'function') showToast('已导入 ' + n + ' 项数据，即将刷新页面恢复～');
+            else alert('已导入 ' + n + ' 项数据，即将刷新页面恢复～');
+            setTimeout(() => location.reload(), 800);
         } catch (err) {
-            alert('导入失败：文件格式不正确或损坏');
+            if (typeof showToast === 'function') showToast('导入失败：文件格式不正确或损坏');
+            else alert('导入失败：文件格式不正确或损坏');
         }
     };
     reader.readAsText(file);
     input.value = '';
+}
+
+/* ---------------- 跨设备云同步（GitHub Gist，零后端） ---------------- */
+const GITHUB_API = 'https://api.github.com';
+const CLOUD_FILE = 'lianlian-backup.json';
+function cloudLoadConfig() {
+    return {
+        gistId: localStorage.getItem('gk_cloud_gist') || '',
+        pat: localStorage.getItem('gk_cloud_pat') || ''
+    };
+}
+function renderCloudConfig() {
+    const cfg = cloudLoadConfig();
+    const gi = document.getElementById('cloudGistId');
+    const pt = document.getElementById('cloudPat');
+    if (gi) gi.value = cfg.gistId;
+    if (pt && cfg.pat) pt.value = cfg.pat; // token 已存则回填掩码（不显示明文，提示已配置）
+    if (pt && !cfg.pat) pt.value = '';
+    if (pt && cfg.pat && !pt.value) pt.placeholder = 'GitHub Token 已配置（留空 = 沿用已存 token）';
+}
+function cloudSaveConfig() {
+    const gistId = (document.getElementById('cloudGistId') || {}).value || '';
+    const pat = (document.getElementById('cloudPat') || {}).value || '';
+    localStorage.setItem('gk_cloud_gist', gistId);
+    if (pat) localStorage.setItem('gk_cloud_pat', pat);
+    cloudStatus('配置已保存到本机 ✅', true);
+}
+function cloudStatus(msg, ok) {
+    const el = document.getElementById('cloudStatus');
+    if (el) { el.textContent = msg; el.style.color = ok ? '#2e9e5b' : '#c0392b'; }
+}
+async function cloudBackup() {
+    const { gistId, pat } = cloudLoadConfig();
+    const uiPat = (document.getElementById('cloudPat') || {}).value || '';
+    const uiGist = (document.getElementById('cloudGistId') || {}).value || '';
+    const token = uiPat || pat;           // 优先用输入框里的（刚填的），否则用已存的
+    const gid = uiGist || gistId;
+    if (!token) { cloudStatus('请先填写 GitHub Token（需 gist 权限）后保存/备份', false); return; }
+    const payload = buildBackupPayload();
+    const content = JSON.stringify(payload);
+    try {
+        let res, url, method;
+        if (gid) {
+            url = GITHUB_API + '/gists/' + gid;
+            method = 'PATCH';
+            res = await fetch(url, {
+                method,
+                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ files: { [CLOUD_FILE]: { content } } })
+            });
+        } else {
+            url = GITHUB_API + '/gists';
+            method = 'POST';
+            res = await fetch(url, {
+                method,
+                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: '莲莲工作台学习数据备份（自动生成，勿手动修改）', public: false, files: { [CLOUD_FILE]: { content } } })
+            });
+        }
+        if (!res.ok) {
+            const t = await res.text();
+            cloudStatus('备份失败：' + res.status + ' ' + t.slice(0, 140), false);
+            return;
+        }
+        const json = await res.json();
+        const newId = json.id;
+        localStorage.setItem('gk_cloud_gist', newId);
+        const inp = document.getElementById('cloudGistId');
+        if (inp) inp.value = newId;
+        cloudStatus('已备份到云端 ✅（' + Object.keys(payload.data).length + ' 项，Gist ID 已回填）', true);
+    } catch (e) {
+        cloudStatus('备份失败：' + (e && e.message ? e.message : e), false);
+    }
+}
+async function cloudRestore() {
+    const { gistId, pat } = cloudLoadConfig();
+    const uiPat = (document.getElementById('cloudPat') || {}).value || '';
+    const uiGist = (document.getElementById('cloudGistId') || {}).value || '';
+    const token = uiPat || pat;
+    const gid = uiGist || gistId;
+    if (!gid) { cloudStatus('请先填写 Gist ID', false); return; }
+    if (!token) { cloudStatus('请先填写 GitHub Token 后保存/恢复', false); return; }
+    try {
+        const res = await fetch(GITHUB_API + '/gists/' + gid, {
+            headers: { 'Authorization': 'token ' + token }
+        });
+        if (!res.ok) { cloudStatus('恢复失败：' + res.status + (res.status === 404 ? '（Gist 不存在或无权限）' : ''), false); return; }
+        const json = await res.json();
+        const file = json.files && json.files[CLOUD_FILE];
+        if (!file || !file.content) { cloudStatus('该 Gist 中没有备份文件', false); return; }
+        const parsed = JSON.parse(file.content);
+        const n = applyBackupData(parsed);
+        cloudStatus('已从云端恢复 ' + n + ' 项，即将刷新～', true);
+        setTimeout(() => location.reload(), 800);
+    } catch (e) {
+        cloudStatus('恢复失败：' + (e && e.message ? e.message : e), false);
+    }
 }
 function renderDataStats() {
     const el = document.getElementById('dataStats');
@@ -1840,7 +2037,9 @@ function renderSpeedMultiList() {
     const container = document.getElementById('mmList');
     if (!container) return;
     // ★ 优先用每日自动生成的远程速算题（最新在前），内置 SPEED_MULTI_DB 作为离线兜底
-    const remote = (typeof window !== 'undefined' && window.__SUSUAN_REMOTE__ && window.__SUSUAN_REMOTE__.length) ? window.__SUSUAN_REMOTE__ : [];
+    // 累积后远程题量可能很大：多解法库只展示最近 150 道（避免一次性渲染过多 DOM）；练习池在 getPracticePool 使用全量
+    const remoteAll = (typeof window !== 'undefined' && window.__SUSUAN_REMOTE__ && window.__SUSUAN_REMOTE__.length) ? window.__SUSUAN_REMOTE__ : [];
+    const remote = remoteAll.slice(0, 150);
     const builtin = (typeof SPEED_MULTI_DB !== 'undefined') ? SPEED_MULTI_DB : [];
     const db = remote.concat(builtin);
     if (db.length === 0) {
@@ -2979,11 +3178,20 @@ function exportMockReport() {
     downloadFile(csv, `模考记录_${new Date().toISOString().slice(0,10)}.csv`, 'text/csv;charset=utf-8');
 }
 
+// 归档 = 先导出一份 JSON 快照（永久备份文件），再清空当前记录。
+// 语义不同于「删除」：数据以快照形式留存，不会无声丢失。
 function confirmArchiveData() {
-    appConfirm('确定要归档所有历史数据吗？归档后数据将被清空（建议先导出备份）。', (ok) => {
+    const records = JSON.parse(localStorage.getItem('mockRecords') || '[]');
+    if (records.length === 0) { appAlert('当前没有可归档的模考记录'); return; }
+    appConfirm('归档 = 先下载一份 JSON 快照（永久备份），再清空当前 ' + records.length + ' 条记录。\n已导出的 CSV 报表不受影响，归档后仍可重新导出。确定继续？', (ok) => {
         if (!ok) return;
+        // 1) 导出快照备份
+        const snapshot = { app: '莲莲工作台', type: 'mock-archive', archivedAt: new Date().toISOString(), count: records.length, records };
+        downloadFile(JSON.stringify(snapshot, null, 2), '模考归档_' + new Date().toISOString().slice(0, 10) + '.json', 'application/json');
+        // 2) 清空当前记录
         localStorage.removeItem('mockRecords');
-        appAlert('✅ 数据已归档清空');
+        if (typeof showToast === 'function') showToast('✅ 已导出归档快照并清空当前 ' + records.length + ' 条记录');
+        else appAlert('✅ 已导出归档快照并清空当前 ' + records.length + ' 条记录');
         renderRecentRecords();
         renderAnalysis();
     });
@@ -3229,15 +3437,51 @@ function toggleIdiomErrView() {
     }
     idiomCursor = 0; idiomRevealId = null; renderIdioms();
 }
+// 成语索引列表分页状态：避免几百条一次性渲染
+let idiomListFull = [];
+let idiomListRendered = 0;
+let idiomListSig = '';
+const IDIOM_PAGE = 40;
+
 function renderIdiomList(list) {
+    idiomListFull = list;
+    const sig = list.map(x => x.id).join(',');
+    if (list.length === 0) {
+        const lst = document.getElementById('idiomList'); if (lst) lst.innerHTML = '';
+        idiomListSig = sig; idiomListRendered = 0; return;
+    }
+    // 列表内容未变（如切卡片/自测/翻页）时保持已渲染进度，不重置
+    if (sig === idiomListSig && idiomListRendered > 0) return;
+    idiomListSig = sig;
+    idiomListRendered = 0;
     const lst = document.getElementById('idiomList'); if (!lst) return;
-    lst.innerHTML = list.map(it =>
+    lst.innerHTML = '';
+    appendIdiomChunk();
+}
+function appendIdiomChunk() {
+    const lst = document.getElementById('idiomList'); if (!lst || !idiomListFull) return;
+    const total = idiomListFull.length;
+    const start = idiomListRendered;
+    if (start >= total) return;
+    const end = Math.min(start + IDIOM_PAGE, total);
+    const slice = idiomListFull.slice(start, end);
+    const oldMore = document.getElementById('idiomMore'); if (oldMore) oldMore.remove();
+    lst.insertAdjacentHTML('beforeend', slice.map(it =>
         '<div class="idiom-row ' + (isFavIdiom(it.id) ? 'faved' : '') + '" onclick="goIdiom(' + it.id + ')">' +
             '<span class="idiom-row-word">' + it.word + '</span>' +
             '<span class="idiom-row-pinyin">' + it.pinyin + '</span>' +
             '<span class="idiom-row-tier tier-' + it.tier + '">' + it.tier + '</span>' +
         '</div>'
-    ).join('');
+    ).join(''));
+    idiomListRendered = end;
+    if (end < total) {
+        const more = document.createElement('button');
+        more.id = 'idiomMore'; more.className = 'btn-outline btn-sm';
+        more.style.cssText = 'display:block;margin:14px auto;font-size:12px;';
+        more.textContent = '加载更多 (' + (total - end) + ')';
+        more.onclick = appendIdiomChunk;
+        lst.appendChild(more);
+    }
 }
 function goIdiom(id) {
     const list = getIdiomList();

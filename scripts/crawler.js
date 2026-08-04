@@ -458,6 +458,58 @@ async function crawlFenbiShizheng() {
 }
 
 /* ============================================================
+ * 政府网 gov.cn（补充源，best-effort）
+ * 国务院办公厅政策文件栏目，天然为国考备考政策素材，
+ * 直接 relevant，不做国考关键词门槛。失败不影响整体。
+ * ============================================================ */
+async function crawlGovCn() {
+    const out = [];
+    const entry = 'https://www.gov.cn/zhengce/guowuyuan/';
+    let html;
+    try {
+        html = await request(entry, entry);
+    } catch (e) {
+        console.log('  [政府网] 列表抓取失败（跳过）: ' + e.message);
+        return out;
+    }
+    const links = [...new Set(
+        [...html.matchAll(/href="([^"]*gov\.cn\/[^"]*\.htm[^"]*)"/g)]
+            .map(m => m[1])
+            .map(u => u.startsWith('http') ? u : 'https://www.gov.cn' + u)
+            .filter(u => /content_/.test(u))
+    )].slice(0, 20);
+    console.log('  [政府网] 发现链接 ' + links.length + ' 条');
+    for (const url of links) {
+        try {
+            const page = await request(url, entry);
+            const art = extractArticle(page);
+            if (!art.title || art.fullText.length < 600) continue;
+            const cls = classify(art.title, art.paragraphs);
+            if (cls.isNegative) continue;
+            out.push({
+                id: 'gov_' + Buffer.from(url).toString('base64').replace(/[^a-zA-Z0-9]/g, '').slice(-16),
+                title: art.title,
+                source: '中国政府网',
+                direction: '国考',
+                date: art.date || new Date().toISOString().slice(0, 10),
+                url,
+                tags: tagTopics(art.title + art.fullText.slice(0, 2000)),
+                keywordsGuokao: cls.guokao.slice(0, 8),
+                keywordsHubei: cls.hubei.slice(0, 8),
+                paragraphs: art.paragraphs,
+                fullText: art.fullText,
+                wordCount: art.fullText.length,
+                analysis: decompose(art.paragraphs),
+                crawledAt: new Date().toISOString()
+            });
+            await sleep(300);
+        } catch (e) { /* 单篇失败忽略 */ }
+    }
+    console.log('  [政府网] 新增 ' + out.length + ' 篇');
+    return out;
+}
+
+/* ============================================================
  * 入口
  * ========================================================== */
 async function main() {
@@ -484,6 +536,14 @@ async function main() {
         all = all.concat(fenbi);
     } catch (e) {
         console.log('  [粉笔时政] 抓取失败（忽略）: ' + e.message);
+    }
+
+    // 政府网 gov.cn 补充源（best-effort）
+    try {
+        const gov = await crawlGovCn();
+        all = all.concat(gov);
+    } catch (e) {
+        console.log('  [政府网] 抓取失败（忽略）: ' + e.message);
     }
 
     // 按日期倒序

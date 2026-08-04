@@ -6,6 +6,8 @@ name: 每日抓取内容更新
 #   联网拉取最新 content/*.json（network-first），无需重新安装 APP。
 on:
   workflow_dispatch: {}        # 每日定时由 cron-job.org 负责触发（POST dispatch）；Actions 页面也可手动触发验证
+  schedule:
+    - cron: '0 16 * * *'       # 北京时间每日 00:00（UTC 16:00 前一日）冗余触发，防止外部调度失效
 
 permissions:
   contents: write

@@ -241,18 +241,40 @@ function main() {
     const pad = n => String(n).padStart(2, '0');
     const dateStr = `${bj.getFullYear()}-${pad(bj.getMonth() + 1)}-${pad(bj.getDate())}`;
 
-    const items = [];
-    let id = 90001;
+    // ★ 累积归档：读取历史已生成题目，保留旧题，只追加今日新题（按日期累积）
+    const outPath = path.join(OUT_DIR, 'susuan.json');
+    let history = [];
+    if (fs.existsSync(outPath)) {
+        try {
+            const prev = JSON.parse(fs.readFileSync(outPath, 'utf8'));
+            if (prev && Array.isArray(prev.items)) history = prev.items;
+        } catch (e) { /* 文件损坏则忽略，重新生成 */ }
+    }
+
+    // 今日新增的 N 道题（id 在历史上递增，避免与历史冲突）
+    const newItems = [];
+    let id = (history.length ? Math.max.apply(null, history.map(x => Number(x.id) || 0)) : 90000) + 1;
     for (let i = 0; i < N; i++) {
         const gen = GENERATORS[i % GENERATORS.length];
         const q = gen();
         q.id = id++;
         q.genDate = dateStr;
-        items.push(q);
+        newItems.push(q);
     }
 
+    // 合并：今日新题在前，历史在后（按 id 去重，保险）
+    const seen = new Set(newItems.map(x => x.id));
+    const merged = newItems.concat(history.filter(x => !seen.has(x.id)));
+
+    // 剪枝：仅保留最近 90 天（更早视为过期），并做总量封顶，避免无限膨胀
+    const cutoff = new Date(bj.getTime() - 90 * 86400000);
+    const cutoffStr = `${cutoff.getFullYear()}-${pad(cutoff.getMonth() + 1)}-${pad(cutoff.getDate())}`;
+    let kept = merged.filter(x => (x.genDate || '') >= cutoffStr);
+    const MAX_ITEMS = 1800;
+    if (kept.length > MAX_ITEMS) kept = kept.slice(0, MAX_ITEMS);
+
     // ★ 校验：每题答案必须唯一且存在
-    items.forEach((q, i) => {
+    kept.forEach((q, i) => {
         const idx = q.answer.charCodeAt(0) - 65;
         if (!q.options[idx] || q.options[idx][0] !== q.answer) {
             throw new Error(`第 ${i + 1} 题答案校验失败: answer=${q.answer}, options=${JSON.stringify(q.options)}`);
@@ -262,11 +284,12 @@ function main() {
         }
     });
 
-    const out = { date: dateStr, count: items.length, items };
+    const historyDays = new Set(kept.map(x => x.genDate)).size;
+    const out = { date: dateStr, count: newItems.length, totalItems: kept.length, historyDays, items: kept };
     if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
-    fs.writeFileSync(path.join(OUT_DIR, 'susuan.json'), JSON.stringify(out, null, 1), 'utf8');
-    console.log(`✅ 已生成 ${items.length} 道速算题（${dateStr}）→ content/susuan.json`);
-    console.log('   题型分布:', items.reduce((m, q) => { m[q.category] = (m[q.category] || 0) + 1; return m; }, {}));
+    fs.writeFileSync(outPath, JSON.stringify(out, null, 1), 'utf8');
+    console.log(`✅ 今日新增 ${newItems.length} 道速算题（${dateStr}），累积共 ${kept.length} 道 / 覆盖 ${historyDays} 天 → content/susuan.json`);
+    console.log('   今日题型分布:', newItems.reduce((m, q) => { m[q.category] = (m[q.category] || 0) + 1; return m; }, {}));
 }
 
 main();

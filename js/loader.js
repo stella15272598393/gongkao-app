@@ -403,7 +403,7 @@
         const CUR_VERSION = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
         const LAST_VERSION = await idbGet('lastPayloadVersion');
         if (CUR_VERSION && LAST_VERSION && CUR_VERSION !== LAST_VERSION) {
-            console.log('[loader] 版本升级', LAST_VERSION, '→', CUR_VERSION, '，清理旧缓存');
+            if (window.__DEBUG__) console.log('[loader] 版本升级', LAST_VERSION, '→', CUR_VERSION, '，清理旧缓存');
             await idbSet('payload', null);
             await idbSet('lastPayloadVersion', CUR_VERSION);
         } else if (CUR_VERSION && !LAST_VERSION) {
@@ -415,7 +415,7 @@
 
         // ★ 脏数据检测：缓存条目明显偏少 → 判定为污染残留，强制清理
         if (cached && isStaleCache(cached)) {
-            console.log('[loader] 检测到脏缓存(时政', (cached.shizheng||[]).length, '条/金句', (cached.quotes||[]).length, '条)，清理');
+            if (window.__DEBUG__) console.log('[loader] 检测到脏缓存(时政', (cached.shizheng||[]).length, '条/金句', (cached.quotes||[]).length, '条)，清理');
             await idbSet('payload', null);
             cached = null;
         }

@@ -560,6 +560,30 @@
                     </div>
                     <div class="settings-stats" id="dataStats"></div>
                 </div>
+
+                <div class="settings-card">
+                    <div class="settings-row" style="flex-direction:column;align-items:stretch;">
+                        <div class="settings-info" style="margin-bottom:10px;">
+                            <div class="settings-title">☁️ 跨设备云同步（GitHub Gist）</div>
+                            <div class="settings-sub">把学习数据备份到私有 Gist，换手机或清缓存后一键恢复。Token 仅存本机，不会上传到任何服务器。</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:8px;max-width:440px;">
+                            <input class="modal-input" id="cloudGistId" placeholder="Gist ID（首次备份后自动回填，也可填已有的 Gist ID）" />
+                            <input class="modal-input" id="cloudPat" type="password" placeholder="GitHub Token（需 gist 权限，仅存本机）" />
+                            <div style="font-size:12px;color:#888;line-height:1.55;">
+                                ① GitHub → Settings → Developer settings → Personal access tokens，生成 token（勾选 <b>gist</b>）<br/>
+                                ② 点「备份到云端」会创建私有 Gist 并自动回填 Gist ID<br/>
+                                ③ 另一台设备填相同 Gist ID + 各自 token，点「从云端恢复」
+                            </div>
+                            <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;">
+                                <button class="btn-pink btn-sm" onclick="cloudBackup()">☁️ 备份到云端</button>
+                                <button class="btn-outline btn-sm" onclick="cloudRestore()">📥 从云端恢复</button>
+                                <button class="btn-outline btn-sm" onclick="cloudSaveConfig()">💾 保存配置</button>
+                            </div>
+                            <div class="settings-stats" id="cloudStatus"></div>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
     </div>
@@ -622,9 +646,9 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=31"></script>
-    <script src="./js/data-modules.js?v=31"></script>
-    <script src="./js/app.js?v=31"></script>
-    <script src="./js/loader.js?v=31"></script>
+    <script src="./js/data.js?v=32"></script>
+    <script src="./js/data-modules.js?v=32"></script>
+    <script src="./js/app.js?v=32"></script>
+    <script src="./js/loader.js?v=32"></script>
 </body>
 </html>

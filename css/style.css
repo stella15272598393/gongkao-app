@@ -1593,6 +1593,16 @@ input[type="range"]::-webkit-slider-thumb {
 .home-todo-del:hover { color: #E75480; }
 .home-todo-empty { color: #bbb; font-size: 13px; text-align: center; padding: 14px 0; }
 
+/* ========== 首页驾驶舱：快捷入口 ========== */
+.home-quick { background: #fff; border: 1px solid #FFE3EC; border-radius: 14px; padding: 14px; margin-top: 14px; }
+.home-quick-title { font-size: 14px; font-weight: 600; color: #C2185B; margin-bottom: 10px; }
+.home-quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.home-quick-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; border: 1px solid #FFE3EC; border-radius: 12px; background: #FFF7FA; color: #C2185B; font-size: 12px; cursor: pointer; transition: .15s; }
+.home-quick-btn:hover { background: #FFE9F1; transform: translateY(-2px); }
+.home-quick-btn:active { transform: scale(.97); }
+.home-quick-icon { font-size: 20px; }
+@media (max-width: 480px) { .home-quick-grid { grid-template-columns: repeat(3, 1fr); } }
+
 /* ========== 响应式：侧边栏收起（手机端） ========== */
 @media (max-width: 768px) {
     .sidebar-toggle { display: block; }
