@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v32';
+const APP_VERSION = '2026-08-05-v33';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -2400,7 +2400,22 @@ function initPlan() {
     renderHistoryStats();
 }
 
-function getTodayKey() { return new Date().toISOString().split('T')[0]; }
+/* ---------------- 北京时间日期工具（v33 修复 UTC 错位） ----------------
+   旧写法 new Date().toISOString() 取的是 UTC 日期，北京时间 00:00-08:00
+   会被算成"前一天"：凌晨打开计划会读写到昨天的键；9月1日凌晨更会把任务
+   写进 plan_2026-08-31，而统计面板已切到9月，导致当天数据"看起来消失"。
+   下面两个函数统一提供"北京时间的年月日"，全模块共用。 */
+function getBJNow() {
+    const n = new Date();
+    // 先把时间戳平移到「本地 getter 读出来正好是北京时间」的状态
+    return new Date(n.getTime() + (n.getTimezoneOffset() + 480) * 60000);
+}
+function fmtYMD(d) {
+    const p = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+function getTodayKey() { return fmtYMD(getBJNow()); }
 
 function loadPlanItems() {
     const key = getTodayKey();
@@ -2437,6 +2452,7 @@ function togglePlanDone(id, done) {
     const item = items.find(i => String(i.id) === String(id));
     if (item) { item.done = done; localStorage.setItem(`plan_${key}`, JSON.stringify(items)); }
     renderPlanStats();
+    if (!planStatMonth) renderHistoryStats(); // 完成率随勾选实时更新
 }
 
 function updatePlanProgress(id, progress) {
@@ -2466,6 +2482,7 @@ function addPlanItem() {
             localStorage.setItem(`plan_${key}`, JSON.stringify(items));
             loadPlanItems();
             renderPlanStats();
+            if (!planStatMonth) renderHistoryStats(); // 看本月时同步刷新月度统计
         }
     });
 }
@@ -2477,6 +2494,7 @@ function deletePlanItem(id) {
     localStorage.setItem(`plan_${key}`, JSON.stringify(items));
     loadPlanItems();
     renderPlanStats();
+    if (!planStatMonth) renderHistoryStats(); // 看本月时同步刷新月度统计
 }
 
 function renderPlanStats() {
@@ -2505,28 +2523,67 @@ function renderPlanStats() {
 
 function getStreakDays() {
     let streak = 0;
-    const today = new Date();
+    const base = getBJNow(); // 北京时间基准，避免凌晨算成前一天
     for (let i = 0; i < 365; i++) {
-        const d = new Date(today); d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
-        const items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
+        const d = new Date(base); d.setDate(d.getDate() - i);
+        const items = JSON.parse(localStorage.getItem(`plan_${fmtYMD(d)}`) || '[]');
         if (items.some(i => i.done)) streak++;
         else break;
     }
     return streak;
 }
 
+/* 当前正在查看的统计月份，'YYYY-MM'；null 表示跟随本月 */
+let planStatMonth = null;
+
+/* 扫描本地已有的最早计划月份，作为往前翻的下限 */
+function getPlanEarliestMonth() {
+    let min = null;
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k || k.indexOf('plan_') !== 0) continue;
+        const ym = k.slice(5, 12); // plan_2026-08-01 → 2026-08
+        if (!/^\d{4}-\d{2}$/.test(ym)) continue;
+        if (!min || ym < min) min = ym;
+    }
+    return min;
+}
+
+/* 月份翻页：delta = -1 上一月 / +1 下一月，越界自动忽略 */
+function shiftPlanStatMonth(delta) {
+    const thisMonth = fmtYMD(getBJNow()).slice(0, 7);
+    const cur = planStatMonth || thisMonth;
+    const [y, m] = cur.split('-').map(Number);
+    const d = new Date(y, m - 1 + delta, 1);
+    const next = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const earliest = getPlanEarliestMonth();
+    if (next > thisMonth) return;                    // 不能翻到未来
+    if (earliest && next < earliest) return;         // 不能翻到最早记录之前
+    planStatMonth = next;
+    renderHistoryStats();
+}
+
+function backToThisMonth() {
+    planStatMonth = null;
+    renderHistoryStats();
+}
+
 function renderHistoryStats() {
     const container = document.getElementById('planHistoryStats');
     if (!container) return;
 
-    // 获取本月数据
-    const now = new Date();
-    const monthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    let totalDone = 0, totalTasks = 0, daysActive = 0;
+    const bjNow = getBJNow();
+    const thisMonth = fmtYMD(bjNow).slice(0, 7);
+    const monthKey = planStatMonth || thisMonth;
+    const isCurrent = monthKey === thisMonth;
 
-    for (let d = 1; d <= now.getDate(); d++) {
-        const key = `${monthKey}-${String(d).padStart(2,'0')}`;
+    const [y, m] = monthKey.split('-').map(Number);
+    // 本月只统计到今天；历史月份统计整月
+    const lastDay = isCurrent ? bjNow.getDate() : new Date(y, m, 0).getDate();
+
+    let totalDone = 0, totalTasks = 0, daysActive = 0;
+    for (let d = 1; d <= lastDay; d++) {
+        const key = `${monthKey}-${String(d).padStart(2, '0')}`;
         const items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
         if (items.length > 0) {
             daysActive++;
@@ -2535,13 +2592,29 @@ function renderHistoryStats() {
         }
     }
 
+    const earliest = getPlanEarliestMonth();
+    const canPrev = !earliest || monthKey > earliest;
+    const canNext = monthKey < thisMonth;
+    const rate = totalTasks > 0 ? ((totalDone / totalTasks) * 100).toFixed(1) : '0.0';
+
+    const body = daysActive === 0
+        ? '<p style="color:#999;padding:6px 0;">该月暂无计划记录</p>'
+        : `<p>活跃天数: <strong>${daysActive}</strong> 天 <span style="color:#bbb;font-size:12px;">/ ${lastDay} 天</span></p>
+           <p>总任务数: <strong>${totalTasks}</strong> 项</p>
+           <p>已完成: <strong>${totalDone}</strong> 项</p>
+           <p>月度完成率: <strong style="color:#FFB6C1;">${rate}%</strong></p>`;
+
     container.innerHTML = `
-        <h4 style="margin-bottom:10px;color:#E891A3;">📊 本月统计 (${monthKey})</h4>
-        <p>活跃天数: <strong>${daysActive}</strong> 天</p>
-        <p>总任务数: <strong>${totalTasks}</strong> 项</p>
-        <p>已完成: <strong>${totalDone}</strong> 项</p>
-        <p>月度完成率: <strong style="color:#FFB6C1;">${totalTasks > 0 ? ((totalDone/totalTasks)*100).toFixed(1) : 0}%</strong></p>
-        <p>连续备考: <strong style="color:#FFB6C1;">${getStreakDays()}</strong> 天</p>
+        <div class="plan-hist-head">
+            <button class="plan-hist-nav" onclick="shiftPlanStatMonth(-1)" ${canPrev ? '' : 'disabled'} title="上一月">◀</button>
+            <h4 class="plan-hist-title">📊 ${monthKey} 月度统计${isCurrent ? '<span class="plan-hist-tag">本月</span>' : ''}</h4>
+            <button class="plan-hist-nav" onclick="shiftPlanStatMonth(1)" ${canNext ? '' : 'disabled'} title="下一月">▶</button>
+        </div>
+        ${body}
+        ${isCurrent
+            ? `<p>连续备考: <strong style="color:#FFB6C1;">${getStreakDays()}</strong> 天</p>`
+            : `<p style="margin-top:8px;"><button class="btn-outline btn-sm" onclick="backToThisMonth()">回到本月</button>
+               <span style="font-size:12px;color:#bbb;margin-left:8px;">历史月份 · 只读</span></p>`}
     `;
 }
 
@@ -2550,7 +2623,7 @@ function checkDailyReset() {
     const lastReset = localStorage.getItem('lastPlanResetDate');
     const today = getTodayKey();
     if (lastReset !== today) {
-        const hour = new Date().getHours();
+        const hour = getBJNow().getHours(); // 北京时间小时，与 getTodayKey 基准保持一致
         if (hour >= 5 && lastReset && lastReset !== today) {
             // 新的一天且过了5点，重置计划但保留历史
             localStorage.setItem('lastPlanResetDate', today);

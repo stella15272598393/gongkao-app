@@ -1116,6 +1116,26 @@ body.sidebar-collapsed .content-area {
     border-radius: var(--radius);
     padding: 16px;
 }
+/* 月度统计的月份翻页头 */
+.plan-hist-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+}
+.plan-hist-title {
+    flex: 1; text-align: center; color: #E891A3; font-size: 15px; margin: 0;
+}
+.plan-hist-tag {
+    display: inline-block; margin-left: 6px; padding: 1px 7px;
+    background: #FFB6C1; color: #fff; border-radius: 8px;
+    font-size: 11px; font-weight: 400; vertical-align: middle;
+}
+.plan-hist-nav {
+    flex: 0 0 auto; width: 30px; height: 30px; line-height: 1;
+    border: 1.5px solid var(--border-color); background: var(--bg-white);
+    color: #E891A3; border-radius: 50%; cursor: pointer;
+    font-size: 12px; transition: all .18s;
+}
+.plan-hist-nav:hover:not(:disabled) { background: #FFB6C1; color: #fff; border-color: #FFB6C1; }
+.plan-hist-nav:disabled { opacity: .3; cursor: not-allowed; }
 
 /* ========== 模考记录 ========== */
 .mock-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
