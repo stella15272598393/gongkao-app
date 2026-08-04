@@ -802,37 +802,101 @@ body.sidebar-collapsed .content-area {
 }
 
 /* 百化分表 */
-.baifenbi-legend {
+.bfb-legend {
     display: flex;
-    gap: 12px;
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    background: #FFF0F5;
-    border-radius: 8px;
-    font-size: 12px;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #FFF0F5, #fff);
+    border-radius: 10px;
+    font-size: 13px;
+    color: #E75480;
+    font-weight: 600;
     flex-wrap: wrap;
+    line-height: 1.6;
 }
-.bfb-legend-item { color: #E75480; font-weight: 600; }
-.bfb-legend-count { margin-left: auto; color: #999; font-size: 11px; }
-.baifenbi-table {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
-    gap: 5px;
+/* 分组容器 */
+.bfb-group { margin-bottom: 20px; }
+.bfb-group-header {
+    font-size: 15px;
+    font-weight: 700;
+    padding: 8px 4px 10px;
+    border-bottom: 2px solid #f0d0da;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-.baifenbi-cell {
-    background: var(--bg-white);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 6px 4px;
-    text-align: center;
+.bfb-group-count {
     font-size: 12px;
-    transition: all 0.15s;
+    font-weight: 400;
+    color: #999;
+    background: #f5f5f5;
+    padding: 2px 10px;
+    border-radius: 12px;
 }
-.baifenbi-cell:hover { border-color: #FFB6C1; transform: translateY(-1px); box-shadow: 0 2px 6px rgba(255,182,193,0.15); }
-.baifenbi-cell.bfb-must { border-color: #E75480; background: linear-gradient(135deg, #FFF0F5, #fff); }
-.baifenbi-cell.bfb-common { border-color: #FF9F43; background: linear-gradient(135deg, #FFF8F0, #fff); }
-.baifenbi-percent { font-weight: 700; color: var(--primary-dark); font-size: 12.5px; }
-.baifenbi-fraction { font-size: 10.5px; color: var(--text-secondary); margin-top: 2px; font-family: 'Courier New', monospace; }
+/* 必背组标题 */
+.bfb-g-must .bfb-group-header { color: #E75480; border-color: #E75480; }
+/* 常用组标题 */
+.bfb-g-common .bfb-group-header { color: #FF9F43; border-color: #FFD6A5; }
+/* 基础组标题 */
+.bfb-g-basic .bfb-group-header { color: #888; border-color: #e0e0e0; }
+/* 网格：每行4-5个，宽松 */
+.bfb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+    padding-top: 8px;
+}
+/* 单元格 */
+.bfb-cell {
+    background: var(--bg-white);
+    border: 1.5px solid #f0d0da;
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+    transition: all 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+.bfb-cell:hover {
+    border-color: #E75480;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231,84,128,0.12);
+}
+/* 必背组内的单元格 */
+.bfb-g-must .bfb-cell {
+    border-color: #E75480;
+    background: linear-gradient(135deg, #FFF0F5, #fff);
+}
+.bfb-g-must .bfb-cell:hover {
+    background: linear-gradient(135deg, #FFE4EC, #fff);
+    box-shadow: 0 4px 14px rgba(231,84,128,0.18);
+}
+/* 常用组内的单元格 */
+.bfb-g-common .bfb-cell {
+    border-color: #FFD6A5;
+    background: linear-gradient(135deg, #FFF8F0, #fff);
+}
+.bfb-g-common .bfb-cell:hover {
+    background: linear-gradient(135deg, #FFE8CC, #fff);
+    box-shadow: 0 4px 14px rgba(255,159,67,0.15);
+}
+/* 百分数文字 */
+.bfb-pct {
+    font-weight: 800;
+    font-size: 14.5px;
+    color: var(--primary-dark);
+    letter-spacing: -0.3px;
+}
+/* 分数文字 */
+.bfb-frac {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    font-family: 'Courier New', Consolas, monospace;
+    font-weight: 500;
+}
 
 /* ========== 多解法速算 ========== */
 .mm-header {
@@ -888,6 +952,12 @@ body.sidebar-collapsed .content-area {
     color: #2e7d32;
     background: #e8f5e9;
     border-top: 1px dashed #a5d6a7;
+}
+.mm-answer-blind {
+    padding: 16px;
+    text-align: center;
+    background: linear-gradient(135deg, #FFF9F0, #fff);
+    border-top: 1px dashed #f0d0da;
 }
 .mm-methods-label {
     padding: 8px 16px 4px;

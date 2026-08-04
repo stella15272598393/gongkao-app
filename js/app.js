@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-04-v11';
+const APP_VERSION = '2026-08-04-v12';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -284,8 +284,9 @@ function renderFavBox() {
             <div class="fav-item-meta">${escapeHTML(f.source || '')}${f.date ? ' · ' + f.date : ''} · 收藏于 ${new Date(f.ts).toLocaleDateString('zh-CN')}</div>
             <div class="fav-item-snippet">${escapeHTML((f.snippet || '').slice(0, 180))}${(f.snippet || '').length > 180 ? '…' : ''}</div>
             <div class="fav-item-actions">
-                <button class="btn-outline btn-sm" onclick="gotoFavSource('${f.module}', '${f.id}')">▶ 前往查看</button>
-                <button class="btn-outline btn-sm" onclick="removeFavItem('${f.module}', '${f.id}')">🗑 取消收藏</button>
+                <button class="btn-outline btn-sm fav-copy-btn" data-fmod="${f.module}" data-fid="${f.id}" onclick="copyFavItem('${f.module}', '${f.id}')">📋 复制</button>
+                <button class="btn-outline btn-sm" onclick="gotoFavSource('${f.module}', '${f.id}')">▶ 查看</button>
+                <button class="btn-outline btn-sm" onclick="removeFavItem('${f.module}', '${f.id}')">🗑 删除</button>
             </div>
         </div>
     `).join('');
@@ -490,6 +491,31 @@ function removeFavItem(module, id) {
         const btn = document.getElementById('btnFavQuote');
         if (btn) btn.innerHTML = isFaved('quote', id) ? '❤️ 已收藏' : '🤍 收藏';
     }
+}
+
+/* 单条收藏导出（复制到剪贴板） */
+function copyFavItem(module, id) {
+    const f = favBox.find(x => x.module === module && x.id === id);
+    if (!f) { alert('未找到该收藏项'); return; }
+    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读' };
+    let txt = '【' + (moduleNames[f.module] || f.module) + '】' + (f.type === 'fav' ? ' ❤️收藏' : ' 👍点赞') + '\n';
+    txt += '标题：' + (f.title || '(无标题)') + '\n';
+    if (f.source) txt += '来源：' + f.source + (f.date ? ' · ' + f.date : '') + '\n';
+    if (f.snippet) txt += '内容：' + f.snippet + '\n';
+    navigator.clipboard.writeText(txt).then(function() {
+        // 找到对应按钮显示反馈
+        const btns = document.querySelectorAll('.fav-copy-btn');
+        btns.forEach(function(b) {
+            if (b.dataset.fmod === module && b.dataset.fid === id) {
+                const orig = b.innerHTML;
+                b.innerHTML = '✅ 已复制';
+                b.style.color = '#27ae60';
+                setTimeout(function() { b.innerHTML = orig; b.style.color = ''; }, 1500);
+            }
+        });
+    }).catch(function() {
+        alert('复制失败，请手动选择文本复制');
+    });
 }
 
 // ========== 全局搜索 ==========
@@ -834,8 +860,12 @@ function showRandomQuote(filter = 'all') {
     document.getElementById('quoteCategory').textContent = quote.themeName;
     document.getElementById('quoteText').textContent = `"${quote.text}"`;
     document.getElementById('quoteTheme').textContent = quote.category;
-    document.getElementById('quoteSource').innerHTML = '<span class="quote-source-name">' + quote.source + '</span>' +
-        ' <a class="quote-source-link" onclick="searchQuoteSource()" title="搜索原文出处">🔍 搜索原文</a>';
+    // 仅在有原文链接时显示跳转按钮
+    var sourceHtml = '<span class="quote-source-name">' + quote.source + '</span>';
+    if (quote.url) {
+        sourceHtml += ' <a class="quote-source-link" onclick="window.open(\'' + quote.url + '\',\'_blank\')" title="查看原文">🔗 查看原文</a>';
+    }
+    document.getElementById('quoteSource').innerHTML = sourceHtml;
 
     // 收藏状态（统一从收藏夹读取，刷新后保持）
     const isFav = isFaved('quote', quote.id);
@@ -850,12 +880,7 @@ function filterQuotes() {
     showRandomQuote(val);
 }
 
-// 搜索金句原文出处（打开百度/搜索引擎）
-function searchQuoteSource() {
-    if (!currentQuote) return;
-    var query = (currentQuote.source || '') + ' ' + (currentQuote.text || '').slice(0, 30);
-    window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(query), '_blank');
-}
+// （原 searchQuoteSource 已移除：数据无URL字段时不显示链接，有url字段则直接跳转原文）
 
 function toggleFavQuote() {
     const quote = QUOTES_DB[currentQuoteIndex];
@@ -1540,6 +1565,7 @@ function switchSusuanTab(tab) {
 // ========== 多解法速算模块 ==========
 let currentMmCategory = 'all';
 let mmOriginalOrder = [];
+let mmShowSolutions = false; // false=做题模式(隐藏解法), true=看解法模式
 
 function renderSpeedMultiList() {
     const container = document.getElementById('mmList');
@@ -1582,9 +1608,15 @@ function renderSpeedMultiList() {
             '</div>' +
             '<div class="mm-question">' + q.question + '</div>' +
             '<div class="mm-options">' + q.options.join('　') + '</div>' +
-            '<div class="mm-answer">✅ 答案：<b>' + q.answer + '</b></div>' +
-            '<div class="mm-methods-label">📐 多种解法（点击展开）：</div>' +
-            '<div class="mm-methods">' + methodsHtml + '</div>' +
+            (mmShowSolutions
+                ? '<div class="mm-answer">✅ 答案：<b>' + q.answer + '</b></div>' +
+                  '<div class="mm-methods-label">📐 多种解法（点击展开）：</div>' +
+                  '<div class="mm-methods">' + methodsHtml + '</div>'
+                : '<div class="mm-answer-blind" id="mm-blind-' + q.id + '">' +
+                    '<button class="btn-pink btn-sm" onclick="this.parentElement.innerHTML=\'<div class=\\\'mm-answer\\\'>✅ 答案：<b>' + q.answer + '</b></div><div class=\\\'mm-methods-label\\\'>📐 多种解法（点击展开）：</div><div class=\\\'mm-methods\\\'>' + methodsHtml.replace(/'/g, "\\'") + '</div>\';this.parentElement.classList.remove(\\\'mm-answer-blind\\\');">👁 查看答案与解法</button>' +
+                    '<div style="font-size:11px;color:#999;margin-top:4px;">先自己算一算，再看答案和解法～</div>' +
+                  '</div>'
+            ) +
         '</div>';
     }).join('');
 }
@@ -1621,6 +1653,15 @@ function shuffleSpeedMulti() {
     renderSpeedMultiList();
 }
 
+/* 切换做题/看解法模式 */
+function toggleMmShowSolutions() {
+    mmShowSolutions = !mmShowSolutions;
+    renderSpeedMultiList();
+    // 更新按钮文字
+    var btn = document.getElementById('mmToggleSolBtn');
+    if (btn) btn.textContent = mmShowSolutions ? '🙈 隐藏解法（做题模式）' : '👁 显示全部解法';
+}
+
 function renderFormulaCards() {
     const container = document.getElementById('formulaCards');
     if (!container) return;
@@ -1649,17 +1690,31 @@ function renderBaifenbiTable() {
     if (!container) return;
     // 按百分数数值排序
     var sorted = BAIFENBI_TABLE.slice().sort(function(a, b) { return parseFloat(a.percent) - parseFloat(b.percent); });
-    container.innerHTML = '<div class="baifenbi-legend"><span class="bfb-legend-item">⭐=必背</span><span class="bfb-legend-item">🔥=常用</span><span class="bfb-legend-count">共 ' + sorted.length + ' 条</span></div>' +
-        sorted.map(function(b) {
-            var isMust = b.note && b.note.indexOf('必背') >= 0;
-            var isCommon = b.note && b.note.indexOf('常用') >= 0;
-            var extra = isMust ? ' ⭐' : (isCommon ? ' 🔥' : '');
-            var cls = isMust ? ' bfb-must' : (isCommon ? ' bfb-common' : '');
-            return '<div class="baifenbi-cell' + cls + '">' +
-                '<div class="baifenbi-percent">' + b.percent + extra + '</div>' +
-                '<div class="baifenbi-fraction">' + b.fraction + '</div>' +
-                '</div>';
-        }).join('');
+    // 分组：必背 > 常用 > 其他
+    var mustKnow = sorted.filter(function(b) { return b.note && b.note.indexOf('必背') >= 0; });
+    var common = sorted.filter(function(b) { return b.note && b.note.indexOf('常用') >= 0; });
+    var basic = sorted.filter(function(b) { return (!b.note || (b.note.indexOf('必背') < 0 && b.note.indexOf('常用') < 0)); });
+
+    function renderGroup(title, items, cls) {
+        if (items.length === 0) return '';
+        var html = '<div class="bfb-group ' + cls + '">' +
+            '<div class="bfb-group-header">' + title + ' <span class="bfb-group-count">' + items.length + '条</span></div>' +
+            '<div class="bfb-grid">';
+        items.forEach(function(b) {
+            html += '<div class="bfb-cell">' +
+                '<span class="bfb-pct">' + b.percent + '</span>' +
+                '<span class="bfb-frac">' + b.fraction + '</span>' +
+            '</div>';
+        });
+        html += '</div></div>';
+        return html;
+    }
+
+    container.innerHTML =
+        '<div class="bfb-legend">⭐必背（考试高频）　🔥常用（建议熟记）　其余为基础参考 · 共' + sorted.length + '条</div>' +
+        renderGroup('⭐ 必背', mustKnow, 'bfb-g-must') +
+        renderGroup('🔥 常用', common, 'bfb-g-common') +
+        renderGroup('📋 基础', basic, 'bfb-g-basic');
 }
 
 // 练习模式
@@ -2942,12 +2997,17 @@ function renderInterview() {
     if (interviewCursor < 0) interviewCursor = list.length - 1;
     const it = list[interviewCursor];
     currentInterview = it; // 保存当前面试短句供搜索用
+    // 仅在有原文链接时显示跳转按钮
+    var linkHtml = '';
+    if (it.url) {
+        linkHtml = '<a class="interview-source-link" onclick="window.open(\'' + it.url + '\',\'_blank\')" title="查看原文">🔗 查看原文</a>';
+    }
     wrap.innerHTML =
         '<div class="interview-card" id="interviewCard">' +
             '<div class="interview-type">' + it.type + '</div>' +
             '<div class="interview-text">' + it.text + '</div>' +
             '<div class="interview-tag tag-' + it.tag + '">' + it.tag + '</div>' +
-            '<a class="interview-source-link" onclick="searchInterviewSource()" title="搜索相关面试技巧/真题">🔍 搜索相关</a>' +
+            linkHtml +
         '</div>' +
         '<div class="idiom-nav">' +
             '<button class="btn-outline btn-sm" onclick="interviewStep(-1)">‹ 上一个</button>' +
@@ -2966,12 +3026,8 @@ function renderInterview() {
 function interviewStep(d) { const list = getInterviewList(); if (!list.length) return; interviewCursor += d; if (interviewCursor < 0) interviewCursor = list.length - 1; if (interviewCursor >= list.length) interviewCursor = 0; renderInterview(); }
 function newInterview() { const list = getInterviewList(); if (list.length) { interviewCursor = Math.floor(Math.random() * list.length); renderInterview(); } }
 
-// 搜索面试短句相关内容（打开搜索引擎）
-function searchInterviewSource() {
-    if (!currentInterview) return;
-    var query = '结构化面试 ' + (currentInterview.type || '') + ' ' + (currentInterview.text || '').slice(0, 20);
-    window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(query), '_blank');
-}
+// （原 searchInterviewSource 已移除：数据无URL字段时不显示链接，有url字段则直接跳转原文）
+
 function bindInterviewSwipe() {
     const card = document.getElementById('interviewCard'); if (!card) return;
     let sx = null;
