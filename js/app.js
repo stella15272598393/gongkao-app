@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v28';
+const APP_VERSION = '2026-08-05-v29';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -239,31 +239,6 @@ function registerSW() {
         if (reg.update) { try { reg.update(); } catch (e) {} }
     }).catch(err => {
         console.log('SW registration failed:', err);
-    });
-}
-
-// ★ v27 强制更新：彻底打破 SW 缓存死循环
-//   当用户卡在旧版（版本号不符预期）时，一键：注销 SW + 清缓存 + 硬刷新
-function forceAppUpdate() {
-    if (!('serviceWorker' in navigator)) {
-        window.location.reload(true);
-        return;
-    }
-    showToast('🔄 正在强制更新...');
-    Promise.all([
-        // 1. 注销所有 SW 注册
-        navigator.serviceWorker.getRegistrations().then(regs => {
-            return Promise.all(regs.map(r => r.unregister()));
-        }),
-        // 2. 清空所有 Cache Storage
-        (window.caches ? caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))) : Promise.resolve())
-    ]).then(() => {
-        console.log('[forceAppUpdate] SW 已注销, 缓存已清, 准备硬刷新');
-        // 3. 硬刷新（绕过缓存加载最新代码）
-        window.location.reload(true);
-    }).catch(err => {
-        console.error('[forceAppUpdate] 失败', err);
-        window.location.reload(true);
     });
 }
 
@@ -556,73 +531,86 @@ function renderHome() {
     renderTodos();
 }
 
-/* ★ v28 热力图 —— 完全重写，最简逻辑 + 内联颜色 */
+/* ★ v29 热力图 —— 一次读取 + 可见调试 + 极简逻辑 */
 function renderStreakHeatmap() {
     const el = document.getElementById('streakHeatmap');
     if (!el) return;
 
-    const sd = _getStreakData();
-    let history = (sd && sd.history) || [];
-    if (!Array.isArray(history)) history = [];
+    // ====== 第一步：只读一次 localStorage ======
+    let raw = {};
+    try { raw = JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch(e) {}
+    let hist = (raw && raw.history) || [];
+    if (!Array.isArray(hist)) hist = [];
 
-    // ★ v28 数据迁移：旧格式 {count, last, history} → 纯 history 数组
-    //   如果 history 为空但旧字段有数据，从 last 往前推 count 天重建
-    if (history.length === 0 && sd && sd.count > 0 && sd.last) {
-        const rebuilt = [];
-        const d = new Date(sd.last);
-        for (let i = 0; i < Math.min(sd.count, 999); i++) {
-            rebuilt.unshift(d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'));
-            d.setDate(d.getDate() - 1);
+    // ====== 第二步：数据修复（旧格式迁移）======
+    // 旧格式 {count:N, last:'YYYY-MM-DD', history:[]} → 从 last 往前推
+    if (hist.length === 0 && raw && typeof raw.count === 'number' && raw.count > 0 && raw.last) {
+        var rb = [], rd = new Date(raw.last);
+        for (var ri = 0; ri < Math.min(raw.count, 999); ri++) {
+            rb.unshift(rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0'));
+            rd.setDate(rd.getDate()-1);
         }
-        history = rebuilt;
-        sd.history = rebuilt;
-        // 删除旧的 count/last 字段，避免干扰
-        delete sd.count;
-        delete sd.last;
-        _saveStreakData(sd);
-        console.log('[heatmap v28] 旧格式迁移完成:', rebuilt);
+        hist = rb;
+        raw.history = rb;
+        delete raw.count;
+        delete raw.last;
+        try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
     }
 
-    const checkedSet = new Set(history);
+    // ★ v29 兜底：如果今天显示"已打卡"但 history 里没有 → 补上
+    var todayStr = (new Date()).getFullYear()+'-'+String((new Date()).getMonth()+1).padStart(2,'0')+'-'+String((new Date()).getDate()).padStart(2,'0');
+    if (hist.indexOf(todayStr) < 0 && raw && raw.last === todayStr) {
+        hist.push(todayStr);
+        raw.history = hist;
+        try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
+    }
 
-    // 内联颜色（不依赖 CSS class）
-    const C_ON  = '#E75480';  // 已打卡：粉色
-    const C_OFF = '#f0f0f0';  // 未打卡：浅灰
-    const C_FUT = '#fafafa';  // 未来：更浅
+    // ====== 第三步：构建查重集合 ======
+    var checked = {};
+    for (var hi = 0; hi < hist.length; hi++) checked[hist[hi]] = true;
 
-    const weeks = 26;
-    const now = new Date(); now.setHours(0,0,0,0);
-    const start = new Date(now);
-    start.setDate(now.getDate() - (weeks * 7 - 1));
-    start.setDate(start.getDate() - start.getDay()); // 对齐到周日
-    const cur = new Date(start);
-    const pad = n => String(n).padStart(2, '0');
+    // ====== 第四步：渲染 ======
+    var C_ON  = '#E75480';
+    var C_OFF = '#e8e8e8';
+    var C_FUT = '#f5f5f5';
+    var weeks = 26;
+    var now = new Date(); now.setHours(0,0,0,0);
+    var start = new Date(now);
+    start.setDate(now.getDate() - (weeks*7 - 1));
+    start.setDate(start.getDate() - start.getDay());
+    var cur = new Date(start);
+    var pad2 = function(n){return String(n).padStart(2,'0');};
 
-    let html = '<div class="heatmap-title">📅 打卡热力图（近半年）</div><div class="heatmap-grid">';
-    let pinkCount = 0;
+    var html = '<div class="heatmap-title">📅 打卡热力图（近半年）</div><div class="heatmap-grid">';
+    var pinkCnt = 0;
 
-    for (let w = 0; w < weeks; w++) {
+    for (var w = 0; w < weeks; w++) {
         html += '<div class="heatmap-week">';
-        for (let d = 0; d < 7; d++) {
-            const key = cur.getFullYear() + '-' + pad(cur.getMonth()+1) + '-' + pad(cur.getDate());
-            const isFuture = cur > now;
-            const done = checkedSet.has(key);
-            if (done && !isFuture) pinkCount++;
-            const bg = isFuture ? C_FUT : (done ? C_ON : C_OFF);
-            html += '<div class="heat-cell" style="background:' + bg + ';" title="' + key +
-                (done ? ' · ✅已打卡' : (isFuture ? ' · 未到' : ' · 未打卡')) + '"></div>';
-            cur.setDate(cur.getDate() + 1);
+        for (var d = 0; d < 7; d++) {
+            var k = cur.getFullYear()+'-'+pad2(cur.getMonth()+1)+'-'+pad2(cur.getDate());
+            var fut = cur > now;
+            var done = !!checked[k];
+            if (done && !fut) pinkCnt++;
+            var bg = fut ? C_FUT : (done ? C_ON : C_OFF);
+            html += '<div class="heat-cell" style="background:'+bg+';" title="'+k+(done?' ✅':(fut?' · 未到':' · 未打卡'))+'"></div>';
+            cur.setDate(cur.getDate()+1);
         }
         html += '</div>';
     }
     html += '</div>';
 
     // 图例
-    html += '<div class="heatmap-legend"><span>未打卡</span>' +
-        '<div class="heat-cell" style="background:' + C_OFF + ';"></div>' +
-        '<div class="heat-cell" style="background:' + C_ON + ';"></div>' +
-        '<span>已打卡</span>' +
-        '<span class="heat-count">累计 ' + pinkCount + ' 天</span></div>';
+    html += '<div class="heatmap-legend"><span>未</span>'+
+        '<div class="heat-cell" style="background:'+C_OFF+';"></div>'+
+        '<div class="heat-cell" style="background:'+C_ON+';"></div>'+
+        '<span>已</span>'+
+        '<span class="heat-count">累计 '+pinkCnt+' 天</span></div>';
+
+    // ★ v29 调试信息（直接显示在页面上，确认数据正确）
+    html += '<div style="font-size:11px;color:#999;margin-top:4px;padding:4px 8px;background:rgba(0,0,0,.04);border-radius:6px;">'+
+        '[调试] history='+JSON.stringify(hist).slice(0,120)+(hist.length>120?'...':'')+
+        ' | 长度='+hist.length+' | 今天('+todayStr+')已打='+(!!checked[todayStr]?'是':'否')+
+        ' | pinkCount='+pinkCnt+'</div>';
 
     el.innerHTML = html;
 }
