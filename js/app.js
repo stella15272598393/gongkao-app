@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-04-v15';
+const APP_VERSION = '2026-08-04-v16';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -1213,6 +1213,31 @@ function toggleFavMorning(id, btnEl) {
 
 /* 晨读语音朗读（Web Speech API） */
 let morningSpeechUtter = null;
+// —— 嗓音缓存：Web Speech 的 getVoices() 是异步的，首屏直接读常为空，会回退到最生硬的默认嗓音 ——
+let _cachedVoices = [];
+function _refreshVoices() {
+    try { _cachedVoices = (window.speechSynthesis && window.speechSynthesis.getVoices()) || []; }
+    catch (e) { _cachedVoices = []; }
+}
+if ('speechSynthesis' in window) {
+    _refreshVoices();
+    window.speechSynthesis.onvoiceschanged = _refreshVoices;
+}
+// 挑最自然的大陆普通话嗓音：优先 zh-CN（含简体/普通话），排除台港腔；再偏好神经/在线嗓音
+function pickChineseVoice() {
+    const list = (_cachedVoices.length ? _cachedVoices : (window.speechSynthesis.getVoices() || []));
+    if (!list.length) return null;
+    let zh = list.filter(v => /^zh[-_]?CN/i.test(v.lang) || /普通话|国语|大陆|简体/i.test(v.name));
+    if (!zh.length) zh = list.filter(v => /^zh/i.test(v.lang) || /chinese|中文/i.test(v.name));
+    if (!zh.length) return null;
+    const prefer = [/xiaoxiao/i, /yunyang/i, /yunxi/i, /yating/i, /xiaoyi/i, /neural/i, /online/i, /natural/i, /yaoyao/i, /kangkang/i];
+    for (const re of prefer) {
+        const hit = zh.find(v => re.test(v.name));
+        if (hit) return hit;
+    }
+    return zh[0];
+}
+
 function speakMorning(id, btn) {
     if (!('speechSynthesis' in window)) { alert('当前浏览器不支持语音朗读，请换 Chrome / Edge 试试～'); return; }
     const item = MORNING_DB.find(m => m.id === id);
@@ -1229,11 +1254,12 @@ function speakMorning(id, btn) {
     window.speechSynthesis.cancel();
     const text = (item.title || '') + '。' + (item.content || '').replace(/\n/g, '。');
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'zh-CN'; u.rate = 1; u.pitch = 1;
+    u.lang = 'zh-CN';
+    u.rate = 0.95;   // 略慢更自然、少卡顿
+    u.pitch = 1.0;
     try {
-        const voices = window.speechSynthesis.getVoices();
-        const zh = voices.find(v => /zh|Chinese|中文|普通话/i.test(v.lang + ' ' + v.name));
-        if (zh) u.voice = zh;
+        const v = pickChineseVoice();
+        if (v) u.voice = v;
     } catch (e) {}
     u.onend = function () {
         document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
