@@ -90,6 +90,18 @@ html, body {
     white-space: nowrap; font-weight: 500;
 }
 
+/* 数据新鲜度提醒横幅（爬虫超过 N 天未更新时显示） */
+.data-stale-banner {
+    background: linear-gradient(135deg, #ff9a6c, #ff6a88);
+    color: #fff;
+    text-align: center;
+    font-size: 13px;
+    padding: 8px 14px;
+    font-weight: 500;
+    letter-spacing: .3px;
+    box-shadow: 0 2px 8px rgba(255,106,136,.3);
+}
+
 .search-box {
     position: relative;
     display: flex; align-items: center;

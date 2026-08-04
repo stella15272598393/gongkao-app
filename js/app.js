@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v30';
+const APP_VERSION = '2026-08-05-v31';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -3025,6 +3025,8 @@ document.addEventListener('click', e => {
 /* ========== 更新提示（对比上次查看总量） ========== */
 let _noticeShown = false;
 function showUpdateNotice(meta) {
+    // ★ 数据新鲜度检查（每次加载都执行，不受下方 _noticeShown 守卫限制）
+    checkDataFreshness(meta);
     if (_noticeShown || !meta || !meta.totals) return;
     _noticeShown = true;
     let prev = null;
@@ -3041,6 +3043,39 @@ function showUpdateNotice(meta) {
     if (parts.length === 0) return;
     showToast('🎉 内容已更新：' + parts.join(' · '));
 }
+
+/* 数据新鲜度检查：若内容超过 N 天未更新（爬虫/cron-job 失效），顶部显示提醒，避免无感失效 */
+function checkDataFreshness(meta) {
+    const el = document.getElementById('dataStaleBanner');
+    if (!el) return;
+    const d = parseMetaDate(meta);
+    if (!d) { el.style.display = 'none'; return; }
+    const sod = dt => { const x = new Date(dt); x.setHours(0, 0, 0, 0); return x; };
+    const days = Math.floor((sod(new Date()) - sod(d)) / 86400000);
+    const THRESHOLD = 2; // 爬虫每天北京时间 00:00 跑，超过 2 天未更新即视为异常（留 1 天容错，避免偶发延迟误报）
+    if (days >= THRESHOLD) {
+        el.textContent = '⚠️ 数据已 ' + days + ' 天未更新，爬虫可能未运行，请检查 cron-job / GitHub Actions';
+        el.style.display = 'block';
+    } else {
+        el.style.display = 'none';
+    }
+}
+function parseMetaDate(meta) {
+    if (!meta) return null;
+    if (meta.updatedAtLocal) {
+        // 北京时间字符串：2026/08/04 16:11:17 → 2026-08-04T16:11:17+08:00（带时区，无解析歧义）
+        let s = String(meta.updatedAtLocal).trim().replace(/\//g, '-').replace(' ', 'T');
+        if (!s.includes('+') && !s.includes('Z')) s += '+08:00';
+        const d = new Date(s);
+        if (!isNaN(d.getTime())) return d;
+    }
+    if (meta.updatedAt) {
+        const d = new Date(meta.updatedAt);
+        if (!isNaN(d.getTime())) return d;
+    }
+    return null;
+}
+
 function showToast(text) {
     let t = document.getElementById('gkToast');
     if (!t) {
