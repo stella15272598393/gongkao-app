@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v25';
+const APP_VERSION = '2026-08-05-v26';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -497,61 +497,83 @@ function renderHome() {
     renderTodos();
 }
 
-/* 打卡热力图（GitHub 风格，近半年） */
+/* 打卡热力图（GitHub 风格，近半年）—— v26 用内联 style 彻底绕开 CSS 缓存问题 */
 function renderStreakHeatmap() {
     const el = document.getElementById('streakHeatmap');
     if (!el) return;
-    let hist = [];
-    try { const s = localStorage.getItem('gk_streak'); if (s) hist = (JSON.parse(s).history) || []; } catch (e) {}
 
-    // ★ v25 热力图自愈：如果 history 为空但 count>0，从 last 字段重建 history
-    //    解决"连续天数显示正常但热力图全灰"的问题（旧版自动打卡未正确写入 history）
-    if (hist.length === 0) {
-        try {
-            const s = JSON.parse(localStorage.getItem('gk_streak') || '{}');
-            if (s.count && s.count > 0 && s.last) {
-                console.log('[heatmap] history 为空但 count=' + s.count + '，从 last 重建');
-                const rebuilt = [];
-                const d = new Date(s.last);
-                for (let i = 0; i < s.count; i++) {
-                    const dateStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-                    rebuilt.unshift(dateStr); // 从最早到最新
-                    d.setDate(d.getDate() - 1);
-                }
-                hist = rebuilt;
-                // 写回 localStorage
-                s.history = rebuilt;
-                localStorage.setItem('gk_streak', JSON.stringify(s));
-                console.log('[heatmap] 已重建 history:', rebuilt);
-            }
-        } catch (e) { console.error('[heatmap] 重建失败', e); }
+    // 读取打卡数据
+    let raw = null;
+    try { raw = JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch (e) { raw = {}; }
+    let hist = (raw && raw.history) || [];
+    if (!Array.isArray(hist)) hist = [];
+
+    // ★ v26 自愈逻辑（更全面）
+    if (hist.length === 0 && raw && raw.count > 0 && raw.last) {
+        console.log('[heatmap v26] history为空, count=' + raw.count + ', last=' + raw.last + ' → 重建');
+        const rebuilt = [];
+        const d = new Date(raw.last);
+        for (let i = 0; i < Math.min(raw.count, 999); i++) {
+            const ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            rebuilt.unshift(ds);
+            d.setDate(d.getDate() - 1);
+        }
+        hist = rebuilt;
+        raw.history = rebuilt;
+        try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
+        console.log('[heatmap v26] 重建完成:', rebuilt);
+    }
+
+    // 也确保今天已打卡但不在 history 中的情况被补上
+    const today = getTodayStr();
+    if (hist.indexOf(today) < 0 && raw && raw.last === today) {
+        hist.push(today);
+        raw.history = hist;
+        try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
+        console.log('[heatmap v26] 补充今天到history');
     }
 
     const set = new Set(hist);
-    console.log('[heatmap] 渲染热力图, history=', hist.length, '天, set.size=', set.size);
+
+    // ★ 内联颜色 —— 不依赖 CSS class，彻底绕开缓存
+    const COLOR_ON = '#E75480';      // 已打卡：粉色
+    const COLOR_OFF = '#f0f0f0';     // 未打卡：浅灰
+    const COLOR_FUT = '#fafafa';     // 未来：更浅
+
     const weeks = 26;
-    const today = new Date(); today.setHours(0, 0, 0, 0);
-    const start = new Date(today);
-    start.setDate(today.getDate() - (weeks * 7 - 1));
+    const now = new Date(); now.setHours(0,0,0,0);
+    const start = new Date(now);
+    start.setDate(now.getDate() - (weeks * 7 - 1));
     start.setDate(start.getDate() - start.getDay()); // 对齐到周日
     const cur = new Date(start);
     const pad = n => String(n).padStart(2, '0');
+
     let html = '<div class="heatmap-title">📅 打卡热力图（近半年）</div><div class="heatmap-grid">';
     for (let w = 0; w < weeks; w++) {
         html += '<div class="heatmap-week">';
         for (let d = 0; d < 7; d++) {
-            const key = cur.getFullYear() + '-' + pad(cur.getMonth() + 1) + '-' + pad(cur.getDate());
-            const future = cur > today;
+            const key = cur.getFullYear() + '-' + pad(cur.getMonth()+1) + '-' + pad(cur.getDate());
+            const isFuture = cur > now;
             const done = set.has(key);
-            const cls = 'heat-cell' + (future ? ' heat-future' : (done ? ' heat-on' : ' heat-off'));
-            html += '<div class="' + cls + '" title="' + key + (done ? ' · 已打卡 ✅' : (future ? ' · 未到' : ' · 未打卡')) + '"></div>';
+            // ★ 内联 style —— 不用 CSS class，缓存无法拦截
+            const bg = isFuture ? COLOR_FUT : (done ? COLOR_ON : COLOR_OFF);
+            html += '<div class="heat-cell" style="background:' + bg + ';" title="' + key +
+                (done ? ' · 已打卡 ✅' : (isFuture ? ' · 未到' : ' · 未打卡')) + '"></div>';
             cur.setDate(cur.getDate() + 1);
         }
         html += '</div>';
     }
     html += '</div>';
-    html += '<div class="heatmap-legend"><span>未打卡</span><span class="heat-cell heat-off"></span><span class="heat-cell heat-on"></span><span>已打卡</span><span class="heat-count">累计 ' + set.size + ' 天</span></div>';
+
+    // 图例也用内联色
+    html += '<div class="heatmap-legend"><span>未打卡</span>' +
+        '<div class="heat-cell" style="background:' + COLOR_OFF + ';"></div>' +
+        '<div class="heat-cell" style="background:' + COLOR_ON + ';"></div>' +
+        '<span>已打卡</span>' +
+        '<span class="heat-count">累计 ' + set.size + ' 天</span></div>';
+
     el.innerHTML = html;
+    console.log('[heatmap v26] 渲染完成, history=' + hist.length + '天, 已打卡=' + set.size + '天, 今天' + today + '已打=' + set.has(today));
 }
 
 function statModule(label) {
