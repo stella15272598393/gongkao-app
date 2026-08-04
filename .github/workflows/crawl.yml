@@ -6,10 +6,9 @@ name: 每日抓取内容更新
 #   联网拉取最新 content/*.json（network-first），无需重新安装 APP。
 on:
   schedule:
-    # 每天两次自动抓取：北京时间 10:00（UTC 02:00）与 22:00（UTC 14:00）
-    - cron: '0 2 * * *'
-    - cron: '0 14 * * *'
-  workflow_dispatch: {}        # 允许在 Actions 页面手动触发
+    # 每天自动抓取一次：北京时间 06:00（UTC 前一日 22:00）
+    - cron: '0 22 * * *'
+  workflow_dispatch: {}        # 允许在 Actions 页面手动触发（可手动跑一次验证爬虫是否真能抓到数据）
 
 permissions:
   contents: write
