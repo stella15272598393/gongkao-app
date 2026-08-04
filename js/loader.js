@@ -264,6 +264,10 @@
                 changed = true;
             }
         }
+        // 速算远程题（每日自动生成）：不覆盖内置 DB，仅暴露给 app.js 优先加载
+        if (payload.susuan && payload.susuan.length) {
+            window.__SUSUAN_REMOTE__ = payload.susuan;
+        }
 
         if (changed) {
             window.__contentOrigin = origin;
@@ -277,7 +281,7 @@
 
     /** 合并远程与缓存：某模块远程抓取失败(为空)但缓存有数据 → 保留缓存，避免部分抓取把模块清空并污染 IndexedDB */
     function mergePayload(fresh, cached) {
-        const keys = ['shizheng', 'qiushi', 'renwu', 'essays', 'quotes', 'morning', 'idioms', 'idiomPairs', 'logic', 'interview', 'transitions'];
+        const keys = ['shizheng', 'qiushi', 'renwu', 'essays', 'quotes', 'morning', 'idioms', 'idiomPairs', 'logic', 'interview', 'transitions', 'susuan'];
         const out = {};
         for (const k of keys) {
             const f = fresh && fresh[k];
@@ -316,6 +320,7 @@
         try { if (typeof renderIdiomPairs === 'function') renderIdiomPairs(); } catch (e) { }
         try { if (typeof renderLogic === 'function') renderLogic(); } catch (e) { }
         try { if (typeof renderInterview === 'function') renderInterview(); } catch (e) { }
+        try { if (typeof renderSpeedMultiList === 'function') renderSpeedMultiList(); } catch (e) { }
     }
 
     /** 顶部提示内容来源与更新时间 */
@@ -349,20 +354,21 @@
     }
 
     async function loadRemote() {
-        const [sz, qs, meta, rw, es, qz, mr, idm, idp, lg, iv, tr] = await Promise.all([
-            fetchJSON('content/shizheng.json').catch(() => null),
-            fetchJSON('content/qiushi.json').catch(() => null),
-            fetchJSON('content/meta.json').catch(() => null),
-            fetchJSON('content/renwu.json').catch(() => null),
-            fetchJSON('content/essays.json').catch(() => null),
-            fetchJSON('content/quotes.json').catch(() => null),
-            fetchJSON('content/morning.json').catch(() => null),
-            fetchJSON('content/idioms.json').catch(() => null),
-            fetchJSON('content/idiom-pairs.json').catch(() => null),
-            fetchJSON('content/logic.json').catch(() => null),
-            fetchJSON('content/interview.json').catch(() => null),
-            fetchJSON('content/transitions.json').catch(() => null)
-        ]);
+    const [sz, qs, meta, rw, es, qz, mr, idm, idp, lg, iv, tr, su] = await Promise.all([
+        fetchJSON('content/shizheng.json').catch(() => null),
+        fetchJSON('content/qiushi.json').catch(() => null),
+        fetchJSON('content/meta.json').catch(() => null),
+        fetchJSON('content/renwu.json').catch(() => null),
+        fetchJSON('content/essays.json').catch(() => null),
+        fetchJSON('content/quotes.json').catch(() => null),
+        fetchJSON('content/morning.json').catch(() => null),
+        fetchJSON('content/idioms.json').catch(() => null),
+        fetchJSON('content/idiom-pairs.json').catch(() => null),
+        fetchJSON('content/logic.json').catch(() => null),
+        fetchJSON('content/interview.json').catch(() => null),
+        fetchJSON('content/transitions.json').catch(() => null),
+        fetchJSON('content/susuan.json').catch(() => null)
+    ]);
         if (!sz && !qs && !rw && !es && !qz && !mr && !idm && !idp && !lg && !iv) throw new Error('all remote failed');
         return {
             shizheng: (sz && sz.items) || [],
@@ -376,6 +382,7 @@
             logic: (lg && lg.items) || [],
             interview: (iv && iv.items) || [],
             transitions: (tr && tr.items) || [],
+            susuan: (su && su.items) || [],
             meta: meta || null
         };
     }

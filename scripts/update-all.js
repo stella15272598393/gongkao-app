@@ -42,19 +42,20 @@ function writeMeta() {
     const meta = {
         updatedAt: now.toISOString(),
         updatedAtLocal: local,
-        todayNew: readCount('shizheng.json') + readCount('qiushi.json') + readCount('renwu.json') + readCount('essays.json') + readCount('quotes.json') + readCount('morning.json'),
+        todayNew: readCount('shizheng.json') + readCount('qiushi.json') + readCount('renwu.json') + readCount('essays.json') + readCount('quotes.json') + readCount('morning.json') + readCount('susuan.json'),
         totals: {
             shizheng: readCount('shizheng.json'),
             qiushi: readCount('qiushi.json'),
             renwu: readCount('renwu.json'),
             essays: readCount('essays.json'),
             quotes: readCount('quotes.json'),
-            morning: readCount('morning.json')
+            morning: readCount('morning.json'),
+            susuan: readCount('susuan.json')
         }
     };
     fs.writeFileSync(path.join(OUT_DIR, 'meta.json'), JSON.stringify(meta, null, 1), 'utf8');
     console.log('\n========== meta.json 已更新 ==========');
-    console.log(`  时政 ${meta.totals.shizheng} · 求是 ${meta.totals.qiushi} · 人物 ${meta.totals.renwu} · 范文 ${meta.totals.essays} · 金句 ${meta.totals.quotes} · 晨读 ${meta.totals.morning}`);
+    console.log(`  时政 ${meta.totals.shizheng} · 求是 ${meta.totals.qiushi} · 人物 ${meta.totals.renwu} · 范文 ${meta.totals.essays} · 金句 ${meta.totals.quotes} · 晨读 ${meta.totals.morning} · 速算 ${meta.totals.susuan}`);
     console.log(`  更新于 ${local}`);
 }
 
@@ -75,6 +76,7 @@ try {
     const ok3 = runSafe('scripts/crawler-quotes.js');
     const ok4 = runSafe('scripts/crawler-essay.js');
     const ok5 = runSafe('scripts/crawler-morning.js');
+    const ok6 = runSafe('scripts/gen-susuan.js'); // 每日自动生成速算新题（不依赖外网）
     writeMeta();
     if (ok1 && ok2 && ok3 && ok4 && ok5) {
         console.log('\n✅ 全部内容抓取完成');

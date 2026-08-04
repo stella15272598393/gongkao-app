@@ -1839,7 +1839,10 @@ let mmRevealedIds = {}; // 做题模式下已手动查看答案的题目ID集合
 function renderSpeedMultiList() {
     const container = document.getElementById('mmList');
     if (!container) return;
-    const db = (typeof SPEED_MULTI_DB !== 'undefined') ? SPEED_MULTI_DB : [];
+    // ★ 优先用每日自动生成的远程速算题（最新在前），内置 SPEED_MULTI_DB 作为离线兜底
+    const remote = (typeof window !== 'undefined' && window.__SUSUAN_REMOTE__ && window.__SUSUAN_REMOTE__.length) ? window.__SUSUAN_REMOTE__ : [];
+    const builtin = (typeof SPEED_MULTI_DB !== 'undefined') ? SPEED_MULTI_DB : [];
+    const db = remote.concat(builtin);
     if (db.length === 0) {
         container.innerHTML = '<div style="text-align:center;padding:40px;color:#999;"><div style="font-size:36px;">🔢</div><div>题库加载中...</div></div>';
         return;
