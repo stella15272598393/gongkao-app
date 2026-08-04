@@ -275,6 +275,22 @@
         return changed;
     }
 
+    /** 合并远程与缓存：某模块远程抓取失败(为空)但缓存有数据 → 保留缓存，避免部分抓取把模块清空并污染 IndexedDB */
+    function mergePayload(fresh, cached) {
+        const keys = ['shizheng', 'qiushi', 'renwu', 'essays', 'quotes', 'morning', 'idioms', 'idiomPairs', 'logic', 'interview', 'transitions'];
+        const out = {};
+        for (const k of keys) {
+            const f = fresh && fresh[k];
+            const c = cached && cached[k];
+            if (Array.isArray(f) && f.length) out[k] = f;
+            else if (Array.isArray(c) && c.length) out[k] = c;
+            else out[k] = (f !== undefined ? f : c);
+        }
+        if (fresh && fresh.meta) out.meta = fresh.meta;
+        else if (cached && cached.meta) out.meta = cached.meta;
+        return out;
+    }
+
     /** 触发相关模块重新渲染 */
     function rerender() {
         // 远程数据覆盖后重置时政过滤状态，避免残留的旧过滤条件
@@ -376,8 +392,9 @@
         try {
             const fresh = await loadRemote();
             if (fresh.shizheng.length || fresh.qiushi.length || fresh.renwu.length || fresh.morning.length) {
-                applyData(fresh, 'remote');
-                await idbSet('payload', fresh);
+                const merged = mergePayload(fresh, cached);
+                applyData(merged, 'remote');
+                await idbSet('payload', merged);
             }
         } catch (e) {
             if (!cached) {
@@ -398,8 +415,9 @@
     window.refreshContent = async function () {
         try {
             const fresh = await loadRemote();
-            applyData(fresh, 'remote');
-            await idbSet('payload', fresh);
+            const merged = mergePayload(fresh, await idbGet('payload'));
+            applyData(merged, 'remote');
+            await idbSet('payload', merged);
             return true;
         } catch (e) {
             showBadge('cache', window.__contentMeta);
