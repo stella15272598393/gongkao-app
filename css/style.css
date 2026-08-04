@@ -953,11 +953,23 @@ body.sidebar-collapsed .content-area {
     background: #e8f5e9;
     border-top: 1px dashed #a5d6a7;
 }
-.mm-answer-blind {
-    padding: 16px;
+/* 做题模式：隐藏答案区域 */
+.mm-blind-area {
+    padding: 20px 16px;
     text-align: center;
-    background: linear-gradient(135deg, #FFF9F0, #fff);
+    background: linear-gradient(135deg, #FFF9F0, #FFFBF5);
     border-top: 1px dashed #f0d0da;
+    border-radius: 0 0 10px 10px;
+}
+.mm-blind-area .btn-pink {
+    font-size: 14px;
+    padding: 10px 24px;
+    border-radius: 20px;
+}
+.mm-blind-hint {
+    font-size: 11.5px;
+    color: #bbb;
+    margin-top: 6px;
 }
 .mm-methods-label {
     padding: 8px 16px 4px;

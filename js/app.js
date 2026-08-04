@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-04-v12';
+const APP_VERSION = '2026-08-04-v13';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -1566,6 +1566,7 @@ function switchSusuanTab(tab) {
 let currentMmCategory = 'all';
 let mmOriginalOrder = [];
 let mmShowSolutions = false; // false=做题模式(隐藏解法), true=看解法模式
+let mmRevealedIds = {}; // 做题模式下已手动查看答案的题目ID集合
 
 function renderSpeedMultiList() {
     const container = document.getElementById('mmList');
@@ -1600,6 +1601,24 @@ function renderSpeedMultiList() {
             '</div>';
         }).join('');
 
+        // 看解法模式：直接显示全部（答案+选项+所有解法）
+        if (mmShowSolutions) {
+            return '<div class="mm-card" id="mm-' + q.id + '">' +
+                '<div class="mm-q-header">' +
+                    '<span class="mm-idx">#' + (idx + 1) + '</span>' +
+                    '<span class="mm-cat">' + q.category + '</span>' +
+                    '<span class="mm-diff">' + q.difficulty + '</span>' +
+                '</div>' +
+                '<div class="mm-question">' + q.question + '</div>' +
+                '<div class="mm-options">' + q.options.join('　') + '</div>' +
+                '<div class="mm-answer">✅ 答案：<b>' + q.answer + '</b></div>' +
+                '<div class="mm-methods-label">📐 多种解法（点击展开）：</div>' +
+                '<div class="mm-methods">' + methodsHtml + '</div>' +
+            '</div>';
+        }
+
+        // 做题模式(mmShowSolutions=false)：默认隐藏答案和解法，只显示题目+选项
+        var isRevealed = !!mmRevealedIds[q.id];
         return '<div class="mm-card" id="mm-' + q.id + '">' +
             '<div class="mm-q-header">' +
                 '<span class="mm-idx">#' + (idx + 1) + '</span>' +
@@ -1608,17 +1627,23 @@ function renderSpeedMultiList() {
             '</div>' +
             '<div class="mm-question">' + q.question + '</div>' +
             '<div class="mm-options">' + q.options.join('　') + '</div>' +
-            (mmShowSolutions
+            (isRevealed
                 ? '<div class="mm-answer">✅ 答案：<b>' + q.answer + '</b></div>' +
                   '<div class="mm-methods-label">📐 多种解法（点击展开）：</div>' +
                   '<div class="mm-methods">' + methodsHtml + '</div>'
-                : '<div class="mm-answer-blind" id="mm-blind-' + q.id + '">' +
-                    '<button class="btn-pink btn-sm" onclick="this.parentElement.innerHTML=\'<div class=\\\'mm-answer\\\'>✅ 答案：<b>' + q.answer + '</b></div><div class=\\\'mm-methods-label\\\'>📐 多种解法（点击展开）：</div><div class=\\\'mm-methods\\\'>' + methodsHtml.replace(/'/g, "\\'") + '</div>\';this.parentElement.classList.remove(\\\'mm-answer-blind\\\');">👁 查看答案与解法</button>' +
-                    '<div style="font-size:11px;color:#999;margin-top:4px;">先自己算一算，再看答案和解法～</div>' +
+                : '<div class="mm-blind-area" id="mm-blind-' + q.id + '">' +
+                    '<button class="btn-pink btn-sm" onclick="revealMmAnswer(' + q.id + ')">👁 查看答案与解法</button>' +
+                    '<div class="mm-blind-hint">先自己算一算，再看答案～</div>' +
                   '</div>'
             ) +
         '</div>';
     }).join('');
+}
+
+/* 做题模式：单题查看答案（只展开这一题） */
+function revealMmAnswer(qId) {
+    mmRevealedIds[qId] = true;
+    renderSpeedMultiList();
 }
 
 function filterSpeedMulti() {
@@ -1656,6 +1681,7 @@ function shuffleSpeedMulti() {
 /* 切换做题/看解法模式 */
 function toggleMmShowSolutions() {
     mmShowSolutions = !mmShowSolutions;
+    if (!mmShowSolutions) mmRevealedIds = {}; // 切回做题模式时，隐藏所有已查看的答案
     renderSpeedMultiList();
     // 更新按钮文字
     var btn = document.getElementById('mmToggleSolBtn');
