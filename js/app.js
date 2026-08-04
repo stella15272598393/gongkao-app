@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v26';
+const APP_VERSION = '2026-08-05-v27';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -239,6 +239,31 @@ function registerSW() {
         if (reg.update) { try { reg.update(); } catch (e) {} }
     }).catch(err => {
         console.log('SW registration failed:', err);
+    });
+}
+
+// ★ v27 强制更新：彻底打破 SW 缓存死循环
+//   当用户卡在旧版（版本号不符预期）时，一键：注销 SW + 清缓存 + 硬刷新
+function forceAppUpdate() {
+    if (!('serviceWorker' in navigator)) {
+        window.location.reload(true);
+        return;
+    }
+    showToast('🔄 正在强制更新...');
+    Promise.all([
+        // 1. 注销所有 SW 注册
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            return Promise.all(regs.map(r => r.unregister()));
+        }),
+        // 2. 清空所有 Cache Storage
+        (window.caches ? caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))) : Promise.resolve())
+    ]).then(() => {
+        console.log('[forceAppUpdate] SW 已注销, 缓存已清, 准备硬刷新');
+        // 3. 硬刷新（绕过缓存加载最新代码）
+        window.location.reload(true);
+    }).catch(err => {
+        console.error('[forceAppUpdate] 失败', err);
+        window.location.reload(true);
     });
 }
 

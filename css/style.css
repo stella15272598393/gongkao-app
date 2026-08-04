@@ -89,6 +89,13 @@ html, body {
     padding: 2px 7px; border-radius: 10px;
     white-space: nowrap; font-weight: 500;
 }
+.force-update-btn {
+    border: none; background: rgba(255,255,255,.22); color: #fff;
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+    font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: transform .2s, background .2s; flex-shrink: 0;
+}
+.force-update-btn:active { transform: scale(.9); background: rgba(255,255,255,.4); }
 .search-box {
     position: relative;
     display: flex; align-items: center;
