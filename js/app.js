@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v29';
+const APP_VERSION = '2026-08-05-v29b';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -583,6 +583,7 @@ function renderStreakHeatmap() {
 
     var html = '<div class="heatmap-title">📅 打卡热力图（近半年）</div><div class="heatmap-grid">';
     var pinkCnt = 0;
+    var lastKeys = []; // ★ v29b 调试：记录最后14个格子的日期key
 
     for (var w = 0; w < weeks; w++) {
         html += '<div class="heatmap-week">';
@@ -593,6 +594,8 @@ function renderStreakHeatmap() {
             if (done && !fut) pinkCnt++;
             var bg = fut ? C_FUT : (done ? C_ON : C_OFF);
             html += '<div class="heat-cell" style="background:'+bg+';" title="'+k+(done?' ✅':(fut?' · 未到':' · 未打卡'))+'"></div>';
+            if (lastKeys.length < 14) lastKeys.push(k);
+            else { lastKeys.shift(); lastKeys.push(k); }
             cur.setDate(cur.getDate()+1);
         }
         html += '</div>';
@@ -606,11 +609,14 @@ function renderStreakHeatmap() {
         '<span>已</span>'+
         '<span class="heat-count">累计 '+pinkCnt+' 天</span></div>';
 
-    // ★ v29 调试信息（直接显示在页面上，确认数据正确）
+    // ★ v29b 调试信息（直接显示在页面上，确认数据正确）
     html += '<div style="font-size:11px;color:#999;margin-top:4px;padding:4px 8px;background:rgba(0,0,0,.04);border-radius:6px;">'+
         '[调试] history='+JSON.stringify(hist).slice(0,120)+(hist.length>120?'...':'')+
         ' | 长度='+hist.length+' | 今天('+todayStr+')已打='+(!!checked[todayStr]?'是':'否')+
-        ' | pinkCount='+pinkCnt+'</div>';
+        ' | pinkCount='+pinkCnt+
+        ' | 网格末尾14Key='+JSON.stringify(lastKeys)+
+        ' | checked[末尾Key]='+ (!!checked[lastKeys[lastKeys.length-1]]?'T':'F') +
+        '</div>';
 
     el.innerHTML = html;
 }
