@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v23';
+const APP_VERSION = '2026-08-05-v24';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -153,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initGlobalSearch();
     const vEl = document.getElementById('appVersionLabel');
     if (vEl) vEl.textContent = 'v' + APP_VERSION;
-    updateStreak();
     switchModule('home');
     initShizheng();
     initShenlun();
@@ -270,8 +269,8 @@ function switchModule(moduleName) {
     if (moduleName === 'favbox') renderFavBox();
     // 进入数据备份页时刷新统计
     if (moduleName === 'settings') renderDataStats();
-    // 进入工作台时刷新打卡与数据
-    if (moduleName === 'home') { updateStreak(); renderHome(); }
+    // 进入工作台时刷新数据（打卡改为手动，不自动触发）
+    if (moduleName === 'home') { renderHome(); }
 }
 
 // ========== 收藏夹页面 ==========
@@ -408,6 +407,16 @@ function updateStreak() {
     try { localStorage.setItem('gk_streak', JSON.stringify(data)); } catch (e) {}
 }
 
+// 手动打卡：点击按钮后才记录今天，并重渲染热力图与连续天数
+function manualCheckin() {
+    let already = false;
+    try { const s = localStorage.getItem('gk_streak'); if (s) already = ((JSON.parse(s).history) || []).indexOf(getTodayStr()) >= 0; } catch (e) {}
+    if (already) { renderHome(); return; }
+    updateStreak();
+    renderHome();
+    if (typeof showToast === 'function') showToast('✅ 打卡成功！已记录到热力图 🔥');
+}
+
 function renderHome() {
     const statsEl = document.getElementById('homeStats');
     if (!statsEl) return;
@@ -426,6 +435,14 @@ function renderHome() {
     ];
 
     let html = '<div class="home-streak"><div class="home-streak-num">' + streak + '</div><div class="home-streak-label">🔥 连续打卡天数</div></div>';
+    // 手动打卡按钮：今天已打卡显示状态，否则显示打卡按钮
+    let todayDone = false;
+    try { const s = localStorage.getItem('gk_streak'); if (s) todayDone = ((JSON.parse(s).history) || []).indexOf(getTodayStr()) >= 0; } catch (e) {}
+    if (todayDone) {
+        html += '<div class="home-checkin done">✅ 今日已打卡</div>';
+    } else {
+        html += '<button class="home-checkin-btn" onclick="manualCheckin()">📍 点击打卡</button>';
+    }
     html += '<div class="home-stat-grid">';
     statCards.forEach(c => {
         html += '<div class="home-stat-card" onclick="switchModule(\'' + statModule(c.label) + '\')">' +
