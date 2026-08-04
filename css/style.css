@@ -1561,8 +1561,6 @@ input[type="range"]::-webkit-slider-thumb {
 .heatmap-grid { display: flex; gap: 3px; }
 .heatmap-week { display: flex; flex-direction: column; gap: 3px; }
 .heat-cell { width: 12px; height: 12px; border-radius: 3px; background: #f0f0f0; }
-.heat-cell.heat-on { background: #E75480; }
-.heat-cell.heat-future { background: #fafafa; }
 .heatmap-legend { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; color: #999; }
 .heatmap-legend .heat-cell { width: 11px; height: 11px; }
 .heatmap-legend .heat-count { margin-left: auto; color: #E75480; font-weight: 600; }

@@ -599,10 +599,10 @@ function renderStreakHeatmap() {
     html += '</div>';
 
     // 图例
-    html += '<div class="heatmap-legend"><span>未</span>'+
+    html += '<div class="heatmap-legend"><span>未打卡</span>'+
         '<div class="heat-cell" style="background:'+C_OFF+';"></div>'+
         '<div class="heat-cell" style="background:'+C_ON+';"></div>'+
-        '<span>已</span>'+
+        '<span>已打卡</span>'+
         '<span class="heat-count">累计 '+pinkCnt+' 天</span></div>';
 
     el.innerHTML = html;
