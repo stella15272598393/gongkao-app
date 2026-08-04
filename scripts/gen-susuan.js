@@ -68,6 +68,7 @@ function genGrowth() {
     return {
         question: `${fmt(A)} × (1 + ${r}%) 中，同比增长量约为？`,
         options, answer, category: '求增长量', difficulty: '⭐⭐',
+        correctText: correct,
         methods: [
             { name: '🥇 百化分 / n+1 原则（推荐）',
               steps: [`① ${r}% ≈ 1/${N}（百化分）`, `② 增长量 ≈ 现期 ÷ (N+1) = ${fmt(A)} ÷ ${N + 1} ≈ ${fmt(approx)}`, `③ 选项取最接近值 → ${correct}`],
@@ -92,6 +93,7 @@ function genBase() {
     return {
         question: `现期量为 ${fmt(A)}，同比增长 ${r}%，求上年同期（基期）量？`,
         options, answer, category: '求基期', difficulty: '⭐⭐',
+        correctText: correct,
         methods: [
             { name: '🥇 基期公式', steps: [`① 基期 = 现期 ÷ (1+r%)`, `② = ${fmt(A)} ÷ ${round2(1 + r / 100)} ≈ ${correct}`], insight: '增长率正用除法，符号别弄反', speedRating: '⭐⭐⭐⭐' },
             { name: '🥈 百化分估算', steps: [`① ${r}% ≈ 1/${Math.round(100 / r)}`, `② 基期 ≈ 现期 × (1 - 1/N) 量级估算`], insight: '只用于快速锁定选项区间', speedRating: '⭐⭐⭐' }
@@ -113,6 +115,7 @@ function genGrowthRate() {
     return {
         question: `基期 ${fmt(base)}，现期 ${fmt(A)}，求增长率？`,
         options, answer, category: '求增长率', difficulty: '⭐⭐',
+        correctText: correct,
         methods: [
             { name: '🥇 增长率公式', steps: [`① 增长率 = (现期-基期) ÷ 基期`, `② = (${fmt(A)} - ${fmt(base)}) ÷ ${fmt(base)}`, `③ = ${fmt(inc)} ÷ ${fmt(base)} × 100% ≈ ${correct}`], insight: '分母是基期不是现期（基准陷阱）', speedRating: '⭐⭐⭐⭐' },
             { name: '🥈 倍数法', steps: [`① 现期/基期 = ${round2(A / base)} 倍`, `② 增长率 = 倍数 - 1 = ${round2(A / base - 1)} ≈ ${correct}`], insight: '先算倍数再减1，避免除错分母', speedRating: '⭐⭐⭐' }
@@ -133,6 +136,7 @@ function genRatio() {
     return {
         question: `整体 ${fmt(whole)} 中，部分 ${fmt(part)} 所占比重约为？`,
         options, answer, category: '倍数与比重', difficulty: '⭐⭐',
+        correctText: correct,
         methods: [
             { name: '🥇 比重公式', steps: [`① 比重 = 部分 ÷ 整体 × 100%`, `② = ${fmt(part)} ÷ ${fmt(whole)} × 100% ≈ ${correct}`], insight: '看清"占谁的比重"，整体作分母', speedRating: '⭐⭐⭐⭐' },
             { name: '🥈 截位估算', steps: [`① 截去末尾0：${fmt(part)}/${fmt(whole)} ≈ ${round2(part / 100)}/${round2(whole / 100)}`, `② 估算量级定位选项`], insight: '只定位区间，不求精确', speedRating: '⭐⭐⭐' }
@@ -154,6 +158,7 @@ function genFractionCompare() {
     return {
         question: `比较大小：${p1}/${q1} 与 ${p2}/${q2}`,
         options, answer: correct, category: '分数比较', difficulty: '⭐⭐',
+        correctText: formerBig ? '前者大' : '后者大',
         methods: [
             { name: '🥇 交叉相乘法', steps: [`① 左×右下 vs 右×左下`, `② ${p1} × ${q2} = ${c1}，${p2} × ${q1} = ${c2}`, `③ ${c1} ${c1 > c2 ? '>' : '<'} ${c2} → ${formerBig ? '前者大' : '后者大'}`], insight: '交叉相乘避免通分，资料分析高频技巧', speedRating: '⭐⭐⭐⭐⭐' },
             { name: '🥈 化小数法', steps: [`① ${p1}/${q1} ≈ ${f1}`, `② ${p2}/${q2} ≈ ${f2}`, `③ ${f1} ${f1 > f2 ? '>' : '<'} ${f2}`], insight: '小数直观，但注意保留位数', speedRating: '⭐⭐⭐' }
@@ -176,6 +181,7 @@ function genTail() {
     return {
         question: `${fmt(a)} × ${fmt(b)} 的乘积末两位是？`,
         options, answer, category: '尾数法', difficulty: '⭐',
+        correctText: correctText,
         methods: [
             { name: '🥇 只看末两位', steps: [`① 乘积末两位 = (a末两位 × b末两位) 的末两位`, `② ${String(a).slice(-2)} × ${String(b).slice(-2)} = ${a % 100} × ${b % 100} = ${(a % 100) * (b % 100)}`, `③ 末两位 = ${correct}`], insight: '尾数法只看末位/末两位相乘，前面不用算', speedRating: '⭐⭐⭐⭐⭐' },
             { name: '🥈 末位连乘验证', steps: [`① 个位 ${a % 10} × ${b % 10} = ${(a % 10) * (b % 10)}，个位为 ${(a * b) % 10}`, `② 再用末两位确认十位`], insight: '先定个位再定十位，双重保险', speedRating: '⭐⭐⭐' }
@@ -196,6 +202,7 @@ function genInterval() {
     return {
         question: `连续两期增长率分别为 ${r1}% 和 ${r2}%，求间隔增长率？`,
         options, answer, category: '间隔增长率', difficulty: '⭐⭐',
+        correctText: correct,
         methods: [
             { name: '🥇 间隔增长率公式', steps: [`① 间隔 r = (1+r1)(1+r2) - 1`, `② = (1+${r1}%)(1+${r2}%) - 1`, `③ = ${r1 + r2 + r1 * r2 / 100} ≈ ${correct}`], insight: '精确值 = r1+r2+r1·r2，别漏交叉项', speedRating: '⭐⭐⭐⭐⭐' },
             { name: '🥈 近似法', steps: [`① 间隔增长率 ≈ r1 + r2`, `② ≈ ${r1 + r2}%`], insight: '选项差距大时用，注意漏了交叉项会偏小', speedRating: '⭐⭐⭐' }
@@ -216,6 +223,7 @@ function genCompleteRate() {
     return {
         question: `目标 ${fmt(target)}，已完成 ${fmt(done)}，目标完成率约为？`,
         options, answer, category: '目标完成率', difficulty: '⭐',
+        correctText: correct,
         methods: [
             { name: '🥇 完成率公式', steps: [`① 完成率 = 已完成 ÷ 目标 × 100%`, `② = ${fmt(done)} ÷ ${fmt(target)} × 100% ≈ ${correct}`], insight: '完成率一般≤100%，超过说明超额', speedRating: '⭐⭐⭐⭐' },
             { name: '🥈 倍数换算', steps: [`① 已完成/目标 = ${round2(done / target)} 倍`, `② ×100% = ${correct}`], insight: '先算倍数再转百分数', speedRating: '⭐⭐⭐' }

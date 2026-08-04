@@ -2015,8 +2015,19 @@ function renderBaifenbiTable() {
 }
 
 // 练习模式
+// ★ 每日练习题库：优先用每日自动生成的远程速算题（最新、含 correctText 纯答案），内置 PRACTICE_QUESTIONS 兜底
+function getPracticePool() {
+    const remote = (typeof window !== 'undefined' && window.__SUSUAN_REMOTE__ && window.__SUSUAN_REMOTE__.length)
+        ? window.__SUSUAN_REMOTE__ : [];
+    const remotePractice = remote.map(function (it) {
+        return { q: it.question, a: it.correctText, type: it.category, remote: true };
+    });
+    const builtin = (typeof PRACTICE_QUESTIONS !== 'undefined') ? PRACTICE_QUESTIONS : [];
+    return remotePractice.concat(builtin); // 远程新题在前
+}
+
 function initPracticeMode() {
-    practiceState.questions = shuffleArray([...PRACTICE_QUESTIONS]).slice(0, 10);
+    practiceState.questions = shuffleArray(getPracticePool()).slice(0, 10);
     practiceState.currentIndex = 0;
     practiceState.correct = 0;
     practiceState.wrong = 0;
@@ -2069,7 +2080,7 @@ function submitPracticeAnswer() {
 
     const userAns = input.value.trim();
     const q = practiceState.questions[practiceState.currentIndex];
-    const correct = userAns === q.a || userAns.replace('%', '') === q.a.replace('%', '');
+    const correct = isPracticeAnswerAcceptable(userAns, q.a);
 
     if (correct) {
         practiceState.correct++;
@@ -2088,6 +2099,24 @@ function submitPracticeAnswer() {
         practiceState.currentIndex++;
         showPracticeQuestion();
     }, 1200);
+}
+
+/* 速算练判分：非数值精确匹配；数值允许±2%（或1个单位）的估算误差，
+   因为资料分析速算本就是估算，答案"差不多就行"，不要求完全一致 */
+function isPracticeAnswerAcceptable(userAns, correctAns) {
+    if (!userAns) return false;
+    const norm = s => String(s).replace(/\s+/g, '').toLowerCase();
+    const u = norm(userAns);
+    const c = norm(correctAns);
+    if (u === c) return true;
+    const toNum = s => parseFloat(s.replace(/[%,≈~]/g, ''));
+    const un = toNum(u), cn = toNum(c);
+    if (isFinite(un) && isFinite(cn) && cn !== 0) {
+        const diff = Math.abs(un - cn);
+        const tol = Math.max(1, Math.abs(cn) * 0.02);
+        if (diff <= tol) return true;
+    }
+    return false;
 }
 
 function endPractice() {
