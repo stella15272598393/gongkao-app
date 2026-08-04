@@ -1,0 +1,49 @@
+{
+  "updatedAt": "2026-08-04T07:41:48.987Z",
+  "updatedAtLocal": "2026/8/4 15:41:48",
+  "todayNew": 59,
+  "totals": {
+    "shizheng": 71,
+    "qiushi": 17
+  },
+  "modules": {
+    "idiomDailyCount": 10,
+    "interviewDailyCount": 5,
+    "idiomTiers": [
+      {
+        "key": "必考",
+        "name": "TOP300 必考",
+        "desc": "考频最高，优先掌握"
+      },
+      {
+        "key": "高频",
+        "name": "301-700 高频",
+        "desc": "常见易考，强化记忆"
+      },
+      {
+        "key": "低频",
+        "name": "701-1200 低频易错",
+        "desc": "低频但易踩坑"
+      }
+    ],
+    "pairTags": [
+      "近义辨析",
+      "望文生义坑",
+      "感情色彩"
+    ],
+    "logicCategories": [
+      "翻译推理",
+      "真假推理",
+      "类比关系",
+      "图形推理",
+      "图推特征图"
+    ],
+    "interviewTags": [
+      "人际",
+      "应急",
+      "综合分析",
+      "组织",
+      "救场金句"
+    ]
+  }
+}

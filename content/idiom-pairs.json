@@ -1,0 +1,687 @@
+{
+  "updatedAt": "2026-08-04T07:41:48.981Z",
+  "updatedAtLocal": "2026/8/4 15:41:48",
+  "count": 40,
+  "items": [
+    {
+      "id": 1,
+      "a": {
+        "word": "一蹴而就",
+        "pinyin": "yī cù ér jiù",
+        "meaning": "事情容易，一下子成功"
+      },
+      "b": {
+        "word": "一挥而就",
+        "pinyin": "yī huī ér jiù",
+        "meaning": "写字作画写文章快"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "「就」都指「成功」；前者说事易成，后者说写画快。"
+    },
+    {
+      "id": 2,
+      "a": {
+        "word": "不以为然",
+        "pinyin": "bù yǐ wéi rán",
+        "meaning": "不认为对，不同意"
+      },
+      "b": {
+        "word": "不以为意",
+        "pinyin": "bù yǐ wéi yì",
+        "meaning": "不放在心上，不在意"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "然=对（不认同）；意=在意（不重视）。最常考一对。"
+    },
+    {
+      "id": 3,
+      "a": {
+        "word": "潜移默化",
+        "pinyin": "qián yí mò huà",
+        "meaning": "内在思想性格渐变"
+      },
+      "b": {
+        "word": "耳濡目染",
+        "pinyin": "ěr rú mù rǎn",
+        "meaning": "外在听看见闻熏陶"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "潜=内在变化；濡染=外在见闻影响。"
+    },
+    {
+      "id": 4,
+      "a": {
+        "word": "相辅相成",
+        "pinyin": "xiāng fǔ xiāng chéng",
+        "meaning": "互相配合缺一不可"
+      },
+      "b": {
+        "word": "相得益彰",
+        "pinyin": "xiāng dé yì zhāng",
+        "meaning": "配合后好处更明显"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "成=补充不可缺；彰=彰显更显好。"
+    },
+    {
+      "id": 5,
+      "a": {
+        "word": "南辕北辙",
+        "pinyin": "nán yuán běi zhé",
+        "meaning": "行动与目的相反"
+      },
+      "b": {
+        "word": "缘木求鱼",
+        "pinyin": "yuán mù qiú yú",
+        "meaning": "方法错误达不到目的"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "辕辙=方向反；木鱼=方法错。"
+    },
+    {
+      "id": 6,
+      "a": {
+        "word": "杀鸡取卵",
+        "pinyin": "shā jī qǔ luǎn",
+        "meaning": "牺牲根本换眼前"
+      },
+      "b": {
+        "word": "竭泽而渔",
+        "pinyin": "jié zé ér yú",
+        "meaning": "耗尽资源换眼前"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "取卵=毁根本；竭泽=耗资源。"
+    },
+    {
+      "id": 7,
+      "a": {
+        "word": "釜底抽薪",
+        "pinyin": "fǔ dǐ chōu xīn",
+        "meaning": "从根本上解决"
+      },
+      "b": {
+        "word": "扬汤止沸",
+        "pinyin": "yáng tāng zhǐ fèi",
+        "meaning": "治标不治本"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "抽薪=治本；止沸=治标。反义对。"
+    },
+    {
+      "id": 8,
+      "a": {
+        "word": "鬼斧神工",
+        "pinyin": "guǐ fǔ shén gōng",
+        "meaning": "可形容自然或人工"
+      },
+      "b": {
+        "word": "巧夺天工",
+        "pinyin": "qiǎo duó tiān gōng",
+        "meaning": "专指人工胜过天然"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "鬼斧可指自然奇观；巧夺只指人工。"
+    },
+    {
+      "id": 9,
+      "a": {
+        "word": "美轮美奂",
+        "pinyin": "měi lún měi huàn",
+        "meaning": "专形容建筑"
+      },
+      "b": {
+        "word": "美不胜收",
+        "pinyin": "měi bù shèng shōu",
+        "meaning": "美好的东西太多看不过来"
+      },
+      "tags": [
+        "望文生义坑"
+      ],
+      "note": "轮奂≠一切美；胜收=数量多美不胜。"
+    },
+    {
+      "id": 10,
+      "a": {
+        "word": "汗牛充栋",
+        "pinyin": "hàn niú chōng dòng",
+        "meaning": "专指藏书多"
+      },
+      "b": {
+        "word": "浩如烟海",
+        "pinyin": "hào rú yān hǎi",
+        "meaning": "形容文献资料极丰富"
+      },
+      "tags": [
+        "望文生义坑"
+      ],
+      "note": "汗牛只指书；烟海可指资料。"
+    },
+    {
+      "id": 11,
+      "a": {
+        "word": "标新立异",
+        "pinyin": "biāo xīn lì yì",
+        "meaning": "故意与众不同(偏贬)"
+      },
+      "b": {
+        "word": "独树一帜",
+        "pinyin": "dú shù yī zhì",
+        "meaning": "自成一家(褒)"
+      },
+      "tags": [
+        "感情色彩"
+      ],
+      "note": "标新偏贬；独树褒义。"
+    },
+    {
+      "id": 12,
+      "a": {
+        "word": "按部就班",
+        "pinyin": "àn bù jiù bān",
+        "meaning": "按顺序/守旧缺创新(中性偏贬)"
+      },
+      "b": {
+        "word": "循序渐进",
+        "pinyin": "xún xù jiàn jìn",
+        "meaning": "逐步提升(褒)"
+      },
+      "tags": [
+        "感情色彩"
+      ],
+      "note": "部班偏保守；渐进偏积极。"
+    },
+    {
+      "id": 13,
+      "a": {
+        "word": "墨守成规",
+        "pinyin": "mò shǒu chéng guī",
+        "meaning": "守旧不肯变(贬)"
+      },
+      "b": {
+        "word": "固步自封",
+        "pinyin": "gù bù zì fēng",
+        "meaning": "自我封闭不求进(贬)"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "成规=守老规矩；自封=封闭不进。"
+    },
+    {
+      "id": 14,
+      "a": {
+        "word": "文不加点",
+        "pinyin": "wén bù jiā diǎn",
+        "meaning": "文思敏捷无需修改"
+      },
+      "b": {
+        "word": "文过饰非",
+        "pinyin": "wén guò shì fēi",
+        "meaning": "掩饰过失错误"
+      },
+      "tags": [
+        "望文生义坑"
+      ],
+      "note": "点=涂改，非标点；过=过错。极易混。"
+    },
+    {
+      "id": 15,
+      "a": {
+        "word": "不刊之论",
+        "pinyin": "bù kān zhī lùn",
+        "meaning": "不可修改的正确言论"
+      },
+      "b": {
+        "word": "不易之论",
+        "pinyin": "bù yì zhī lùn",
+        "meaning": "内容正确不可更改的言论"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "刊=删改；易=更改。近义，皆褒。"
+    },
+    {
+      "id": 16,
+      "a": {
+        "word": "首当其冲",
+        "pinyin": "shǒu dāng qí chōng",
+        "meaning": "最先受攻击/遭灾"
+      },
+      "b": {
+        "word": "一马当先",
+        "pinyin": "yī mǎ dāng xiān",
+        "meaning": "领先带头"
+      },
+      "tags": [
+        "望文生义坑"
+      ],
+      "note": "冲≠首要；当先才是领先。"
+    },
+    {
+      "id": 17,
+      "a": {
+        "word": "万人空巷",
+        "pinyin": "wàn rén kōng xiàng",
+        "meaning": "人都出来巷空(盛况)"
+      },
+      "b": {
+        "word": "门可罗雀",
+        "pinyin": "mén kě luó què",
+        "meaning": "十分冷落宾客少"
+      },
+      "tags": [
+        "望文生义坑"
+      ],
+      "note": "空巷=人出来；罗雀=人不来。反义。"
+    },
+    {
+      "id": 18,
+      "a": {
+        "word": "炙手可热",
+        "pinyin": "zhì shǒu kě rè",
+        "meaning": "权势盛不可近(贬)"
+      },
+      "b": {
+        "word": "炯炯有名",
+        "pinyin": "jiǒng jiǒng yǒu míng",
+        "meaning": "形容名声大"
+      },
+      "tags": [
+        "感情色彩"
+      ],
+      "note": "炙手含贬；有名中性。"
+    },
+    {
+      "id": 19,
+      "a": {
+        "word": "望其项背",
+        "pinyin": "wàng qí xiàng bèi",
+        "meaning": "赶得上(多用于否定)"
+      },
+      "b": {
+        "word": "望尘莫及",
+        "pinyin": "wàng chén mò jí",
+        "meaning": "远远落后赶不上"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "项背=比得上；莫及=比不上。反义。"
+    },
+    {
+      "id": 20,
+      "a": {
+        "word": "差强人意",
+        "pinyin": "chā qiáng rén yì",
+        "meaning": "大体令人满意"
+      },
+      "b": {
+        "word": "不尽人意",
+        "pinyin": "bù jìn rén yì",
+        "meaning": "不能完全令人满意"
+      },
+      "tags": [
+        "望文生义坑"
+      ],
+      "note": "差强=还算满意；不尽=不够满意。"
+    },
+    {
+      "id": 21,
+      "a": {
+        "word": "形影相吊",
+        "pinyin": "xíng yǐng xiāng diào",
+        "meaning": "孤独无依"
+      },
+      "b": {
+        "word": "形影不离",
+        "pinyin": "xíng yǐng bù lí",
+        "meaning": "关系密切不分离"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "吊=安慰(孤)；不离=亲密。反义。"
+    },
+    {
+      "id": 22,
+      "a": {
+        "word": "不负众望",
+        "pinyin": "bù fù zhòng wàng",
+        "meaning": "没辜负期望(褒)"
+      },
+      "b": {
+        "word": "不孚众望",
+        "pinyin": "bù fú zhòng wàng",
+        "meaning": "不能使人信服(贬)"
+      },
+      "tags": [
+        "望文生义坑"
+      ],
+      "note": "负=辜负；孚=使人信服。一褒一贬。"
+    },
+    {
+      "id": 23,
+      "a": {
+        "word": "义不容辞",
+        "pinyin": "yì bù róng cí",
+        "meaning": "道义上不容推辞"
+      },
+      "b": {
+        "word": "责无旁贷",
+        "pinyin": "zé wú páng dài",
+        "meaning": "责任上不能推卸"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "义=道义；责=责任。近义。"
+    },
+    {
+      "id": 24,
+      "a": {
+        "word": "刮目相看",
+        "pinyin": "guā mù xiāng kàn",
+        "meaning": "用新眼光看进步的人"
+      },
+      "b": {
+        "word": "另眼相看",
+        "pinyin": "lìng yǎn xiāng kàn",
+        "meaning": "用不同眼光看待(优/劣)"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "刮目=见进步；另眼=特殊看待。"
+    },
+    {
+      "id": 25,
+      "a": {
+        "word": "息息相关",
+        "pinyin": "xī xī xiāng guān",
+        "meaning": "关系密切"
+      },
+      "b": {
+        "word": "休戚相关",
+        "pinyin": "xiū qī xiāng guān",
+        "meaning": "祸福相依(利害一致)"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "相关=有关系；休戚=祸福共。"
+    },
+    {
+      "id": 26,
+      "a": {
+        "word": "一挥而就",
+        "pinyin": "yī huī ér jiù",
+        "meaning": "写画快"
+      },
+      "b": {
+        "word": "一气呵成",
+        "pinyin": "yī qì hē chéng",
+        "meaning": "不间断完成(文章/做事)"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "挥就=写得快；呵成=连贯完成。"
+    },
+    {
+      "id": 27,
+      "a": {
+        "word": "莫衷一是",
+        "pinyin": "mò zhōng yī shì",
+        "meaning": "意见分歧无定论"
+      },
+      "b": {
+        "word": "无所适从",
+        "pinyin": "wú suǒ shì cóng",
+        "meaning": "不知跟从谁/怎么办"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "一是=无一致结论；适从=不知怎么选。"
+    },
+    {
+      "id": 28,
+      "a": {
+        "word": "鱼目混珠",
+        "pinyin": "yú mù hùn zhū",
+        "meaning": "以假乱真"
+      },
+      "b": {
+        "word": "鱼龙混杂",
+        "pinyin": "yú lóng hùn zá",
+        "meaning": "好人坏人混在一起"
+      },
+      "tags": [
+        "望文生义坑"
+      ],
+      "note": "混珠=假充真；混杂=人好坏混。"
+    },
+    {
+      "id": 29,
+      "a": {
+        "word": "耸人听闻",
+        "pinyin": "sǒng rén tīng wén",
+        "meaning": "夸大捏造吓人"
+      },
+      "b": {
+        "word": "骇人听闻",
+        "pinyin": "hài rén tīng wén",
+        "meaning": "真实恶事令人震惊"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "耸=夸大假；骇=真实惨。"
+    },
+    {
+      "id": 30,
+      "a": {
+        "word": "不容置喙",
+        "pinyin": "bù róng zhì huì",
+        "meaning": "不容插嘴"
+      },
+      "b": {
+        "word": "毋庸置疑",
+        "pinyin": "wú yōng zhì yí",
+        "meaning": "不必怀疑"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "喙=嘴(不许说)；疑=怀疑。"
+    },
+    {
+      "id": 31,
+      "a": {
+        "word": "推己及人",
+        "pinyin": "tuī jǐ jí rén",
+        "meaning": "设身处地为别人想"
+      },
+      "b": {
+        "word": "设身处地",
+        "pinyin": "shè shēn chǔ dì",
+        "meaning": "站在别人立场想"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "推己=由己及人；设身=置身其地。近义。"
+    },
+    {
+      "id": 32,
+      "a": {
+        "word": "独树一帜",
+        "pinyin": "dú shù yī zhì",
+        "meaning": "自成一家"
+      },
+      "b": {
+        "word": "独辟蹊径",
+        "pinyin": "dú pì xī jìng",
+        "meaning": "方法路径独创"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "树帜=风格体系；辟径=方法路径。"
+    },
+    {
+      "id": 33,
+      "a": {
+        "word": "风姿绰约",
+        "pinyin": "fēng zī chuò yuē",
+        "meaning": "女子姿态柔美"
+      },
+      "b": {
+        "word": "风度翩翩",
+        "pinyin": "fēng dù piān piān",
+        "meaning": "男子举止潇洒"
+      },
+      "tags": [
+        "感情色彩"
+      ],
+      "note": "绰约多形容女子；翩翩多形容男子。"
+    },
+    {
+      "id": 34,
+      "a": {
+        "word": "惨淡经营",
+        "pinyin": "cǎn dàn jīng yíng",
+        "meaning": "苦心谋划(中性)"
+      },
+      "b": {
+        "word": "苦心孤诣",
+        "pinyin": "kǔ xīn gū yì",
+        "meaning": "造诣独到(褒)"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "惨淡=费力筹划；孤诣=独到成就。"
+    },
+    {
+      "id": 35,
+      "a": {
+        "word": "深思熟虑",
+        "pinyin": "shēn sī shú lǜ",
+        "meaning": "深入细致考虑"
+      },
+      "b": {
+        "word": "深谋远虑",
+        "pinyin": "shēn móu yuǎn lǜ",
+        "meaning": "计划周密眼光长远"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "熟虑=想得细；远虑=看得远。"
+    },
+    {
+      "id": 36,
+      "a": {
+        "word": "耳闻目睹",
+        "pinyin": "ěr wén mù dǔ",
+        "meaning": "亲耳听亲眼见"
+      },
+      "b": {
+        "word": "耳濡目染",
+        "pinyin": "ěr rú mù rǎn",
+        "meaning": "长期熏陶受影响"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "闻睹=看见过；濡染=被影响。"
+    },
+    {
+      "id": 37,
+      "a": {
+        "word": "重整旗鼓",
+        "pinyin": "chóng zhěng qí gǔ",
+        "meaning": "失利后重头来(褒)"
+      },
+      "b": {
+        "word": "死灰复燃",
+        "pinyin": "sǐ huī fù rán",
+        "meaning": "失势势力重新活动(贬)"
+      },
+      "tags": [
+        "感情色彩"
+      ],
+      "note": "旗鼓褒；死灰贬。"
+    },
+    {
+      "id": 38,
+      "a": {
+        "word": "话里有话",
+        "pinyin": "huà lǐ yǒu huà",
+        "meaning": "话含弦外之音"
+      },
+      "b": {
+        "word": "弦外之音",
+        "pinyin": "xián wài zhī yīn",
+        "meaning": "言外之意"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "里话=话中套话；外音=言外意。近义。"
+    },
+    {
+      "id": 39,
+      "a": {
+        "word": "等量齐观",
+        "pinyin": "děng liàng qí guān",
+        "meaning": "对有差别事物同等看待"
+      },
+      "b": {
+        "word": "相提并论",
+        "pinyin": "xiāng tí bìng lùn",
+        "meaning": "把不同人/事放一起谈"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "齐观=同等看；并论=放一起论。近义。"
+    },
+    {
+      "id": 40,
+      "a": {
+        "word": "息息相关",
+        "pinyin": "xī xī xiāng guān",
+        "meaning": "关系密切"
+      },
+      "b": {
+        "word": "一脉相承",
+        "pinyin": "yī mài xiāng chéng",
+        "meaning": "由一个系统传承下来"
+      },
+      "tags": [
+        "近义辨析"
+      ],
+      "note": "相关=有联系；相承=有传承。"
+    }
+  ]
+}
