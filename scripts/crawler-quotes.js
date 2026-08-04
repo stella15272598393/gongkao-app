@@ -130,7 +130,7 @@ function main() {
     }
 
     // 按主题均衡取样：每类上限，避免某一主题（如基层治理）把其他主题挤掉
-    const MAX_PER_THEME = 60;
+    const MAX_PER_THEME = 12;
     const byTheme = {};
     quotes.forEach(q => { (byTheme[q.theme] = byTheme[q.theme] || []).push(q); });
     let balanced = [];
@@ -145,7 +145,7 @@ function main() {
     for (const q of [...balanced, ...old]) {
         if (!mergedMap.has(q.id)) mergedMap.set(q.id, q);
     }
-    const merged = [...mergedMap.values()].slice(0, 400);
+    const merged = [...mergedMap.values()].slice(0, 55);
 
     fs.writeFileSync(file, JSON.stringify({
         updatedAt: new Date().toISOString(),
