@@ -77,8 +77,9 @@ try {
     const ok4 = runSafe('scripts/crawler-essay.js');
     const ok5 = runSafe('scripts/crawler-morning.js');
     const ok6 = runSafe('scripts/gen-susuan.js'); // 每日自动生成速算新题（不依赖外网）
+    const ok7 = runSafe('scripts/verify_idiom_pairs.js'); // 混淆配对权威性核验（百度百科）
     writeMeta();
-    if (ok1 && ok2 && ok3 && ok4 && ok5) {
+    if (ok1 && ok2 && ok3 && ok4 && ok5 && ok7) {
         console.log('\n✅ 全部内容抓取完成');
     } else {
         console.log('\n⚠️ 部分内容抓取失败，已保留上次内容，meta.json 仍为最新');

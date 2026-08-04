@@ -244,10 +244,11 @@
                 changed = true;
             }
         }
-        if (payload.idiomPairs && payload.idiomPairs.length) {
-            if (typeof IDIOM_PAIRS_DB !== 'undefined') {
+        if (payload.idiomPairs || payload.items) {
+            const pairs = payload.idiomPairs || payload.items;
+            if (pairs.length && typeof IDIOM_PAIRS_DB !== 'undefined') {
                 IDIOM_PAIRS_DB.length = 0;
-                payload.idiomPairs.forEach(x => IDIOM_PAIRS_DB.push(x));
+                pairs.forEach(x => IDIOM_PAIRS_DB.push(x));
                 changed = true;
             }
         }

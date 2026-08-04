@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v34';
+const APP_VERSION = '2026-08-05-v35';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -3240,17 +3240,89 @@ function renderAnalysis() {
         `).join('') : '<p style="color:#999;">数据不足，继续积累中...</p>'}
     `;
 
-    // 月度报告
-    const thisMonth = bjToday().slice(0, 7); // v34：北京时间的当前月
-    const monthRecs = prac.filter(r => (r.date || '').startsWith(thisMonth));
-    const monthAvg = monthRecs.length > 0 ? (monthRecs.reduce((s,r) => s + parseFloat(r.accuracy), 0) / monthRecs.length).toFixed(1) : '-';
+    // 月度报告（支持历史月份翻页，逻辑同每日计划月度统计）
+    renderMockMonthReport();
+}
+
+/* ---------------- 模考月度备考报告：历史月份翻页（v35） ---------------- */
+let mockReportMonth = null; // null = 看本月
+
+/* 扫描本地模考记录里最早的月份，作为往前翻的下限 */
+function getMockEarliestMonth() {
+    const recs = JSON.parse(localStorage.getItem('mockRecords') || '[]');
+    let min = null;
+    recs.forEach(r => {
+        const d = (r.date || '').slice(0, 7);
+        if (!/^\d{4}-\d{2}$/.test(d)) return;
+        if (!min || d < min) min = d;
+    });
+    return min;
+}
+
+/* 月份翻页：delta = -1 上一月 / +1 下一月，越界自动忽略 */
+function shiftMockReportMonth(delta) {
+    const thisMonth = bjToday().slice(0, 7);
+    const cur = mockReportMonth || thisMonth;
+    const [y, m] = cur.split('-').map(Number);
+    const d = new Date(y, m - 1 + delta, 1);
+    const next = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const earliest = getMockEarliestMonth();
+    if (next > thisMonth) return;                  // 不能翻到未来
+    if (earliest && next < earliest) return;       // 不能翻到最早记录之前
+    mockReportMonth = next;
+    renderMockMonthReport();
+}
+
+function backToMockReportMonth() {
+    mockReportMonth = null;
+    renderMockMonthReport();
+}
+
+/* 渲染当前所选月份的备考报告（本月统计到今天，历史月统计整月） */
+function renderMockMonthReport() {
+    const reportEl = document.getElementById('monthlyReport');
+    if (!reportEl) return;
+
+    const thisMonth = bjToday().slice(0, 7);
+    const mk = mockReportMonth || thisMonth;
+    const isCurrent = mk === thisMonth;
+
+    const records = JSON.parse(localStorage.getItem('mockRecords') || '[]');
+    const prac = records.filter(r => r.module !== '模考成绩'); // 仅刷题记录参与正确率
+    const monthRecs = prac.filter(r => (r.date || '').slice(0, 7) === mk);
+    const monthAvg = monthRecs.length > 0
+        ? (monthRecs.reduce((s, r) => s + parseFloat(r.accuracy), 0) / monthRecs.length).toFixed(1)
+        : '-';
+
+    // 本月各模块平均正确率，用于「提升明显 / 待加强」
+    const modAcc = {};
+    MOCK_MODULES.filter(mm => mm !== '模考成绩').forEach(mm => modAcc[mm] = []);
+    monthRecs.forEach(r => { if (modAcc[r.module]) modAcc[r.module].push(parseFloat(r.accuracy)); });
+    const sortedMods = Object.entries(modAcc)
+        .filter(([k, v]) => v.length > 0)
+        .map(([k, v]) => ({ module: k, avg: (v.reduce((a, b) => a + b, 0) / v.length).toFixed(1), count: v.length }))
+        .sort((a, b) => parseFloat(a.avg) - parseFloat(b.avg));
+
+    const earliest = getMockEarliestMonth();
+    const canPrev = !earliest || mk > earliest;
+    const canNext = mk < thisMonth;
 
     reportEl.innerHTML = `
-        <h4 style="color:#E891A3;">📋 ${thisMonth} 月度备考报告</h4>
+        <div class="plan-hist-head">
+            <button class="plan-hist-nav" onclick="shiftMockReportMonth(-1)" ${canPrev ? '' : 'disabled'} title="上一月">◀</button>
+            <h4 style="color:#E891A3;margin:0;">📋 ${mk} 月度备考报告${isCurrent ? '<span class="plan-hist-tag">本月</span>' : ''}</h4>
+            <button class="plan-hist-nav" onclick="shiftMockReportMonth(1)" ${canNext ? '' : 'disabled'} title="下一月">▶</button>
+        </div>
         <p>本月练习次数: <strong>${monthRecs.length}</strong> 次</p>
         <p>月均正确率: <strong style="color:#FFB6C1;font-size:16px;">${monthAvg}%</strong></p>
-        <p>提升明显板块: <strong style="color:#68C07D;">${sortedMods.length > 0 ? sortedMods[sortedMods.length-1]?.module || '-' : '-'}</strong></p>
-        <p>待加强板块: <strong style="color:#E57373;">${sortedMods.length > 0 ? sortedMods[0]?.module || '-' : '-'}</strong></p>
+        ${sortedMods.length > 0
+            ? `<p>提升明显板块: <strong style="color:#68C07D;">${sortedMods[sortedMods.length - 1].module}</strong></p>
+               <p>待加强板块: <strong style="color:#E57373;">${sortedMods[0].module}</strong></p>`
+            : '<p style="color:#999;">该月暂无刷题记录</p>'}
+        ${isCurrent
+            ? ''
+            : `<p style="margin-top:8px;"><button class="btn-outline btn-sm" onclick="backToMockReportMonth()">回到本月</button>
+               <span style="font-size:12px;color:#bbb;margin-left:8px;">历史月份 · 只读</span></p>`}
     `;
 }
 
@@ -3618,6 +3690,8 @@ function renderIdiomPairs() {
     if (pairCursor < 0) pairCursor = list.length - 1;
     const p = list[pairCursor];
     const tagsHtml = (p.tags || []).map(t => '<span class="pair-tag">' + t + '</span>').join('');
+    const dayIdx = (function(){ const n = daysBetweenYMD('2026-01-01', bjToday()); return ((n % list.length) + list.length) % list.length; })();
+    const isDailyPick = pairCursor === dayIdx;
     wrap.innerHTML =
         '<div class="pair-card" id="pairCard">' +
             '<div class="pair-side"><div class="pair-word">' + p.a.word + '</div><div class="pair-pinyin">' + p.a.pinyin + '</div><div class="pair-meaning">' + p.a.meaning + '</div></div>' +
@@ -3626,7 +3700,9 @@ function renderIdiomPairs() {
         '</div>' +
         '<div class="pair-note">' + p.note + '</div>' +
         '<div class="pair-tags">' + tagsHtml + '</div>' +
+        (p.verifiedAt ? '<div class="pair-verify">✅ 已核验 ' + p.verifiedAt + (p.source ? ' · ' + p.source : '') + '</div>' : '') +
         '<div class="idiom-nav">' +
+            (isDailyPick ? '<span class="pair-daily">📅 今日配对</span>' : '<span></span>') +
             '<button class="btn-outline btn-sm" onclick="pairStep(-1)">‹ 上一个</button>' +
             '<span class="idiom-pos">' + (pairCursor + 1) + ' / ' + list.length + '</span>' +
             '<button class="btn-outline btn-sm" onclick="pairStep(1)">下一个 ›</button>' +
@@ -3649,6 +3725,12 @@ function initIdiomPairs() {
         b.classList.add('active');
         currentPairTag = b.dataset.ptag || 'all'; pairCursor = 0; renderIdiomPairs();
     });
+    // 每日自动轮换：以北京时间日期为种子，确定性选取今日配对（每天不同、当天稳定）
+    const _plist = getIdiomPairList();
+    if (_plist.length) {
+        const _day = daysBetweenYMD('2026-01-01', bjToday());
+        pairCursor = ((_day % _plist.length) + _plist.length) % _plist.length;
+    }
     renderIdiomPairs();
 }
 
