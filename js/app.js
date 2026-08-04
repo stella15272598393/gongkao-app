@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v24';
+const APP_VERSION = '2026-08-05-v25';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -175,32 +175,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ========== Service Worker 注册 ==========
 function registerSW() {
-    if ('serviceWorker' in navigator) {
-        // ★ 关键：注册 URL 带版本戳，每次发版 URL 变化 → 浏览器必定重新拉取新 sw.js
-        //    否则 URL 固定为 ./sw.js，浏览器复用 HTTP 缓存的旧字节，SW 永不更新（缓存名停在旧版）
-        const swUrl = './sw.js?v=' + (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1');
-        navigator.serviceWorker.register(swUrl).then(reg => {
-            console.log('PWA SW registered:', reg.scope, 'url=', swUrl);
-            // 强制检查更新，确保新 SW 立即生效
-            if (reg.waiting) {
-                reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    if (!('serviceWorker' in navigator)) return;
+
+    const swUrl = './sw.js?v=' + (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1');
+
+    // ★ v25 增强：检测到旧 SW 仍在控制页面时，强制 unregister 后重新注册
+    //    解决"代码已发版但手机 SW 缓存了旧 index.html"导致永远用旧版的问题
+    navigator.serviceWorker.getRegistration().then(oldReg => {
+        // 如果有旧注册且 scope 匹配，检查是否需要强制更新
+        if (oldReg && oldReg.scope.includes(location.hostname)) {
+            // 检查 controller 是否存在——如果存在但版本可能过期，强制刷新
+            if (navigator.serviceWorker.controller) {
+                // 发送版本检查消息
+                navigator.serviceWorker.controller.postMessage({ type: 'CHECK_VERSION', version: APP_VERSION });
             }
-            reg.onupdatefound = () => {
-                const installing = reg.installing;
-                if (installing) {
-                    installing.onstatechange = () => {
-                        if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+            // 主动触发更新检查
+            if (oldReg.update) { try { oldReg.update(); } catch (e) {} }
+        }
+
+        // 注册/更新 SW（URL 带版本戳确保浏览器不复用 HTTP 缓存的旧 sw.js 字节）
+        return navigator.serviceWorker.register(swUrl);
+    }).then(reg => {
+        console.log('PWA SW registered:', reg.scope, 'url=', swUrl, 'version=', APP_VERSION);
+
+        // ★ 关键：新 SW 安装完成后立即激活，不让它进入 waiting 状态
+        function activateNew(sw) {
+            if (sw) sw.postMessage({ type: 'SKIP_WAITING' });
+        }
+        activateNew(reg.waiting);
+        activateNew(reg.installing);
+
+        reg.onupdatefound = () => {
+            const installing = reg.installing;
+            if (installing) {
+                installing.onstatechange = () => {
+                    console.log('SW state:', installing.state);
+                    if (installing.state === 'installed') {
+                        // 有活跃 controller 说明是更新（非首次安装）→ 立即激活
+                        if (navigator.serviceWorker.controller) {
                             installing.postMessage({ type: 'SKIP_WAITING' });
+                            // ★ 延迟刷新页面，让新 SW 接管后重新加载最新资源
+                            setTimeout(() => {
+                                if (!navigator.serviceWorker.controller || navigator.serviceWorker.controller.state === 'activated') {
+                                    console.log('v25: SW 已更新，建议用户刷新');
+                                }
+                            }, 1000);
                         }
-                    };
-                }
-            };
-            // 主动触发一次更新检查
-            if (reg.update) { try { reg.update(); } catch (e) {} }
-        }).catch(err => {
-            console.log('SW registration failed:', err);
+                    }
+                };
+            }
+        };
+
+        // 监听 controllerchange —— 新 SW 接管后自动刷新页面获取最新资源
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) {
+                refreshing = true;
+                console.log('v25: 新 SW 已接管，刷新页面获取最新资源');
+                window.location.reload();
+            }
         });
-    }
+
+        if (reg.update) { try { reg.update(); } catch (e) {} }
+    }).catch(err => {
+        console.log('SW registration failed:', err);
+    });
 }
 
 // ========== 倒计时计算与显示 ==========
@@ -464,7 +503,32 @@ function renderStreakHeatmap() {
     if (!el) return;
     let hist = [];
     try { const s = localStorage.getItem('gk_streak'); if (s) hist = (JSON.parse(s).history) || []; } catch (e) {}
+
+    // ★ v25 热力图自愈：如果 history 为空但 count>0，从 last 字段重建 history
+    //    解决"连续天数显示正常但热力图全灰"的问题（旧版自动打卡未正确写入 history）
+    if (hist.length === 0) {
+        try {
+            const s = JSON.parse(localStorage.getItem('gk_streak') || '{}');
+            if (s.count && s.count > 0 && s.last) {
+                console.log('[heatmap] history 为空但 count=' + s.count + '，从 last 重建');
+                const rebuilt = [];
+                const d = new Date(s.last);
+                for (let i = 0; i < s.count; i++) {
+                    const dateStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+                    rebuilt.unshift(dateStr); // 从最早到最新
+                    d.setDate(d.getDate() - 1);
+                }
+                hist = rebuilt;
+                // 写回 localStorage
+                s.history = rebuilt;
+                localStorage.setItem('gk_streak', JSON.stringify(s));
+                console.log('[heatmap] 已重建 history:', rebuilt);
+            }
+        } catch (e) { console.error('[heatmap] 重建失败', e); }
+    }
+
     const set = new Set(hist);
+    console.log('[heatmap] 渲染热力图, history=', hist.length, '天, set.size=', set.size);
     const weeks = 26;
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const start = new Date(today);
