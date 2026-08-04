@@ -380,10 +380,39 @@
         };
     }
 
+    /** 检测缓存是否明显偏少（被旧版污染的标志） */
+    function isStaleCache(payload) {
+        if (!payload) return false;
+        const sz = payload.shizheng || [];
+        const qz = payload.quotes || [];
+        // 正常数据：时政≥70条 或 金句≥200条；低于此阈值大概率是污染后的残留
+        return (sz.length > 0 && sz.length < 20) || (qz.length > 0 && qz.length < 50);
+    }
+
     /* ---------------- 主流程 ---------------- */
     async function boot() {
+        // ★ 版本升级自动清理：检测到 APP_VERSION 变化时清除旧的脏缓存
+        //    解决"刷新就变离线"——旧版缓存被污染后，新版必须重拉
+        const CUR_VERSION = (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '';
+        const LAST_VERSION = await idbGet('lastPayloadVersion');
+        if (CUR_VERSION && LAST_VERSION && CUR_VERSION !== LAST_VERSION) {
+            console.log('[loader] 版本升级', LAST_VERSION, '→', CUR_VERSION, '，清理旧缓存');
+            await idbSet('payload', null);
+            await idbSet('lastPayloadVersion', CUR_VERSION);
+        } else if (CUR_VERSION && !LAST_VERSION) {
+            await idbSet('lastPayloadVersion', CUR_VERSION);
+        }
+
         // 第 2 层：IndexedDB 缓存（联网失败时的安全兜底，非离线模式）
-        const cached = await idbGet('payload');
+        let cached = await idbGet('payload');
+
+        // ★ 脏数据检测：缓存条目明显偏少 → 判定为污染残留，强制清理
+        if (cached && isStaleCache(cached)) {
+            console.log('[loader] 检测到脏缓存(时政', (cached.shizheng||[]).length, '条/金句', (cached.quotes||[]).length, '条)，清理');
+            await idbSet('payload', null);
+            cached = null;
+        }
+
         if (cached && ((cached.shizheng || []).length || (cached.qiushi || []).length || (cached.renwu || []).length || (cached.essays || []).length || (cached.quotes || []).length || (cached.morning || []).length)) {
             applyData(cached, 'cache');
         }
@@ -395,6 +424,8 @@
                 const merged = mergePayload(fresh, cached);
                 applyData(merged, 'remote');
                 await idbSet('payload', merged);
+                // 记录成功拉取的版本，防止下次误清
+                if (CUR_VERSION) await idbSet('lastPayloadVersion', CUR_VERSION);
             }
         } catch (e) {
             if (!cached) {
