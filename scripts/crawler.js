@@ -507,7 +507,7 @@ async function main() {
     // 元信息
     fs.writeFileSync(path.join(OUT_DIR, 'meta.json'), JSON.stringify({
         updatedAt: new Date().toISOString(),
-        updatedAtLocal: new Date().toLocaleString('zh-CN'),
+        updatedAtLocal: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
         todayNew: shizheng.length + qiushi.length,
         totals: { shizheng: merged.shizheng.length, qiushi: merged.qiushi.length }
     }, null, 1), 'utf8');

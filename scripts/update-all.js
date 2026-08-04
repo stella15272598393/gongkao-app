@@ -35,7 +35,10 @@ function readCount(file) {
 function writeMeta() {
     const now = new Date();
     const pad = n => String(n).padStart(2, '0');
-    const local = `${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    // ★ 显式转换为北京时间（东八区）：GitHub Actions runner 默认 TZ=UTC，
+    //    若直接用 now.getHours() 会写出 UTC 时间（如 16:0x），导致 APP 显示"16点更新"而非"00点更新"
+    const bjTime = new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+    const local = `${bjTime.getFullYear()}/${pad(bjTime.getMonth() + 1)}/${pad(bjTime.getDate())} ${pad(bjTime.getHours())}:${pad(bjTime.getMinutes())}:${pad(bjTime.getSeconds())}`;
     const meta = {
         updatedAt: now.toISOString(),
         updatedAtLocal: local,
