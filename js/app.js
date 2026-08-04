@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v22';
+const APP_VERSION = '2026-08-05-v23';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -177,8 +177,27 @@ document.addEventListener('DOMContentLoaded', () => {
 // ========== Service Worker 注册 ==========
 function registerSW() {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-            console.log('PWA SW registered:', reg.scope);
+        // ★ 关键：注册 URL 带版本戳，每次发版 URL 变化 → 浏览器必定重新拉取新 sw.js
+        //    否则 URL 固定为 ./sw.js，浏览器复用 HTTP 缓存的旧字节，SW 永不更新（缓存名停在旧版）
+        const swUrl = './sw.js?v=' + (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1');
+        navigator.serviceWorker.register(swUrl).then(reg => {
+            console.log('PWA SW registered:', reg.scope, 'url=', swUrl);
+            // 强制检查更新，确保新 SW 立即生效
+            if (reg.waiting) {
+                reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            reg.onupdatefound = () => {
+                const installing = reg.installing;
+                if (installing) {
+                    installing.onstatechange = () => {
+                        if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                            installing.postMessage({ type: 'SKIP_WAITING' });
+                        }
+                    };
+                }
+            };
+            // 主动触发一次更新检查
+            if (reg.update) { try { reg.update(); } catch (e) {} }
         }).catch(err => {
             console.log('SW registration failed:', err);
         });

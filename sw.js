@@ -44,6 +44,13 @@ self.addEventListener('activate', event => {
     );
 });
 
+// 监听主线程消息：跳过等待，立即激活新 SW（配合 registerSW 的 SKIP_WAITING 消息）
+self.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
 // 判断是否为核心代码资源（需保证拿到最新版本）
 function isCoreAsset(url) {
     return /\.(js|css|html)$/i.test(new URL(url).pathname);
