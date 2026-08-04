@@ -170,8 +170,16 @@
         return tags.map(t => map[t] || t);
     }
 
+    // v34：北京时间的今天（loader 独立于 app.js，此处自带一份轻量实现）
+    function bjTodayKey() {
+        const n = new Date();
+        const bj = new Date(n.getTime() + (n.getTimezoneOffset() + 480) * 60000);
+        const p = x => String(x).padStart(2, '0');
+        return `${bj.getFullYear()}-${p(bj.getMonth() + 1)}-${p(bj.getDate())}`;
+    }
+
     function normalizeDate(d) {
-        if (!d) return new Date().toISOString().slice(0, 10);
+        if (!d) return bjTodayKey();
         const m = String(d).match(/(20\d\d)[-年](\d{1,2})[-月](\d{1,2})/);
         if (m) return `${m[1]}-${String(m[2]).padStart(2, '0')}-${String(m[3]).padStart(2, '0')}`;
         return String(d).slice(0, 10);

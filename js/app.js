@@ -14,10 +14,49 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v33';
+const APP_VERSION = '2026-08-05-v34';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
+
+/* ================================================================
+   全局时间基准：北京时间（UTC+8） —— v34 全站统一
+   ----------------------------------------------------------------
+   历史坑（已全部堵上）：
+   1) new Date().toISOString() 取的是 UTC 日期，北京时间 00:00-08:00
+      会被算成「前一天」。凌晨打卡/录入会写到昨天的键上。
+   2) 部分模块用本地时间（getFullYear 等）、部分用 UTC，两套基准混用，
+      跨月当天会出现「数据看起来凭空消失」。
+   3) 设备时区若不是东八区（出国 / 手机时区设错），本地时间同样不可靠。
+
+   规则：凡是「哪一天」这种日期归属语义，一律走下面的工具函数；
+        凡是「精确到毫秒的事件时刻」（exportedAt / crawledAt 等），
+        保留标准 ISO UTC 字符串（带 Z），那是正确用法，不要改。
+   ================================================================ */
+function getBJNow() {
+    const n = new Date();
+    // 把时间戳平移到「本地 getter 读出来正好是北京时间」的状态
+    return new Date(n.getTime() + (n.getTimezoneOffset() + 480) * 60000);
+}
+function fmtYMD(d) {
+    const p = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+// 北京时间「今天」，格式 YYYY-MM-DD
+function bjToday() { return fmtYMD(getBJNow()); }
+// 北京时间偏移 N 天后的 Date 对象（负数往前）
+function bjDateOffset(days) { const d = getBJNow(); d.setDate(d.getDate() + days); return d; }
+// 北京时间偏移 N 天后的日期键，格式 YYYY-MM-DD
+function bjDayKey(days) { return fmtYMD(bjDateOffset(days || 0)); }
+/* 两个 YYYY-MM-DD 相差多少天（toKey - fromKey）。
+   纯日期差，不掺当前时刻，避免「倒计时/Day 计数」被小时数带偏一天。
+   注意补 'T00:00:00'：否则 new Date('2026-11-29') 会按 UTC 零点解析。 */
+function daysBetweenYMD(fromKey, toKey) {
+    const a = new Date(String(fromKey).slice(0, 10) + 'T00:00:00');
+    const b = new Date(String(toKey).slice(0, 10) + 'T00:00:00');
+    if (isNaN(a) || isNaN(b)) return 0;
+    return Math.round((b - a) / 86400000);
+}
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -252,12 +291,12 @@ function initCountdown() {
 }
 
 function updateCountdownDisplay() {
-    const now = new Date();
-    const guokaoTarget = new Date(EXAM_DATES.guokao);
-    const hubaoTarget = new Date(EXAM_DATES.hubao);
-
-    const guokaoDays = Math.ceil((guokaoTarget - now) / (1000 * 60 * 60 * 24));
-    const hubaoDays = Math.ceil((hubaoTarget - now) / (1000 * 60 * 60 * 24));
+    /* v34 修复：旧写法用 new Date('2026-11-29')（UTC零点）减去本地当前时刻再 ceil，
+       会被「当天已过的小时数」带偏一天——实测 8/5 距 11/29 应为 116 天却显示 117，
+       Day 计数则反过来少一天。改为纯日期差，任何时刻打开结果都稳定。 */
+    const todayKey = bjToday();
+    const guokaoDays = daysBetweenYMD(todayKey, EXAM_DATES.guokao);
+    const hubaoDays = daysBetweenYMD(todayKey, EXAM_DATES.hubao);
 
     const guokaoEl = document.getElementById('guokaoDays');
     const hubaoEl = document.getElementById('hubaoDays');
@@ -265,9 +304,8 @@ function updateCountdownDisplay() {
     if (guokaoEl) guokaoEl.textContent = Math.max(0, guokaoDays);
     if (hubaoEl) hubaoEl.textContent = Math.max(0, hubaoDays);
 
-    // Day计数
-    const startDate = new Date('2026-08-03'); // 项目启动日
-    const dayNum = Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    // Day计数（启动日当天为 Day 1）
+    const dayNum = daysBetweenYMD('2026-08-03', todayKey) + 1;
     const guokaoDayNumEl = document.getElementById('guokaoDayNum');
     const hubaoDayNumEl = document.getElementById('hubaoDayNum');
     if (guokaoDayNumEl) guokaoDayNumEl.textContent = `Day ${dayNum}`;
@@ -277,7 +315,7 @@ function updateCountdownDisplay() {
 // ========== 实时时钟 ==========
 function startDateTimeClock() {
     function updateClock() {
-        const now = new Date();
+        const now = getBJNow(); // v34：始终显示北京时间，设备时区设错也不受影响
         const el = document.getElementById('datetimeDisplay');
         if (el) {
             const pad = n => String(n).padStart(2, '0');
@@ -383,7 +421,7 @@ function exportFavTxt() {
     const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = '莲莲工作台_收藏_' + new Date().toISOString().slice(0, 10) + '.txt';
+    a.download = '莲莲工作台_收藏_' + bjToday() + '.txt';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
@@ -427,16 +465,14 @@ function exportFavImage() {
     });
     const a = document.createElement('a');
     a.href = cv.toDataURL('image/png');
-    a.download = '莲莲工作台_收藏_' + new Date().toISOString().slice(0, 10) + '.png';
+    a.download = '莲莲工作台_收藏_' + bjToday() + '.png';
     a.click();
     function clip(c, text, maxW) { if (c.measureText(text).width <= maxW) return text; let t = text; while (t.length > 1 && c.measureText(t + '…').width > maxW) t = t.slice(0, -1); return t + '…'; }
 }
 
 /* ========== 工作台首页 ========== */
-function getTodayStr() {
-    const d = new Date();
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-}
+// 打卡/推送等共用的「今天」，统一北京时间基准（v34）
+function getTodayStr() { return bjToday(); }
 
 // ★ v28 彻底重写：打卡数据结构简化为纯 history 数组
 //   localStorage.gk_streak = { history: ['2026-08-03', '2026-08-04', '2026-08-05'] }
@@ -454,12 +490,9 @@ function _calcStreak(history) {
     if (!history || !history.length) return 0;
     const sorted = [...history].sort().reverse(); // 最新在前
     let streak = 0;
-    const today = new Date();
     for (let i = 0; i < sorted.length; i++) {
-        const expected = new Date(today);
-        expected.setDate(today.getDate() - i);
-        const key = expected.getFullYear() + '-' + String(expected.getMonth()+1).padStart(2,'0') + '-' + String(expected.getDate()).padStart(2,'0');
-        if (sorted[i] === key) streak++;
+        // v34：按北京时间往前推，与 getTodayStr() 的写入基准保持一致
+        if (sorted[i] === bjDayKey(-i)) streak++;
         else break;
     }
     return streak;
@@ -565,9 +598,11 @@ function renderStreakHeatmap() {
 
     // 旧格式迁移
     if (hist.length === 0 && raw && typeof raw.count === 'number' && raw.count > 0 && raw.last) {
-        var rb = [], rd = new Date(raw.last);
+        // v34：'YYYY-MM-DD' 被 new Date() 当成 UTC 零点解析，非东八区设备会整体错一天，
+        //      补 'T00:00:00' 强制按本地墙上时间解析，保证读回来就是原字符串那一天
+        var rb = [], rd = new Date(String(raw.last).slice(0, 10) + 'T00:00:00');
         for (var ri = 0; ri < Math.min(raw.count, 999); ri++) {
-            rb.unshift(rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0'));
+            rb.unshift(fmtYMD(rd));
             rd.setDate(rd.getDate()-1);
         }
         hist = rb; raw.history = rb; delete raw.count; delete raw.last;
@@ -575,7 +610,7 @@ function renderStreakHeatmap() {
     }
 
     // 兜底补今天
-    var todayStr = (new Date()).getFullYear()+'-'+String((new Date()).getMonth()+1).padStart(2,'0')+'-'+String((new Date()).getDate()).padStart(2,'0');
+    var todayStr = bjToday();
     if (hist.indexOf(todayStr) < 0 && raw && raw.last === todayStr) {
         hist.push(todayStr); raw.history = hist;
         try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
@@ -589,10 +624,10 @@ function renderStreakHeatmap() {
     var C_OFF = '#e8e8e8';
     var C_FUT = '#f5f5f5';
     var weeks = 26;
-    var now = new Date(); now.setHours(0,0,0,0);
+    // v34：以北京时间的「今天零点」为基准，保证格子日期与打卡写入的键完全对齐
+    var now = getBJNow(); now.setHours(0,0,0,0);
 
     // ★ 关键改动：从今天往回推，最新的一周在最左边
-    var pad2 = function(n){return String(n).padStart(2,'0');};
 
     // 计算本周日（作为网格的右边界基准）
     var endOfWeek = new Date(now);
@@ -608,7 +643,7 @@ function renderStreakHeatmap() {
         for (var d = 6; d >= 0; d--) {
             var cellDate = new Date(endOfWeek);
             cellDate.setDate(endOfWeek.getDate() - (w * 7 + (6 - d)));
-            var k = cellDate.getFullYear()+'-'+pad2(cellDate.getMonth()+1)+'-'+pad2(cellDate.getDate());
+            var k = fmtYMD(cellDate);
             var fut = cellDate > now;
             var done = !!checked[k];
             if (done && !fut) pinkCnt++;
@@ -1132,7 +1167,7 @@ function exportAllData() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = '莲莲工作台_学习数据_' + new Date().toISOString().slice(0, 10) + '.json';
+    a.download = '莲莲工作台_学习数据_' + bjToday() + '.json';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
     if (typeof showToast === 'function') showToast('已导出 ' + Object.keys(payload.data).length + ' 项学习数据 ✅');
@@ -1276,7 +1311,7 @@ function renderDataStats() {
 function updateShizhengUpdateInfo() {
     const el = document.getElementById('shizhengUpdateInfo');
     if (!el) return;
-    const today = new Date().toISOString().slice(0, 10);
+    const today = bjToday(); // v34：北京时间，凌晨不再把"今日更新"算成 0
     const todayCount = SHIZHENG_NEWS.filter(n => (n.date || '').slice(0, 10) === today).length;
     const total = SHIZHENG_NEWS.length;
     el.textContent = todayCount > 0
@@ -1347,7 +1382,7 @@ function toggleFavQuote() {
 function checkinQuote() {
     const quote = QUOTES_DB[currentQuoteIndex];
     if (!quote) return;
-    const today = new Date().toISOString().split('T')[0];
+    const today = bjToday(); // v34：北京时间，凌晨背金句不再记到昨天
     let checkins = JSON.parse(localStorage.getItem('quoteCheckins') || '{}');
     if (!checkins[today]) checkins[today] = [];
     if (!checkins[today].includes(quote.id)) {
@@ -1368,11 +1403,9 @@ function loadCheckinStats() {
     // 计算连续天数
     const dates = Object.keys(checkins).sort().reverse();
     let streak = 0;
-    const today = new Date();
     for (let i = 0; i < 365; i++) {
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        const key = d.toISOString().split('T')[0];
+        // v34：按北京时间往前推，与 checkinQuote 的写入基准一致
+        const key = bjDayKey(-i);
         if (checkins[key] && checkins[key].length > 0) streak++;
         else break;
     }
@@ -1599,9 +1632,7 @@ function updateMorningInfo() {
     // 设置日期标签
     const dateLabel = document.getElementById('morningDateLabel');
     if (dateLabel) {
-        const now = new Date();
-        const pad = n => String(n).padStart(2, '0');
-        dateLabel.textContent = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} 晨读 · 权威媒体评论每日精选`;
+        dateLabel.textContent = `${bjToday()} 晨读 · 权威媒体评论每日精选`;
     }
 }
 
@@ -2400,22 +2431,8 @@ function initPlan() {
     renderHistoryStats();
 }
 
-/* ---------------- 北京时间日期工具（v33 修复 UTC 错位） ----------------
-   旧写法 new Date().toISOString() 取的是 UTC 日期，北京时间 00:00-08:00
-   会被算成"前一天"：凌晨打开计划会读写到昨天的键；9月1日凌晨更会把任务
-   写进 plan_2026-08-31，而统计面板已切到9月，导致当天数据"看起来消失"。
-   下面两个函数统一提供"北京时间的年月日"，全模块共用。 */
-function getBJNow() {
-    const n = new Date();
-    // 先把时间戳平移到「本地 getter 读出来正好是北京时间」的状态
-    return new Date(n.getTime() + (n.getTimezoneOffset() + 480) * 60000);
-}
-function fmtYMD(d) {
-    const p = n => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-}
-
-function getTodayKey() { return fmtYMD(getBJNow()); }
+// 每日计划的日期键（北京时间，工具函数见文件顶部「全局时间基准」）
+function getTodayKey() { return bjToday(); }
 
 function loadPlanItems() {
     const key = getTodayKey();
@@ -2653,7 +2670,7 @@ function renderRecordForm() {
     const form = document.getElementById('recordForm');
     if (!form) return;
     const editing = editingMockId !== null;
-    const today = new Date().toISOString().slice(0, 10);
+    const today = bjToday(); // v34：表单默认日期用北京时间，凌晨不再默认成昨天
     form.innerHTML = `
         <h4 style="margin-bottom:14px;">${editing ? '✏️ 编辑记录' : '📝 录入模考 / 刷题记录'}</h4>
         <div class="form-row">
@@ -2737,7 +2754,7 @@ function renderRecordForm() {
 
 function submitMockRecord() {
     const module = document.getElementById('mockModule').value;
-    const dateVal = document.getElementById('mockDate').value || new Date().toISOString().slice(0, 10);
+    const dateVal = document.getElementById('mockDate').value || bjToday();
     const date = dateVal + 'T00:00:00.000Z';
     const note = document.getElementById('mockNote').value.trim();
 
@@ -3041,9 +3058,11 @@ function renderBarChart(ctx, canvas, records) {
     const h = canvas.height - padding.top - padding.bottom;
 
     // 按模块聚合最近7天
-    const now = new Date();
-    const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
-    const weekRecords = records.filter(r => new Date(r.date) >= weekAgo);
+    /* v34：记录里存的是 'YYYY-MM-DDT00:00:00.000Z'（UTC零点），旧写法用 new Date()
+       解析后跟本地时刻比，会有 8 小时边界漂移。改为直接比日期字符串——
+       YYYY-MM-DD 的字典序等价于时间序，既准确又零时区歧义。 */
+    const weekAgoKey = bjDayKey(-7);
+    const weekRecords = records.filter(r => (r.date || '').slice(0, 10) >= weekAgoKey);
 
     const moduleData = {};
     MOCK_MODULES.filter(m => m !== '模考成绩').forEach(m => moduleData[m] = { total: 0, count: 0 });
@@ -3185,11 +3204,11 @@ function renderAnalysis() {
     const prac = records.filter(r => r.module !== '模考成绩'); // 仅刷题记录参与正确率分析
 
     // 近7天平均
-    const now = new Date();
-    const days7 = new Date(now); days7.setDate(days7.getDate() - 7);
-    const days30 = new Date(now); days30.setDate(days30.getDate() - 30);
-    const r7 = prac.filter(r => new Date(r.date) >= days7);
-    const r30 = prac.filter(r => new Date(r.date) >= days30);
+    // v34：同上，按北京时间的日期字符串比较，消除 UTC/本地混用的边界漂移
+    const key7 = bjDayKey(-7);
+    const key30 = bjDayKey(-30);
+    const r7 = prac.filter(r => (r.date || '').slice(0, 10) >= key7);
+    const r30 = prac.filter(r => (r.date || '').slice(0, 10) >= key30);
 
     const avg7 = r7.length > 0 ? (r7.reduce((s,r) => s + parseFloat(r.accuracy), 0) / r7.length).toFixed(1) : '-';
     const avg30 = r30.length > 0 ? (r30.reduce((s,r) => s + parseFloat(r.accuracy), 0) / r30.length).toFixed(1) : '-';
@@ -3222,8 +3241,8 @@ function renderAnalysis() {
     `;
 
     // 月度报告
-    const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const monthRecs = prac.filter(r => r.date.startsWith(thisMonth));
+    const thisMonth = bjToday().slice(0, 7); // v34：北京时间的当前月
+    const monthRecs = prac.filter(r => (r.date || '').startsWith(thisMonth));
     const monthAvg = monthRecs.length > 0 ? (monthRecs.reduce((s,r) => s + parseFloat(r.accuracy), 0) / monthRecs.length).toFixed(1) : '-';
 
     reportEl.innerHTML = `
@@ -3248,7 +3267,7 @@ function exportMockReport() {
         }
     });
 
-    downloadFile(csv, `模考记录_${new Date().toISOString().slice(0,10)}.csv`, 'text/csv;charset=utf-8');
+    downloadFile(csv, `模考记录_${bjToday()}.csv`, 'text/csv;charset=utf-8');
 }
 
 // 归档 = 先导出一份 JSON 快照（永久备份文件），再清空当前记录。
@@ -3260,7 +3279,7 @@ function confirmArchiveData() {
         if (!ok) return;
         // 1) 导出快照备份
         const snapshot = { app: '莲莲工作台', type: 'mock-archive', archivedAt: new Date().toISOString(), count: records.length, records };
-        downloadFile(JSON.stringify(snapshot, null, 2), '模考归档_' + new Date().toISOString().slice(0, 10) + '.json', 'application/json');
+        downloadFile(JSON.stringify(snapshot, null, 2), '模考归档_' + bjToday() + '.json', 'application/json');
         // 2) 清空当前记录
         localStorage.removeItem('mockRecords');
         if (typeof showToast === 'function') showToast('✅ 已导出归档快照并清空当前 ' + records.length + ' 条记录');
@@ -3420,10 +3439,7 @@ function shuffle(a) {
     }
     return a;
 }
-function getTodayStr() {
-    const d = new Date(); const p = n => String(n).padStart(2, '0');
-    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
-}
+// （原此处有 getTodayStr 的重复定义，v34 已合并到首页那一处，统一北京时间基准）
 
 /* ---------------- 高频成语 ---------------- */
 function getIdiomList() {
@@ -3796,7 +3812,7 @@ function showDailyPush() {
     buildDailyPush();
     const ov = document.getElementById('dailyPushOverlay'); if (!ov) return;
     const title = document.getElementById('dailyPushTitle');
-    const h = new Date().getHours();
+    const h = getBJNow().getHours(); // v34：按北京时间判断早/晚安
     if (title) title.textContent = (h < 12 ? '🌅 早安 · ' : '🌙 晚安 · ') + '今日碎片推送';
     switchDailyPushTab('idiom');
     ov.style.display = 'flex';

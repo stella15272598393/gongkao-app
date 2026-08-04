@@ -21,6 +21,17 @@ const { extractArticle: extractFenbi } = require('./crawler-essay');
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
+/* v34：GitHub Actions runner 的 TZ 是 UTC，直接用 toISOString().slice(0,10) 兜底
+   会把文章日期写成「前一天」（爬虫在北京时间 00:00 触发，UTC 还停在昨天 16:00）。
+   统一用北京时间的日期。注意：updatedAt / crawledAt 那类精确时间戳保留 ISO UTC，
+   那是标准做法，不在此列。 */
+function bjToday() {
+    const n = new Date();
+    const bj = new Date(n.getTime() + (n.getTimezoneOffset() + 480) * 60000);
+    const p = x => String(x).padStart(2, '0');
+    return `${bj.getFullYear()}-${p(bj.getMonth() + 1)}-${p(bj.getDate())}`;
+}
+
 /* ============================================================
  * 关键词体系
  * ========================================================== */
@@ -382,7 +393,7 @@ async function crawlSource(src) {
                 title: art.title,
                 source: src.name,
                 direction,
-                date: art.date || new Date().toISOString().slice(0, 10),
+                date: art.date || bjToday(),
                 url,
                 tags: tagTopics(art.title + art.fullText.slice(0, 2000)),
                 keywordsGuokao: cls.guokao.slice(0, 8),
@@ -439,7 +450,7 @@ async function crawlFenbiShizheng() {
                 title: art.title.replace(/^时政汇总\|\s*/, ''),
                 source: '粉笔·时政热点',
                 direction: '国考',
-                date: art.date || new Date().toISOString().slice(0, 10),
+                date: art.date || bjToday(),
                 url,
                 tags: tagTopics(art.title + art.fullText.slice(0, 2000)),
                 keywordsGuokao: cls.guokao.slice(0, 8),
@@ -491,7 +502,7 @@ async function crawlGovCn() {
                 title: art.title,
                 source: '中国政府网',
                 direction: '国考',
-                date: art.date || new Date().toISOString().slice(0, 10),
+                date: art.date || bjToday(),
                 url,
                 tags: tagTopics(art.title + art.fullText.slice(0, 2000)),
                 keywordsGuokao: cls.guokao.slice(0, 8),
