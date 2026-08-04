@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v27';
+const APP_VERSION = '2026-08-05-v28';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -455,28 +455,58 @@ function exportFavImage() {
 }
 
 /* ========== 工作台首页 ========== */
-function getTodayStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-function getYesterdayStr() { const d = new Date(Date.now() - 86400000); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-
-function updateStreak() {
-    let data = { count: 0, last: '', history: [] };
-    try { const s = localStorage.getItem('gk_streak'); if (s) data = JSON.parse(s); } catch (e) {}
-    if (!Array.isArray(data.history)) data.history = [];
-    const today = getTodayStr();
-    if (data.last === today) return; // 今天已打卡
-    if (data.last === getYesterdayStr()) data.count += 1;
-    else data.count = 1;
-    data.last = today;
-    if (data.history.indexOf(today) < 0) data.history.push(today);
-    try { localStorage.setItem('gk_streak', JSON.stringify(data)); } catch (e) {}
+function getTodayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 
-// 手动打卡：点击按钮后才记录今天，并重渲染热力图与连续天数
+// ★ v28 彻底重写：打卡数据结构简化为纯 history 数组
+//   localStorage.gk_streak = { history: ['2026-08-03', '2026-08-04', '2026-08-05'] }
+//   count 从 history 动态计算，不再单独维护
+
+function _getStreakData() {
+    try { return JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch (e) { return {}; }
+}
+function _saveStreakData(d) {
+    try { localStorage.setItem('gk_streak', JSON.stringify(d)); } catch (e) {}
+}
+
+// 计算连续打卡天数（从今天往前数连续的天数）
+function _calcStreak(history) {
+    if (!history || !history.length) return 0;
+    const sorted = [...history].sort().reverse(); // 最新在前
+    let streak = 0;
+    const today = new Date();
+    for (let i = 0; i < sorted.length; i++) {
+        const expected = new Date(today);
+        expected.setDate(today.getDate() - i);
+        const key = expected.getFullYear() + '-' + String(expected.getMonth()+1).padStart(2,'0') + '-' + String(expected.getDate()).padStart(2,'0');
+        if (sorted[i] === key) streak++;
+        else break;
+    }
+    return streak;
+}
+
+// 手动打卡：直接往 history 里追加今天，然后重新计算连续天数
 function manualCheckin() {
-    let already = false;
-    try { const s = localStorage.getItem('gk_streak'); if (s) already = ((JSON.parse(s).history) || []).indexOf(getTodayStr()) >= 0; } catch (e) {}
-    if (already) { renderHome(); return; }
-    updateStreak();
+    const d = _getStreakData();
+    if (!Array.isArray(d.history)) d.history = [];
+    const today = getTodayStr();
+
+    // 已打过 → 刷新显示即可
+    if (d.history.indexOf(today) >= 0) {
+        renderHome();
+        return;
+    }
+
+    // ★ 直接写入，不经过任何可能提前返回的逻辑
+    d.history.push(today);
+    // 保持排序（去重+排序）
+    const uniq = [...new Set(d.history)].sort();
+    d.history = uniq;
+    _saveStreakData(d);
+
+    console.log('[checkin v28] 打卡成功, history=', JSON.stringify(d.history), ', 连续=', _calcStreak(d.history));
     renderHome();
     if (typeof showToast === 'function') showToast('✅ 打卡成功！已记录到热力图 🔥');
 }
@@ -484,8 +514,11 @@ function manualCheckin() {
 function renderHome() {
     const statsEl = document.getElementById('homeStats');
     if (!statsEl) return;
-    let streak = 0;
-    try { const s = localStorage.getItem('gk_streak'); if (s) streak = JSON.parse(s).count || 0; } catch (e) {}
+
+    // ★ v28: 连续天数从 history 动态计算
+    const sd = _getStreakData();
+    const history = (sd && sd.history) || [];
+    const streak = _calcStreak(history);
 
     // 各模块数据概览
     const statCards = [
@@ -499,9 +532,10 @@ function renderHome() {
     ];
 
     let html = '<div class="home-streak"><div class="home-streak-num">' + streak + '</div><div class="home-streak-label">🔥 连续打卡天数</div></div>';
-    // 手动打卡按钮：今天已打卡显示状态，否则显示打卡按钮
-    let todayDone = false;
-    try { const s = localStorage.getItem('gk_streak'); if (s) todayDone = ((JSON.parse(s).history) || []).indexOf(getTodayStr()) >= 0; } catch (e) {}
+
+    // 手动打卡按钮
+    const today = getTodayStr();
+    const todayDone = history.indexOf(today) >= 0;
     if (todayDone) {
         html += '<div class="home-checkin done">✅ 今日已打卡</div>';
     } else {
@@ -522,48 +556,39 @@ function renderHome() {
     renderTodos();
 }
 
-/* 打卡热力图（GitHub 风格，近半年）—— v26 用内联 style 彻底绕开 CSS 缓存问题 */
+/* ★ v28 热力图 —— 完全重写，最简逻辑 + 内联颜色 */
 function renderStreakHeatmap() {
     const el = document.getElementById('streakHeatmap');
     if (!el) return;
 
-    // 读取打卡数据
-    let raw = null;
-    try { raw = JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch (e) { raw = {}; }
-    let hist = (raw && raw.history) || [];
-    if (!Array.isArray(hist)) hist = [];
+    const sd = _getStreakData();
+    let history = (sd && sd.history) || [];
+    if (!Array.isArray(history)) history = [];
 
-    // ★ v26 自愈逻辑（更全面）
-    if (hist.length === 0 && raw && raw.count > 0 && raw.last) {
-        console.log('[heatmap v26] history为空, count=' + raw.count + ', last=' + raw.last + ' → 重建');
+    // ★ v28 数据迁移：旧格式 {count, last, history} → 纯 history 数组
+    //   如果 history 为空但旧字段有数据，从 last 往前推 count 天重建
+    if (history.length === 0 && sd && sd.count > 0 && sd.last) {
         const rebuilt = [];
-        const d = new Date(raw.last);
-        for (let i = 0; i < Math.min(raw.count, 999); i++) {
-            const ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-            rebuilt.unshift(ds);
+        const d = new Date(sd.last);
+        for (let i = 0; i < Math.min(sd.count, 999); i++) {
+            rebuilt.unshift(d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'));
             d.setDate(d.getDate() - 1);
         }
-        hist = rebuilt;
-        raw.history = rebuilt;
-        try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
-        console.log('[heatmap v26] 重建完成:', rebuilt);
+        history = rebuilt;
+        sd.history = rebuilt;
+        // 删除旧的 count/last 字段，避免干扰
+        delete sd.count;
+        delete sd.last;
+        _saveStreakData(sd);
+        console.log('[heatmap v28] 旧格式迁移完成:', rebuilt);
     }
 
-    // 也确保今天已打卡但不在 history 中的情况被补上
-    const today = getTodayStr();
-    if (hist.indexOf(today) < 0 && raw && raw.last === today) {
-        hist.push(today);
-        raw.history = hist;
-        try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
-        console.log('[heatmap v26] 补充今天到history');
-    }
+    const checkedSet = new Set(history);
 
-    const set = new Set(hist);
-
-    // ★ 内联颜色 —— 不依赖 CSS class，彻底绕开缓存
-    const COLOR_ON = '#E75480';      // 已打卡：粉色
-    const COLOR_OFF = '#f0f0f0';     // 未打卡：浅灰
-    const COLOR_FUT = '#fafafa';     // 未来：更浅
+    // 内联颜色（不依赖 CSS class）
+    const C_ON  = '#E75480';  // 已打卡：粉色
+    const C_OFF = '#f0f0f0';  // 未打卡：浅灰
+    const C_FUT = '#fafafa';  // 未来：更浅
 
     const weeks = 26;
     const now = new Date(); now.setHours(0,0,0,0);
@@ -574,31 +599,32 @@ function renderStreakHeatmap() {
     const pad = n => String(n).padStart(2, '0');
 
     let html = '<div class="heatmap-title">📅 打卡热力图（近半年）</div><div class="heatmap-grid">';
+    let pinkCount = 0;
+
     for (let w = 0; w < weeks; w++) {
         html += '<div class="heatmap-week">';
         for (let d = 0; d < 7; d++) {
             const key = cur.getFullYear() + '-' + pad(cur.getMonth()+1) + '-' + pad(cur.getDate());
             const isFuture = cur > now;
-            const done = set.has(key);
-            // ★ 内联 style —— 不用 CSS class，缓存无法拦截
-            const bg = isFuture ? COLOR_FUT : (done ? COLOR_ON : COLOR_OFF);
+            const done = checkedSet.has(key);
+            if (done && !isFuture) pinkCount++;
+            const bg = isFuture ? C_FUT : (done ? C_ON : C_OFF);
             html += '<div class="heat-cell" style="background:' + bg + ';" title="' + key +
-                (done ? ' · 已打卡 ✅' : (isFuture ? ' · 未到' : ' · 未打卡')) + '"></div>';
+                (done ? ' · ✅已打卡' : (isFuture ? ' · 未到' : ' · 未打卡')) + '"></div>';
             cur.setDate(cur.getDate() + 1);
         }
         html += '</div>';
     }
     html += '</div>';
 
-    // 图例也用内联色
+    // 图例
     html += '<div class="heatmap-legend"><span>未打卡</span>' +
-        '<div class="heat-cell" style="background:' + COLOR_OFF + ';"></div>' +
-        '<div class="heat-cell" style="background:' + COLOR_ON + ';"></div>' +
+        '<div class="heat-cell" style="background:' + C_OFF + ';"></div>' +
+        '<div class="heat-cell" style="background:' + C_ON + ';"></div>' +
         '<span>已打卡</span>' +
-        '<span class="heat-count">累计 ' + set.size + ' 天</span></div>';
+        '<span class="heat-count">累计 ' + pinkCount + ' 天</span></div>';
 
     el.innerHTML = html;
-    console.log('[heatmap v26] 渲染完成, history=' + hist.length + '天, 已打卡=' + set.size + '天, 今天' + today + '已打=' + set.has(today));
 }
 
 function statModule(label) {
@@ -1025,7 +1051,7 @@ function exportAllData() {
     a.download = '莲莲工作台_学习数据_' + new Date().toISOString().slice(0, 10) + '.json';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
-    alert('已导出 ' + Object.keys(data).length + ' 项学习数据 ✅\n（含收藏/成语错词/打卡/待办/速算错题等）');
+    alert('已导出 ' + Object.keys(data).length + ' 项学习数据 ✅\n（含收藏/成语错词/打卡/待办/速算错题/模考记录等）');
 }
 function importAllData(input) {
     const file = input.files && input.files[0];
@@ -1058,7 +1084,8 @@ function renderDataStats() {
     // 各模块数据量概览
     const labels = {
         favBox: '收藏', favQuotes: '金句收藏', favIdioms: '成语收藏', idiomErrors: '成语错词',
-        gk_streak: '打卡', gk_todos: '待办', susuanErrors: '速算错题', quoteCheckins: '金句打卡'
+        gk_streak: '打卡', gk_todos: '待办', susuanErrors: '速算错题', quoteCheckins: '金句打卡',
+        mockRecords: '模考记录'
     };
     let html = '📊 当前本机数据：共 ' + keys.length + ' 项';
     const parts = keys.filter(k => labels[k]).map(k => labels[k] + ' ' + (function () {
