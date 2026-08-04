@@ -14,11 +14,11 @@ jobs:
   crawl:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: 抓取最新官方内容
         run: node scripts/update-all.js
@@ -31,6 +31,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "内容无变化，跳过提交"
           else
-            git commit -m "chore: 自动抓取更新 $(date +%F)"
+            git commit -m "chore: 自动抓取更新 $(TZ=Asia/Shanghai date +%F)"
             git push
           fi
