@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD1DC"/>
+      <stop offset="100%" style="stop-color:#FFB6C1"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="40" fill="url(#bg)"/>
+  <!-- Hello Kitty face -->
+  <ellipse cx="96" cy="110" rx="55" ry="50" fill="#FFFFFF"/>
+  <!-- Ears -->
+  <ellipse cx="55" cy="60" rx="22" ry="28" fill="#FFFFFF"/>
+  <ellipse cx="137" cy="60" rx="22" ry="28" fill="#FFFFFF"/>
+  <!-- Eyes -->
+  <ellipse cx="78" cy="100" rx="5" ry="6" fill="#333"/>
+  <ellipse cx="114" cy="100" rx="5" ry="6" fill="#333"/>
+  <!-- Nose -->
+  <ellipse cx="96" cy="112" rx="4" ry="3" fill="#FFB6C1"/>
+  <!-- Mouth -->
+  <path d="M96 115 L96 124 M88 124 Q96 132 104 124" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Whiskers -->
+  <line x1="58" y1="108" x2="35" y2="102" stroke="#333" stroke-width="1.5"/>
+  <line x1="58" y1="114" x2="35" y2="118" stroke="#333" stroke-width="1.5"/>
+  <line x1="134" y1="108" x2="157" y2="102" stroke="#333" stroke-width="1.5"/>
+  <line x1="134" y1="114" x2="157" y2="118" stroke="#333" stroke-width="1.5"/>
+  <!-- Bow -->
+  <ellipse cx="55" cy="58" rx="16" ry="12" fill="#FF69B4"/>
+  <circle cx="55" cy="58" r="4" fill="#E91E63"/>
+  <ellipse cx="42" cy="54" rx="10" ry="7" fill="#FF69B4" transform="rotate(-20 42 54)"/>
+  <ellipse cx="68" cy="54" rx="10" ry="7" fill="#FF69B4" transform="rotate(20 68 54)"/>
+  <!-- Text -->
+  <text x="96" y="175" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF">备考工作台</text>
+</svg>

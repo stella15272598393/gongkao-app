@@ -1,0 +1,20 @@
+# 依赖
+node_modules/
+
+# 本地验证/截图产物（非源码）
+verify_*.html
+verify_*.png
+*.log
+
+# 沙箱/编辑器缓存
+.cache/
+.DS_Store
+
+# 项目私有数据（不入库）
+.workbuddy/
+
+# 本地测试用静态服务器（可选保留，不影响部署）
+# scripts/serve.js
+
+# 调试残留脚本（不入库）
+scripts/dbg*.js

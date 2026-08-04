@@ -1,0 +1,39 @@
+name: 每日抓取内容更新
+
+# 手机 PWA 联网自动更新机制：
+#   GitHub Actions 每天定时运行抓取脚本，更新 content/*.json，
+#   提交回仓库；GitHub Pages 直接托管整个仓库，PWA 在每次打开时
+#   联网拉取最新 content/*.json（network-first），无需重新安装 APP。
+on:
+  schedule:
+    # UTC 22:00 = 北京时间次日 06:00，每天一更
+    - cron: '0 22 * * *'
+  workflow_dispatch: {}        # 允许在 Actions 页面手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 抓取最新官方内容
+        run: node scripts/update-all.js
+
+      - name: 提交更新
+        run: |
+          git config user.name "小桃自动抓取"
+          git config user.email "bot@workbuddy.local"
+          git add content/
+          if git diff --cached --quiet; then
+            echo "内容无变化，跳过提交"
+          else
+            git commit -m "chore: 自动抓取更新 $(date +%F)"
+            git push
+          fi

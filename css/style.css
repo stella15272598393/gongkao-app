@@ -1,5 +1,5 @@
 /* ========================================
-   莲莲工作台 - 全局样式
+   莲莲工作台 - 全局样式  v11
    主题：淡粉色 HelloKitty 可爱风
    ======================================== */
 
@@ -440,6 +440,8 @@ body.sidebar-collapsed .content-area {
     color: var(--text-light); margin-bottom: 12px;
 }
 .quote-theme { background: var(--primary-light); padding: 2px 8px; border-radius: 8px; color: var(--primary-dark); }
+.quote-source-link { color: #E75480; font-size: 11.5px; cursor: pointer; text-decoration: none; margin-left: 6px; white-space: nowrap; }
+.quote-source-link:hover { text-decoration: underline; }
 .quote-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* 范文列表 */
@@ -800,21 +802,37 @@ body.sidebar-collapsed .content-area {
 }
 
 /* 百化分表 */
+.baifenbi-legend {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: #FFF0F5;
+    border-radius: 8px;
+    font-size: 12px;
+    flex-wrap: wrap;
+}
+.bfb-legend-item { color: #E75480; font-weight: 600; }
+.bfb-legend-count { margin-left: auto; color: #999; font-size: 11px; }
 .baifenbi-table {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 5px;
 }
 .baifenbi-cell {
     background: var(--bg-white);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 8px 4px;
+    padding: 6px 4px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
+    transition: all 0.15s;
 }
-.baifenbi-percent { font-weight: 700; color: var(--primary-dark); font-size: 14px; }
-.baifenbi-fraction { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.baifenbi-cell:hover { border-color: #FFB6C1; transform: translateY(-1px); box-shadow: 0 2px 6px rgba(255,182,193,0.15); }
+.baifenbi-cell.bfb-must { border-color: #E75480; background: linear-gradient(135deg, #FFF0F5, #fff); }
+.baifenbi-cell.bfb-common { border-color: #FF9F43; background: linear-gradient(135deg, #FFF8F0, #fff); }
+.baifenbi-percent { font-weight: 700; color: var(--primary-dark); font-size: 12.5px; }
+.baifenbi-fraction { font-size: 10.5px; color: var(--text-secondary); margin-top: 2px; font-family: 'Courier New', monospace; }
 
 /* ========== 多解法速算 ========== */
 .mm-header {
@@ -1592,6 +1610,12 @@ input[type="range"]::-webkit-slider-thumb {
     background: var(--primary-light); padding: 2px 12px; border-radius: 10px; margin-bottom: 14px;
 }
 .interview-text { font-size: 22px; font-weight: 700; line-height: 1.7; color: var(--text-primary); letter-spacing: 0.5px; }
+.interview-source-link {
+    display: inline-block; margin-top: 14px; font-size: 12px; color: #E75480;
+    cursor: pointer; text-decoration: none; padding: 4px 12px;
+    border: 1.5px solid #FFD6E7; border-radius: 14px; transition: all 0.2s;
+}
+.interview-source-link:hover { background: #FFF0F5; border-color: #E75480; }
 .interview-tag {
     display: inline-block; margin-top: 16px; font-size: 12px; color: #fff;
     padding: 3px 14px; border-radius: 12px;

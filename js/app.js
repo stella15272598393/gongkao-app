@@ -10,10 +10,11 @@ let currentShizhengSource = 'all';
 let currentQiushiTag = 'all';
 let currentRenwuCat = 'all';
 let currentQuoteIndex = -1;
+let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-04-v10';
+const APP_VERSION = '2026-08-04-v11';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -828,11 +829,13 @@ function showRandomQuote(filter = 'all') {
     const idx = Math.floor(Math.random() * pool.length);
     currentQuoteIndex = QUOTES_DB.indexOf(pool[idx]);
     const quote = pool[idx];
+    currentQuote = quote; // 保存当前引用供搜索用
 
     document.getElementById('quoteCategory').textContent = quote.themeName;
     document.getElementById('quoteText').textContent = `"${quote.text}"`;
     document.getElementById('quoteTheme').textContent = quote.category;
-    document.getElementById('quoteSource').textContent = quote.source;
+    document.getElementById('quoteSource').innerHTML = '<span class="quote-source-name">' + quote.source + '</span>' +
+        ' <a class="quote-source-link" onclick="searchQuoteSource()" title="搜索原文出处">🔍 搜索原文</a>';
 
     // 收藏状态（统一从收藏夹读取，刷新后保持）
     const isFav = isFaved('quote', quote.id);
@@ -845,6 +848,13 @@ function newQuote() { showRandomQuote(document.getElementById('quoteThemeFilter'
 function filterQuotes() {
     const val = document.getElementById('quoteThemeFilter').value;
     showRandomQuote(val);
+}
+
+// 搜索金句原文出处（打开百度/搜索引擎）
+function searchQuoteSource() {
+    if (!currentQuote) return;
+    var query = (currentQuote.source || '') + ' ' + (currentQuote.text || '').slice(0, 30);
+    window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(query), '_blank');
 }
 
 function toggleFavQuote() {
@@ -1551,7 +1561,7 @@ function renderSpeedMultiList() {
 
     container.innerHTML = list.map(function(q, idx) {
         var methodsHtml = q.methods.map(function(m, mi) {
-            return '<div class="mm-method' + (mi === 0 ? ' mm-method-best' : '') + '" onclick="this.classList.toggle(\'expanded\')">' +
+            return '<div class="mm-method' + (mi === 0 ? ' mm-method-best' : '') + '" data-mid="' + q.id + '-' + mi + '" onclick="toggleSpeedMethod(this)">' +
                 '<div class="mm-method-header">' +
                     '<span class="mm-method-name">' + m.name + '</span>' +
                     '<span class="mm-speed">' + m.speedRating + '</span>' +
@@ -1583,6 +1593,20 @@ function filterSpeedMulti() {
     var sel = document.getElementById('mmCatFilter');
     currentMmCategory = sel ? sel.value : 'all';
     renderSpeedMultiList();
+}
+
+function toggleSpeedMethod(el) {
+    if (!el) return;
+    var isExpanded = el.classList.contains('expanded');
+    // 先收起同题其他展开的解法（手风琴效果）
+    var parent = el.closest('.mm-methods');
+    if (parent) {
+        parent.querySelectorAll('.mm-method.expanded').forEach(function(m) { m.classList.remove('expanded'); });
+    }
+    // 切换当前
+    if (!isExpanded) {
+        el.classList.add('expanded');
+    }
 }
 
 function shuffleSpeedMulti() {
@@ -1623,12 +1647,19 @@ function toggleFormulaCard(header) {
 function renderBaifenbiTable() {
     const container = document.getElementById('baifenbiTable');
     if (!container) return;
-    container.innerHTML = BAIFENBI_TABLE.map(b => `
-        <div class="baifenbi-cell">
-            <div class="baifenbi-percent">${b.percent}</div>
-            <div class="baifenbi-fraction">${b.fraction}</div>
-        </div>
-    `).join('');
+    // 按百分数数值排序
+    var sorted = BAIFENBI_TABLE.slice().sort(function(a, b) { return parseFloat(a.percent) - parseFloat(b.percent); });
+    container.innerHTML = '<div class="baifenbi-legend"><span class="bfb-legend-item">⭐=必背</span><span class="bfb-legend-item">🔥=常用</span><span class="bfb-legend-count">共 ' + sorted.length + ' 条</span></div>' +
+        sorted.map(function(b) {
+            var isMust = b.note && b.note.indexOf('必背') >= 0;
+            var isCommon = b.note && b.note.indexOf('常用') >= 0;
+            var extra = isMust ? ' ⭐' : (isCommon ? ' 🔥' : '');
+            var cls = isMust ? ' bfb-must' : (isCommon ? ' bfb-common' : '');
+            return '<div class="baifenbi-cell' + cls + '">' +
+                '<div class="baifenbi-percent">' + b.percent + extra + '</div>' +
+                '<div class="baifenbi-fraction">' + b.fraction + '</div>' +
+                '</div>';
+        }).join('');
 }
 
 // 练习模式
@@ -2660,6 +2691,7 @@ let currentLogicCat = 'all';
 let currentInterviewTag = 'all';
 let currentInterviewType = 'all';
 let interviewCursor = 0;
+let currentInterview = null; // 当前显示的面试短句（供搜索用）
 
 // 易错成语收藏（独立于全局收藏夹，单独归类）
 let favIdioms = loadFavIdioms();
@@ -2732,7 +2764,7 @@ function renderIdioms() {
     bindIdiomSwipe();
     if (prog) prog.textContent = '共 ' + list.length + ' 条 · 易错收藏 ' + favIdioms.length + ' 条';
 }
-function revealIdiom(id) { idiomRevealId = id; renderIdioms(); }
+function revealIdiom(id) { idiomRevealId = Number(id); renderIdioms(); }
 function idiomStep(d) { const list = getIdiomList(); if (!list.length) return; idiomCursor += d; idiomRevealId = null; if (idiomCursor < 0) idiomCursor = list.length - 1; if (idiomCursor >= list.length) idiomCursor = 0; renderIdioms(); }
 function newIdiom() { const list = getIdiomList(); if (list.length) { idiomCursor = Math.floor(Math.random() * list.length); idiomRevealId = null; renderIdioms(); } }
 function toggleIdiomTest() {
@@ -2909,11 +2941,13 @@ function renderInterview() {
     if (interviewCursor >= list.length) interviewCursor = 0;
     if (interviewCursor < 0) interviewCursor = list.length - 1;
     const it = list[interviewCursor];
+    currentInterview = it; // 保存当前面试短句供搜索用
     wrap.innerHTML =
         '<div class="interview-card" id="interviewCard">' +
             '<div class="interview-type">' + it.type + '</div>' +
             '<div class="interview-text">' + it.text + '</div>' +
             '<div class="interview-tag tag-' + it.tag + '">' + it.tag + '</div>' +
+            '<a class="interview-source-link" onclick="searchInterviewSource()" title="搜索相关面试技巧/真题">🔍 搜索相关</a>' +
         '</div>' +
         '<div class="idiom-nav">' +
             '<button class="btn-outline btn-sm" onclick="interviewStep(-1)">‹ 上一个</button>' +
@@ -2931,6 +2965,13 @@ function renderInterview() {
 }
 function interviewStep(d) { const list = getInterviewList(); if (!list.length) return; interviewCursor += d; if (interviewCursor < 0) interviewCursor = list.length - 1; if (interviewCursor >= list.length) interviewCursor = 0; renderInterview(); }
 function newInterview() { const list = getInterviewList(); if (list.length) { interviewCursor = Math.floor(Math.random() * list.length); renderInterview(); } }
+
+// 搜索面试短句相关内容（打开搜索引擎）
+function searchInterviewSource() {
+    if (!currentInterview) return;
+    var query = '结构化面试 ' + (currentInterview.type || '') + ' ' + (currentInterview.text || '').slice(0, 20);
+    window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(query), '_blank');
+}
 function bindInterviewSwipe() {
     const card = document.getElementById('interviewCard'); if (!card) return;
     let sx = null;
