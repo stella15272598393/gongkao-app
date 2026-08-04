@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v29b';
+const APP_VERSION = '2026-08-05-v30';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -531,72 +531,68 @@ function renderHome() {
     renderTodos();
 }
 
-/* ★ v29 热力图 —— 一次读取 + 可见调试 + 极简逻辑 */
+/* ★ v30 热力图 —— 最新日期在左侧（GitHub 风格），修复"粉色格子在屏幕外不可见"问题 */
 function renderStreakHeatmap() {
-    const el = document.getElementById('streakHeatmap');
+    var el = document.getElementById('streakHeatmap');
     if (!el) return;
 
-    // ====== 第一步：只读一次 localStorage ======
-    let raw = {};
-    try { raw = JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch(e) {}
-    let hist = (raw && raw.history) || [];
+    // ====== 读取数据 ======
+    var raw = {};
+    try { raw = JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch(e){}
+    var hist = (raw && raw.history) || [];
     if (!Array.isArray(hist)) hist = [];
 
-    // ====== 第二步：数据修复（旧格式迁移）======
-    // 旧格式 {count:N, last:'YYYY-MM-DD', history:[]} → 从 last 往前推
+    // 旧格式迁移
     if (hist.length === 0 && raw && typeof raw.count === 'number' && raw.count > 0 && raw.last) {
         var rb = [], rd = new Date(raw.last);
         for (var ri = 0; ri < Math.min(raw.count, 999); ri++) {
             rb.unshift(rd.getFullYear()+'-'+String(rd.getMonth()+1).padStart(2,'0')+'-'+String(rd.getDate()).padStart(2,'0'));
             rd.setDate(rd.getDate()-1);
         }
-        hist = rb;
-        raw.history = rb;
-        delete raw.count;
-        delete raw.last;
+        hist = rb; raw.history = rb; delete raw.count; delete raw.last;
         try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
     }
 
-    // ★ v29 兜底：如果今天显示"已打卡"但 history 里没有 → 补上
+    // 兜底补今天
     var todayStr = (new Date()).getFullYear()+'-'+String((new Date()).getMonth()+1).padStart(2,'0')+'-'+String((new Date()).getDate()).padStart(2,'0');
     if (hist.indexOf(todayStr) < 0 && raw && raw.last === todayStr) {
-        hist.push(todayStr);
-        raw.history = hist;
+        hist.push(todayStr); raw.history = hist;
         try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
     }
 
-    // ====== 第三步：构建查重集合 ======
     var checked = {};
     for (var hi = 0; hi < hist.length; hi++) checked[hist[hi]] = true;
 
-    // ====== 第四步：渲染 ======
+    // ====== 渲染（最新在左）======
     var C_ON  = '#E75480';
     var C_OFF = '#e8e8e8';
     var C_FUT = '#f5f5f5';
     var weeks = 26;
     var now = new Date(); now.setHours(0,0,0,0);
-    var start = new Date(now);
-    start.setDate(now.getDate() - (weeks*7 - 1));
-    start.setDate(start.getDate() - start.getDay());
-    var cur = new Date(start);
+
+    // ★ 关键改动：从今天往回推，最新的一周在最左边
     var pad2 = function(n){return String(n).padStart(2,'0');};
+
+    // 计算本周日（作为网格的右边界基准）
+    var endOfWeek = new Date(now);
+    endOfWeek.setDate(now.getDate() + (6 - now.getDay())); // 本周六
 
     var html = '<div class="heatmap-title">📅 打卡热力图（近半年）</div><div class="heatmap-grid">';
     var pinkCnt = 0;
-    var lastKeys = []; // ★ v29b 调试：记录最后14个格子的日期key
 
+    // 从最新的周开始，往前遍历（w=0 是最近一周，在最左边）
     for (var w = 0; w < weeks; w++) {
         html += '<div class="heatmap-week">';
-        for (var d = 0; d < 7; d++) {
-            var k = cur.getFullYear()+'-'+pad2(cur.getMonth()+1)+'-'+pad2(cur.getDate());
-            var fut = cur > now;
+        // 每周从周日到周六
+        for (var d = 6; d >= 0; d--) {
+            var cellDate = new Date(endOfWeek);
+            cellDate.setDate(endOfWeek.getDate() - (w * 7 + (6 - d)));
+            var k = cellDate.getFullYear()+'-'+pad2(cellDate.getMonth()+1)+'-'+pad2(cellDate.getDate());
+            var fut = cellDate > now;
             var done = !!checked[k];
             if (done && !fut) pinkCnt++;
             var bg = fut ? C_FUT : (done ? C_ON : C_OFF);
             html += '<div class="heat-cell" style="background:'+bg+';" title="'+k+(done?' ✅':(fut?' · 未到':' · 未打卡'))+'"></div>';
-            if (lastKeys.length < 14) lastKeys.push(k);
-            else { lastKeys.shift(); lastKeys.push(k); }
-            cur.setDate(cur.getDate()+1);
         }
         html += '</div>';
     }
@@ -608,15 +604,6 @@ function renderStreakHeatmap() {
         '<div class="heat-cell" style="background:'+C_ON+';"></div>'+
         '<span>已</span>'+
         '<span class="heat-count">累计 '+pinkCnt+' 天</span></div>';
-
-    // ★ v29b 调试信息（直接显示在页面上，确认数据正确）
-    html += '<div style="font-size:11px;color:#999;margin-top:4px;padding:4px 8px;background:rgba(0,0,0,.04);border-radius:6px;">'+
-        '[调试] history='+JSON.stringify(hist).slice(0,120)+(hist.length>120?'...':'')+
-        ' | 长度='+hist.length+' | 今天('+todayStr+')已打='+(!!checked[todayStr]?'是':'否')+
-        ' | pinkCount='+pinkCnt+
-        ' | 网格末尾14Key='+JSON.stringify(lastKeys)+
-        ' | checked[末尾Key]='+ (!!checked[lastKeys[lastKeys.length-1]]?'T':'F') +
-        '</div>';
 
     el.innerHTML = html;
 }
