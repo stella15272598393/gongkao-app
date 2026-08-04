@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-04-v17';
+const APP_VERSION = '2026-08-04-v18';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -1170,7 +1170,6 @@ function renderMorningList() {
             '<div class="morning-card-actions">' +
                 '<button class="action-btn" onclick="toggleMorningLike(' + idx + ', this)">👍 0</button>' +
                 '<button class="action-btn" onclick="toggleFavMorning(\'' + item.id + '\', this)">🤍</button>' +
-                '<button class="action-btn morning-speak-btn" data-on="0" onclick="speakMorning(\'' + item.id + '\', this)">🔊 朗读</button>' +
             '</div>' +
         '</div>';
     }).join('');
@@ -1211,83 +1210,6 @@ function toggleFavMorning(id, btnEl) {
     }
 }
 
-/* 晨读语音朗读（Web Speech API） */
-let morningSpeechUtter = null;
-// —— 嗓音缓存：Web Speech 的 getVoices() 是异步的，首屏直接读常为空，会回退到最生硬的默认嗓音 ——
-let _cachedVoices = [];
-function _refreshVoices() {
-    try { _cachedVoices = (window.speechSynthesis && window.speechSynthesis.getVoices()) || []; }
-    catch (e) { _cachedVoices = []; }
-}
-if ('speechSynthesis' in window) {
-    _refreshVoices();
-    window.speechSynthesis.onvoiceschanged = _refreshVoices;
-}
-// 挑最自然的大陆普通话嗓音：优先 zh-CN（含简体/普通话），排除台港腔；再偏好神经/在线嗓音
-function pickChineseVoice() {
-    const list = (_cachedVoices.length ? _cachedVoices : (window.speechSynthesis.getVoices() || []));
-    if (!list.length) return null;
-    let zh = list.filter(v => /^zh[-_]?CN/i.test(v.lang) || /普通话|国语|大陆|简体/i.test(v.name));
-    if (!zh.length) zh = list.filter(v => /^zh/i.test(v.lang) || /chinese|中文/i.test(v.name));
-    if (!zh.length) return null;
-    const prefer = [/xiaoxiao/i, /yunyang/i, /yunxi/i, /yating/i, /xiaoyi/i, /neural/i, /online/i, /natural/i, /yaoyao/i, /kangkang/i];
-    for (const re of prefer) {
-        const hit = zh.find(v => re.test(v.name));
-        if (hit) return hit;
-    }
-    return zh[0];
-}
-
-function speakMorning(id, btn) {
-    if (!('speechSynthesis' in window)) { alert('当前浏览器不支持语音朗读，请换 Chrome / Edge 试试～'); return; }
-    const item = MORNING_DB.find(m => m.id === id);
-    if (!item) return;
-    // 正在读这一篇 → 停止
-    if (morningSpeechUtter && window.speechSynthesis.speaking && btn && btn.dataset.on === '1') {
-        window.speechSynthesis.cancel();
-        morningSpeechUtter = null;
-        document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
-        return;
-    }
-    // 先复位其它朗读按钮
-    document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
-    window.speechSynthesis.cancel();
-    const text = (item.title || '') + '。' + (item.content || '').replace(/\n/g, '。');
-    const btnEl = btn;
-    function doSpeak() {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'zh-CN';
-        u.rate = 0.95;   // 略慢更自然、少卡顿
-        u.pitch = 1.0;
-        const v = pickChineseVoice();
-        if (v) u.voice = v;
-        u.onend = function () {
-            document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
-        };
-        u.onerror = function (e) {
-            console.warn('晨读朗读失败：', e.error || e);
-            alert('朗读失败（' + (e.error || '未知错误') + '）。\n若你用的是 iPhone 且已把 APP 加到主屏幕，iOS 在“独立 APP”模式下通常不支持网页语音，请在 Safari 浏览器里打开本页再点朗读。');
-            document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
-        };
-        morningSpeechUtter = u;
-        window.speechSynthesis.speak(u);
-        if (btnEl) { btnEl.textContent = '⏹ 停止'; btnEl.dataset.on = '1'; }
-    }
-    // 移动端/首屏嗓音列表可能尚未加载 → 等 voiceschanged 再读，避免静默失败
-    if (!_cachedVoices.length && window.speechSynthesis.getVoices().length === 0) {
-        let fired = false;
-        const onReady = function () {
-            if (fired) return; fired = true;
-            window.speechSynthesis.onvoiceschanged = _refreshVoices;
-            _refreshVoices();
-            doSpeak();
-        };
-        window.speechSynthesis.onvoiceschanged = onReady;
-        setTimeout(onReady, 400); // 兜底：部分浏览器不触发 voiceschanged
-    } else {
-        doSpeak();
-    }
-}
 
 function refreshMorning() {
     // 随机打乱顺序展示（换一批效果）
