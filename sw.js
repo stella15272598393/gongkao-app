@@ -3,7 +3,7 @@
    支持离线缓存和PWA安装
    ======================================== */
 
-const CACHE_NAME = 'gongzuotai-v5';
+const CACHE_NAME = 'gongzuotai-v6';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -14,25 +14,19 @@ const ASSETS_TO_CACHE = [
     './manifest.json'
 ];
 
-// 内容数据：单独缓存，失败不影响安装（离线时仍有内置数据兜底）
-const CONTENT_TO_CACHE = [
-    './content/shizheng.json',
-    './content/qiushi.json',
-    './content/renwu.json',
-    './content/meta.json'
-];
+// 内容数据文件：不预缓存！
+// 原因：content/*.json 由 loader.js 用 Network-First + IndexedDB 自行管理，
+//       SW 若缓存旧版本会在网络抖动时返回过时数据，导致"刷新就变离线"。
+// const CONTENT_TO_CACHE 已移除，install 不再缓存任何 content 文件。
 
-// 安装事件 - 缓存核心资源
+// 安装事件 - 缓存核心资源（不含 content/*.json，由 loader.js 自行管理）
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(async cache => {
                 console.log('PWA: 缓存核心资源');
                 await cache.addAll(ASSETS_TO_CACHE);
-                // 内容文件容错缓存
-                await Promise.all(CONTENT_TO_CACHE.map(u =>
-                    cache.add(u).catch(() => console.warn('PWA: 内容文件暂不可用', u))
-                ));
+                // content 文件不再在此预缓存，避免旧数据污染
             })
             .then(() => self.skipWaiting())
     );
@@ -52,7 +46,12 @@ self.addEventListener('activate', event => {
 
 // 判断是否为核心代码资源（需保证拿到最新版本）
 function isCoreAsset(url) {
-    return /\.(js|css|html|json)$/i.test(new URL(url).pathname);
+    return /\.(js|css|html)$/i.test(new URL(url).pathname);
+}
+
+// 判断是否为内容数据文件（由 loader.js 自行管理，SW 不插手）
+function isContentData(url) {
+    return /\/content\/.+\.json$/i.test(new URL(url).pathname);
 }
 
 // 拦截网络请求
@@ -61,6 +60,19 @@ self.addEventListener('fetch', event => {
     if (event.request.method !== 'GET') return;
     // 跳过跨域请求
     if (!event.request.url.startsWith(self.location.origin)) return;
+
+    // ★ 内容数据文件：Network Only —— 不缓存、不 fallback
+    //    让 loader.js 自己决定用网络数据还是 IndexedDB 缓存，
+    //    避免 SW 返回旧缓存导致"刷新就变离线"
+    if (isContentData(event.request.url)) {
+        event.respondWith(
+            fetch(event.request).catch(() => new Response(JSON.stringify({items:[]}), {
+                status: 503,
+                headers: {'Content-Type': 'application/json'}
+            }))
+        );
+        return;
+    }
 
     const isCore = event.request.mode === 'navigate' || isCoreAsset(event.request.url);
 
