@@ -107,6 +107,10 @@
                     <div class="nav-icon">📌</div>
                     <span>我的收藏</span>
                 </li>
+                <li class="nav-item" data-module="settings" onclick="switchModule('settings')">
+                    <div class="nav-icon">⚙️</div>
+                    <span>数据备份</span>
+                </li>
             </ul>
             <div class="sidebar-footer" id="sidebarFooter">
                 <span class="author-credit">Made by <b>莲莲</b> ✨</span>
@@ -123,6 +127,8 @@
                 </div>
                 <!-- 打卡与数据概览 -->
                 <div class="home-stats" id="homeStats"></div>
+                <!-- 打卡热力图 -->
+                <div class="home-heatmap" id="streakHeatmap"></div>
                 <!-- 今日待办 -->
                 <div class="home-todo">
                     <div class="home-todo-head">
@@ -210,8 +216,9 @@
                             <button class="tag-btn" data-etag="经济发展" onclick="filterEssays('经济发展', this)">经济发展</button>
                             <button class="tag-btn" data-etag="基层治理" onclick="filterEssays('基层治理', this)">基层治理</button>
                             <button class="tag-btn" data-etag="文旅" onclick="filterEssays('文旅', this)">文旅</button>
-                            <button class="tag-btn" data-etag="党建" onclick="filterEssays('党建', this)">党建廉政</button>
+                            <button class="tag-btn" data-etag="党建" onclick="filterEssays('党建', this)">党建</button>
                             <button class="tag-btn" data-etag="三农" onclick="filterEssays('三农', this)">乡村振兴</button>
+                            <button class="tag-btn" data-etag="区域发展" onclick="filterEssays('区域发展', this)">区域发展</button>
                             <button class="tag-btn" data-etag="科技创新" onclick="filterEssays('科技创新', this)">科技创新</button>
                             <button class="tag-btn" data-etag="生态文明" onclick="filterEssays('生态文明', this)">生态文明</button>
                             <button class="tag-btn" data-etag="民生保障" onclick="filterEssays('民生保障', this)">民生保障</button>
@@ -423,6 +430,7 @@
                     <button class="btn-pink btn-refresh" onclick="newIdiom()">🎲 随机一条</button>
                     <button class="btn-outline btn-sm" id="btnIdiomTest" onclick="toggleIdiomTest()">🂠 自测模式</button>
                     <button class="btn-outline btn-sm" onclick="toggleFavIdiomView()">⭐ 易错收藏</button>
+                    <button class="btn-outline btn-sm" id="btnIdiomErr" onclick="toggleIdiomErrView()">📕 错词本</button>
                 </div>
                 <div class="filter-tags" id="idiomTierFilters">
                     <button class="tag-btn active" data-tier="all">全部</button>
@@ -526,6 +534,32 @@
                 </div>
                 <div class="fav-list" id="favBoxList"></div>
             </section>
+
+            <!-- 数据备份 / 导入 -->
+            <section class="module-panel" id="panel-settings">
+                <div class="module-header">
+                    <h2>⚙️ 数据备份</h2>
+                    <p class="module-desc">所有学习记录都存在本机，换手机或清缓存前记得备份～</p>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-row">
+                        <div class="settings-info">
+                            <div class="settings-title">📤 导出全部学习数据</div>
+                            <div class="settings-sub">收藏、成语错词、打卡、待办、速算错题等，导出为一个 JSON 文件</div>
+                        </div>
+                        <button class="btn-pink btn-sm" onclick="exportAllData()">导出 JSON</button>
+                    </div>
+                    <div class="settings-row">
+                        <div class="settings-info">
+                            <div class="settings-title">📥 导入学习数据</div>
+                            <div class="settings-sub">选择之前导出的 JSON 恢复（覆盖同名记录）</div>
+                        </div>
+                        <button class="btn-outline btn-sm" onclick="document.getElementById('importDataFile').click()">选择文件</button>
+                        <input type="file" id="importDataFile" accept="application/json,.json" style="display:none" onchange="importAllData(this)" />
+                    </div>
+                    <div class="settings-stats" id="dataStats"></div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -587,9 +621,9 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=14"></script>
-    <script src="./js/data-modules.js?v=14"></script>
-    <script src="./js/app.js?v=14"></script>
-    <script src="./js/loader.js?v=14"></script>
+    <script src="./js/data.js?v=15"></script>
+    <script src="./js/data-modules.js?v=15"></script>
+    <script src="./js/app.js?v=15"></script>
+    <script src="./js/loader.js?v=15"></script>
 </body>
 </html>

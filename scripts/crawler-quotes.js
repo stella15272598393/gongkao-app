@@ -121,6 +121,8 @@ function main() {
                     kind: b.kind,
                     text,
                     source: it.source || '官方媒体',
+                    // 透传原文链接：文章本身带有 url 字段，金句即可「查看原文」直接跳转
+                    url: it.url || '',
                     category: THEMES[theme]
                 });
             }

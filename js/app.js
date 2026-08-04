@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-04-v14';
+const APP_VERSION = '2026-08-04-v15';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -249,6 +249,8 @@ function switchModule(moduleName) {
 
     // 进入收藏夹时刷新列表
     if (moduleName === 'favbox') renderFavBox();
+    // 进入数据备份页时刷新统计
+    if (moduleName === 'settings') renderDataStats();
     // 进入工作台时刷新打卡与数据
     if (moduleName === 'home') { updateStreak(); renderHome(); }
 }
@@ -375,13 +377,15 @@ function getTodayStr() { const d = new Date(); return d.getFullYear() + '-' + St
 function getYesterdayStr() { const d = new Date(Date.now() - 86400000); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 
 function updateStreak() {
-    let data = { count: 0, last: '' };
+    let data = { count: 0, last: '', history: [] };
     try { const s = localStorage.getItem('gk_streak'); if (s) data = JSON.parse(s); } catch (e) {}
+    if (!Array.isArray(data.history)) data.history = [];
     const today = getTodayStr();
     if (data.last === today) return; // 今天已打卡
     if (data.last === getYesterdayStr()) data.count += 1;
     else data.count = 1;
     data.last = today;
+    if (data.history.indexOf(today) < 0) data.history.push(today);
     try { localStorage.setItem('gk_streak', JSON.stringify(data)); } catch (e) {}
 }
 
@@ -414,7 +418,40 @@ function renderHome() {
     html += '</div>';
     statsEl.innerHTML = html;
 
+    renderStreakHeatmap();
     renderTodos();
+}
+
+/* 打卡热力图（GitHub 风格，近半年） */
+function renderStreakHeatmap() {
+    const el = document.getElementById('streakHeatmap');
+    if (!el) return;
+    let hist = [];
+    try { const s = localStorage.getItem('gk_streak'); if (s) hist = (JSON.parse(s).history) || []; } catch (e) {}
+    const set = new Set(hist);
+    const weeks = 26;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const start = new Date(today);
+    start.setDate(today.getDate() - (weeks * 7 - 1));
+    start.setDate(start.getDate() - start.getDay()); // 对齐到周日
+    const cur = new Date(start);
+    const pad = n => String(n).padStart(2, '0');
+    let html = '<div class="heatmap-title">📅 打卡热力图（近半年）</div><div class="heatmap-grid">';
+    for (let w = 0; w < weeks; w++) {
+        html += '<div class="heatmap-week">';
+        for (let d = 0; d < 7; d++) {
+            const key = cur.getFullYear() + '-' + pad(cur.getMonth() + 1) + '-' + pad(cur.getDate());
+            const future = cur > today;
+            const done = set.has(key);
+            const cls = 'heat-cell' + (future ? ' heat-future' : (done ? ' heat-on' : ' heat-off'));
+            html += '<div class="' + cls + '" title="' + key + (done ? ' · 已打卡 ✅' : (future ? ' · 未到' : ' · 未打卡')) + '"></div>';
+            cur.setDate(cur.getDate() + 1);
+        }
+        html += '</div>';
+    }
+    html += '</div>';
+    html += '<div class="heatmap-legend"><span>未打卡</span><span class="heat-cell heat-off"></span><span class="heat-cell heat-on"></span><span>已打卡</span><span class="heat-count">累计 ' + set.size + ' 天</span></div>';
+    el.innerHTML = html;
 }
 
 function statModule(label) {
@@ -824,6 +861,66 @@ function clearAllCache() {
     setTimeout(finish, 1200);
 }
 
+/* ---------------- 全量学习数据备份 / 导入 ---------------- */
+function exportAllData() {
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k) continue;
+        const raw = localStorage.getItem(k);
+        try { data[k] = JSON.parse(raw); } catch (e) { data[k] = raw; }
+    }
+    const payload = { app: '莲莲工作台', version: APP_VERSION, exportedAt: new Date().toISOString(), data };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '莲莲工作台_学习数据_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    alert('已导出 ' + Object.keys(data).length + ' 项学习数据 ✅\n（含收藏/成语错词/打卡/待办/速算错题等）');
+}
+function importAllData(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            const parsed = JSON.parse(e.target.result);
+            const data = parsed.data || parsed; // 兼容直接导出的 localStorage 快照
+            let n = 0;
+            for (const k in data) {
+                const v = data[k];
+                localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+                n++;
+            }
+            alert('已导入 ' + n + ' 项数据，即将刷新页面恢复～');
+            location.reload();
+        } catch (err) {
+            alert('导入失败：文件格式不正确或损坏');
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
+}
+function renderDataStats() {
+    const el = document.getElementById('dataStats');
+    if (!el) return;
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k) keys.push(k); }
+    // 各模块数据量概览
+    const labels = {
+        favBox: '收藏', favQuotes: '金句收藏', favIdioms: '成语收藏', idiomErrors: '成语错词',
+        gk_streak: '打卡', gk_todos: '待办', susuanErrors: '速算错题', quoteCheckins: '金句打卡'
+    };
+    let html = '📊 当前本机数据：共 ' + keys.length + ' 项';
+    const parts = keys.filter(k => labels[k]).map(k => labels[k] + ' ' + (function () {
+        try { return JSON.parse(localStorage.getItem(k)).length; } catch (e) { return 1; }
+    })());
+    if (parts.length) html += '（' + parts.join(' · ') + '）';
+    el.textContent = html;
+}
+
 function updateShizhengUpdateInfo() {
     const el = document.getElementById('shizhengUpdateInfo');
     if (!el) return;
@@ -841,6 +938,7 @@ function updateShizhengUpdateInfo() {
 function initShenlun() {
     showRandomQuote();
     renderEssayList();
+    updateEssayFilterCounts();
     loadCheckinStats();
 }
 
@@ -990,6 +1088,20 @@ function filterEssays(tag, btn) {
     renderEssayList();
 }
 
+/* 话题筛选按钮显示各话题范文数量 */
+function updateEssayFilterCounts() {
+    const box = document.getElementById('essayTagFilters');
+    if (!box || typeof ESSAYS_DB === 'undefined') return;
+    const counts = {};
+    ESSAYS_DB.forEach(function(e) { (e.tags || []).forEach(function(t) { counts[t] = (counts[t] || 0) + 1; }); });
+    box.querySelectorAll('.tag-btn').forEach(function(btn) {
+        if (!btn.dataset.label) btn.dataset.label = btn.textContent.trim();
+        const tag = btn.dataset.etag;
+        const n = tag === 'all' ? ESSAYS_DB.length : (counts[tag] || 0);
+        btn.innerHTML = btn.dataset.label + ' <i>' + n + '</i>';
+    });
+}
+
 /* ========== 今日晨读模块 ========== */
 function toggleSidebar() {
     const sb = document.getElementById('sidebar');
@@ -1058,6 +1170,7 @@ function renderMorningList() {
             '<div class="morning-card-actions">' +
                 '<button class="action-btn" onclick="toggleMorningLike(' + idx + ', this)">👍 0</button>' +
                 '<button class="action-btn" onclick="toggleFavMorning(\'' + item.id + '\', this)">🤍</button>' +
+                '<button class="action-btn morning-speak-btn" data-on="0" onclick="speakMorning(\'' + item.id + '\', this)">🔊 朗读</button>' +
             '</div>' +
         '</div>';
     }).join('');
@@ -1096,6 +1209,38 @@ function toggleFavMorning(id, btnEl) {
         addFav('morning', id, 'morning', item);
         if (btnEl) { btnEl.textContent = '❤️'; btnEl.classList.add('liked'); }
     }
+}
+
+/* 晨读语音朗读（Web Speech API） */
+let morningSpeechUtter = null;
+function speakMorning(id, btn) {
+    if (!('speechSynthesis' in window)) { alert('当前浏览器不支持语音朗读，请换 Chrome / Edge 试试～'); return; }
+    const item = MORNING_DB.find(m => m.id === id);
+    if (!item) return;
+    // 正在读这一篇 → 停止
+    if (morningSpeechUtter && window.speechSynthesis.speaking && btn && btn.dataset.on === '1') {
+        window.speechSynthesis.cancel();
+        morningSpeechUtter = null;
+        document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
+        return;
+    }
+    // 先复位其它朗读按钮
+    document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
+    window.speechSynthesis.cancel();
+    const text = (item.title || '') + '。' + (item.content || '').replace(/\n/g, '。');
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN'; u.rate = 1; u.pitch = 1;
+    try {
+        const voices = window.speechSynthesis.getVoices();
+        const zh = voices.find(v => /zh|Chinese|中文|普通话/i.test(v.lang + ' ' + v.name));
+        if (zh) u.voice = zh;
+    } catch (e) {}
+    u.onend = function () {
+        document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
+    };
+    morningSpeechUtter = u;
+    window.speechSynthesis.speak(u);
+    if (btn) { btn.textContent = '⏹ 停止'; btn.dataset.on = '1'; }
 }
 
 function refreshMorning() {
@@ -2764,6 +2909,7 @@ function showToast(text) {
 let currentIdiomTier = 'all';
 let idiomTestMode = false;
 let idiomFavOnly = false;
+let idiomErrOnly = false; // 错词本筛选
 let idiomCursor = 0;
 let idiomRevealId = null;
 let currentPairTag = 'all';
@@ -2785,6 +2931,17 @@ function toggleFavIdiom(id) {
     saveFavIdioms();
 }
 
+// 错词本：自测答错/手动标记的易错成语
+let idiomErrors = loadIdiomErrors();
+function loadIdiomErrors() { try { return JSON.parse(localStorage.getItem('idiomErrors') || '[]'); } catch (e) { return []; } }
+function saveIdiomErrors() { try { localStorage.setItem('idiomErrors', JSON.stringify(idiomErrors)); } catch (e) {} }
+function isIdiomError(id) { return idiomErrors.indexOf(String(id)) >= 0; }
+function toggleIdiomError(id) {
+    const k = String(id);
+    if (isIdiomError(id)) idiomErrors = idiomErrors.filter(x => x !== k); else idiomErrors.push(k);
+    saveIdiomErrors();
+}
+
 function shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -2800,7 +2957,8 @@ function getTodayStr() {
 /* ---------------- 高频成语 ---------------- */
 function getIdiomList() {
     let list = (typeof IDIOMS_DB !== 'undefined') ? IDIOMS_DB.slice() : [];
-    if (idiomFavOnly) list = list.filter(x => isFavIdiom(x.id));
+    if (idiomErrOnly) list = list.filter(x => isIdiomError(x.id));
+    else if (idiomFavOnly) list = list.filter(x => isFavIdiom(x.id));
     else if (currentIdiomTier !== 'all') list = list.filter(x => x.tier === currentIdiomTier);
     return list;
 }
@@ -2812,13 +2970,14 @@ function renderIdioms() {
     if (list.length === 0) {
         wrap.innerHTML = '<div style="text-align:center;padding:34px 16px;color:#999;">暂无成语<br><span style="font-size:12px;">试试切换分级，或取消「易错收藏」筛选</span></div>';
         const lst = document.getElementById('idiomList'); if (lst) lst.innerHTML = '';
-        if (prog) prog.textContent = idiomFavOnly ? '易错收藏夹为空，去收藏易错成语吧～' : '';
+        if (prog) prog.textContent = idiomErrOnly ? '错词本还是空的，去自测时点击「🔒 显示释义」自动收录，或点卡片 ➕ 手动加入～' : (idiomFavOnly ? '易错收藏夹为空，去收藏易错成语吧～' : '');
         return;
     }
     if (idiomCursor >= list.length) idiomCursor = 0;
     if (idiomCursor < 0) idiomCursor = list.length - 1;
     const it = list[idiomCursor];
     const faved = isFavIdiom(it.id);
+    const erred = isIdiomError(it.id);
     const tierColor = it.tier === '必考' ? '#E75D80' : (it.tier === '高频' ? '#FF9F43' : '#8E8E93');
     const showMeaning = !idiomTestMode || (it.id === idiomRevealId);
     wrap.innerHTML =
@@ -2826,6 +2985,7 @@ function renderIdioms() {
             '<div class="idiom-card-top">' +
                 '<span class="idiom-tier" style="background:' + tierColor + '">' + it.tier + '</span>' +
                 '<button class="idiom-fav-btn ' + (faved ? 'faved' : '') + '" onclick="toggleFavIdiom(\'' + it.id + '\');renderIdioms()">' + (faved ? '⭐' : '☆') + '</button>' +
+                '<button class="idiom-err-btn ' + (erred ? 'erred' : '') + '" onclick="toggleIdiomError(\'' + it.id + '\');renderIdioms()" title="加入/移出错词本">' + (erred ? '📕' : '➕') + '</button>' +
             '</div>' +
             '<div class="idiom-word">' + it.word + '</div>' +
             '<div class="idiom-pinyin">' + it.pinyin + '</div>' +
@@ -2843,9 +3003,14 @@ function renderIdioms() {
         '</div>';
     renderIdiomList(list);
     bindIdiomSwipe();
-    if (prog) prog.textContent = '共 ' + list.length + ' 条 · 易错收藏 ' + favIdioms.length + ' 条';
+    if (prog) prog.textContent = '共 ' + list.length + ' 条 · ⭐收藏 ' + favIdioms.length + ' · 📕错词 ' + idiomErrors.length;
 }
-function revealIdiom(id) { idiomRevealId = Number(id); renderIdioms(); }
+function revealIdiom(id) {
+    // 自测模式下点击「显示释义」= 没记住，自动收录进错词本
+    if (idiomTestMode) toggleIdiomError(Number(id));
+    idiomRevealId = Number(id);
+    renderIdioms();
+}
 function idiomStep(d) { const list = getIdiomList(); if (!list.length) return; idiomCursor += d; idiomRevealId = null; if (idiomCursor < 0) idiomCursor = list.length - 1; if (idiomCursor >= list.length) idiomCursor = 0; renderIdioms(); }
 function newIdiom() { const list = getIdiomList(); if (list.length) { idiomCursor = Math.floor(Math.random() * list.length); idiomRevealId = null; renderIdioms(); } }
 function toggleIdiomTest() {
@@ -2857,6 +3022,17 @@ function toggleIdiomTest() {
 function toggleFavIdiomView() {
     idiomFavOnly = !idiomFavOnly;
     if (idiomFavOnly) {
+        currentIdiomTier = 'all';
+        idiomErrOnly = false;
+        const f = document.getElementById('idiomTierFilters');
+        if (f) f.querySelectorAll('.tag-btn').forEach(x => x.classList.toggle('active', (x.dataset.tier || 'all') === 'all'));
+    }
+    idiomCursor = 0; idiomRevealId = null; renderIdioms();
+}
+function toggleIdiomErrView() {
+    idiomErrOnly = !idiomErrOnly;
+    if (idiomErrOnly) {
+        idiomFavOnly = false;
         currentIdiomTier = 'all';
         const f = document.getElementById('idiomTierFilters');
         if (f) f.querySelectorAll('.tag-btn').forEach(x => x.classList.toggle('active', (x.dataset.tier || 'all') === 'all'));

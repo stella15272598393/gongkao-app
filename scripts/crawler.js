@@ -61,7 +61,7 @@ const SOURCES = [
         entry: 'http://www.people.com.cn/',
         referer: 'http://www.people.com.cn/',
         linkRe: /href="(https?:\/\/[^"]*people\.com\.cn\/n1\/20\d\d\/[^"]+\.html)"/g,
-        max: 30
+        max: 45
     },
     {
         id: 'people_theory',
@@ -70,7 +70,7 @@ const SOURCES = [
         entry: 'http://theory.people.com.cn/',
         referer: 'http://www.people.com.cn/',
         linkRe: /href="(https?:\/\/[^"]*people\.com\.cn\/n1\/20\d\d\/[^"]+\.html)"/g,
-        max: 20
+        max: 30
     },
     {
         id: 'qiushi',
@@ -80,7 +80,7 @@ const SOURCES = [
         referer: 'https://www.qstheory.cn/',
         linkRe: /href="(?:https?:\/\/www\.qstheory\.cn)?\/?(20\d{6}\/[0-9a-f]{32}\/c\.html)"/g,
         base: 'https://www.qstheory.cn/',
-        max: 30
+        max: 45
     },
     {
         id: 'cnhubei',
@@ -89,7 +89,7 @@ const SOURCES = [
         entry: 'http://news.cnhubei.com/',
         referer: 'http://news.cnhubei.com/',
         linkRe: /href="(https?:\/\/[^"]*cnhubei\.com\/content\/20\d\d-\d\d\/\d\d\/content_\d+\.html?)"/g,
-        max: 40
+        max: 60
     }
 ];
 
@@ -470,8 +470,12 @@ async function main() {
 
     let all = [];
     for (const src of SOURCES) {
-        const items = await crawlSource(src);
-        all = all.concat(items);
+        try {
+            const items = await crawlSource(src);
+            all = all.concat(items);
+        } catch (e) {
+            console.log('  [' + (src.name || src.id) + '] 抓取失败（已跳过）: ' + e.message);
+        }
     }
 
     // 粉笔时政热点补充源
