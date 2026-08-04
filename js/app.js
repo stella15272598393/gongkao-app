@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-04-v16';
+const APP_VERSION = '2026-08-04-v17';
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
 const APP_NAME = '🪷 莲莲工作台';
 let currentRenwuDailyIndex = -1;
@@ -1253,20 +1253,40 @@ function speakMorning(id, btn) {
     document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
     window.speechSynthesis.cancel();
     const text = (item.title || '') + '。' + (item.content || '').replace(/\n/g, '。');
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'zh-CN';
-    u.rate = 0.95;   // 略慢更自然、少卡顿
-    u.pitch = 1.0;
-    try {
+    const btnEl = btn;
+    function doSpeak() {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'zh-CN';
+        u.rate = 0.95;   // 略慢更自然、少卡顿
+        u.pitch = 1.0;
         const v = pickChineseVoice();
         if (v) u.voice = v;
-    } catch (e) {}
-    u.onend = function () {
-        document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
-    };
-    morningSpeechUtter = u;
-    window.speechSynthesis.speak(u);
-    if (btn) { btn.textContent = '⏹ 停止'; btn.dataset.on = '1'; }
+        u.onend = function () {
+            document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
+        };
+        u.onerror = function (e) {
+            console.warn('晨读朗读失败：', e.error || e);
+            alert('朗读失败（' + (e.error || '未知错误') + '）。\n若你用的是 iPhone 且已把 APP 加到主屏幕，iOS 在“独立 APP”模式下通常不支持网页语音，请在 Safari 浏览器里打开本页再点朗读。');
+            document.querySelectorAll('.morning-speak-btn').forEach(b => { b.textContent = '🔊 朗读'; b.dataset.on = '0'; });
+        };
+        morningSpeechUtter = u;
+        window.speechSynthesis.speak(u);
+        if (btnEl) { btnEl.textContent = '⏹ 停止'; btnEl.dataset.on = '1'; }
+    }
+    // 移动端/首屏嗓音列表可能尚未加载 → 等 voiceschanged 再读，避免静默失败
+    if (!_cachedVoices.length && window.speechSynthesis.getVoices().length === 0) {
+        let fired = false;
+        const onReady = function () {
+            if (fired) return; fired = true;
+            window.speechSynthesis.onvoiceschanged = _refreshVoices;
+            _refreshVoices();
+            doSpeak();
+        };
+        window.speechSynthesis.onvoiceschanged = onReady;
+        setTimeout(onReady, 400); // 兜底：部分浏览器不触发 voiceschanged
+    } else {
+        doSpeak();
+    }
 }
 
 function refreshMorning() {
