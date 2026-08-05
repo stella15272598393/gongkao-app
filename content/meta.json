@@ -1,13 +1,14 @@
 {
- "updatedAt": "2026-08-04T16:11:17.266Z",
- "updatedAtLocal": "2026/08/04 16:11:17",
- "todayNew": 641,
+ "updatedAt": "2026-08-05T16:10:35.086Z",
+ "updatedAtLocal": "2026/08/06 00:10:35",
+ "todayNew": 384,
  "totals": {
-  "shizheng": 85,
-  "qiushi": 22,
+  "shizheng": 103,
+  "qiushi": 23,
   "renwu": 29,
   "essays": 80,
-  "quotes": 400,
-  "morning": 25
+  "quotes": 55,
+  "morning": 34,
+  "susuan": 60
  }
 }
