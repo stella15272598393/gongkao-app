@@ -1,7 +1,7 @@
 {
- "updatedAt": "2026-08-05T16:10:35.086Z",
- "updatedAtLocal": "2026/08/06 00:10:35",
- "todayNew": 384,
+ "updatedAt": "2026-08-05T20:49:21.990Z",
+ "updatedAtLocal": "2026/08/06 04:49:21",
+ "todayNew": 404,
  "totals": {
   "shizheng": 103,
   "qiushi": 23,
@@ -9,6 +9,6 @@
   "essays": 80,
   "quotes": 55,
   "morning": 34,
-  "susuan": 60
+  "susuan": 80
  }
 }
