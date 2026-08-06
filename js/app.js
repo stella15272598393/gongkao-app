@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v51';
+const APP_VERSION = '2026-08-06-v52';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -282,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMorning();
     bindFavFilters();
     registerSW();
+    checkVersion();
     checkDailyReset();
     // 新增模块初始化
     initIdioms();
@@ -369,6 +370,41 @@ function registerSW() {
     }).catch(err => {
         if (window.__DEBUG__) console.log('SW registration failed:', err);
     });
+}
+
+// ========== 版本自检（v52：防止手机端静默卡在旧版本）==========
+// 打开任意旧版本时，向服务端查询最新版本号（带时间戳绕过 SW 缓存），
+// 若与服务端不一致则弹出"发现新版本"横幅，点"立即刷新"即可拉取最新。
+function checkVersion() {
+    fetch('./version.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(r => (r && r.ok ? r.json() : null))
+        .then(data => {
+            if (data && data.version && String(data.version) !== String(APP_VERSION)) {
+                const key = '__reloaded_' + data.version;
+                if (!sessionStorage.getItem(key)) {
+                    sessionStorage.setItem(key, '1');
+                    showUpdateBanner(data.version);
+                }
+            }
+        })
+        .catch(() => {});
+}
+function showUpdateBanner(newVer) {
+    if (document.getElementById('updateBanner')) return;
+    const b = document.createElement('div');
+    b.id = 'updateBanner';
+    b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:#fff0f5;border:1px solid #FFB6C1;border-radius:12px;padding:12px 14px;box-shadow:0 4px 16px rgba(231,84,128,.3);display:flex;align-items:center;gap:10px;font-size:13px;color:#c2185b;';
+    b.innerHTML = '<span style="font-size:18px;">🔄</span><span style="flex:1;">发现新版本 <b>' + newVer + '</b>（当前 v' + APP_VERSION + '），建议刷新获取最新内容。</span>';
+    const btn = document.createElement('button');
+    btn.textContent = '立即刷新';
+    btn.style.cssText = 'border:none;background:#FF6FA5;color:#fff;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;';
+    btn.onclick = function () { window.location.reload(); };
+    const close = document.createElement('span');
+    close.textContent = '✕';
+    close.style.cssText = 'cursor:pointer;color:#bbb;font-size:16px;';
+    close.onclick = function () { b.remove(); };
+    b.appendChild(btn); b.appendChild(close);
+    document.body.appendChild(b);
 }
 
 // ========== 倒计时计算与显示 ==========
