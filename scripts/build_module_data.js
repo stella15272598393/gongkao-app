@@ -32,6 +32,48 @@ function buildIdioms() {
   return capped;
 }
 
+/* 叠加汉典权威核验结果（scripts/verify_idioms.py 生成）：
+ * 用权威「解释/出处/示例」覆盖 AI 撰写的释义文本，并标记 verified。
+ * 缺失权威数据的条目保留原释义（后续可补跑校验）。
+ */
+function applyZdicOverlay(items) {
+  const cacheFile = path.join(OUT, '_cache', 'idioms_zd.json');
+  if (!fs.existsSync(cacheFile)) {
+    console.warn('  ⚠️ 未找到汉典核验缓存 content/_cache/idioms_zd.json，跳过 overlay（请先运行 python3 scripts/verify_idioms.py）');
+    return { verified: 0, total: items.length };
+  }
+  const overlay = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+  let verified = 0;
+  for (const x of items) {
+    const z = overlay[x.word];
+    if (z && z.meaning && z.meaning.length >= 4) {
+      x.meaning = z.meaning;
+      if (z.source) x.source = z.source;
+      if (z.example) x.example = z.example;
+      if (z.pinyin && z.pinyin.split(/\s+/).length === (x.word.match(/[一-鿿]/g) || []).length) {
+        x.pinyin = z.pinyin;
+      }
+      x.verified = '汉典';
+      verified++;
+    }
+  }
+  return { verified, total: items.length };
+}
+
+/* 拼音 sanity 校验：音节数应与汉字数一致，仅告警 */
+function checkPinyin(items) {
+  const cn = (s) => (s || '').match(/[一-鿿]/g) || [];
+  const PINY = /[a-zāáǎàêēéěèîíǐìīĭôōóǒòûūúǔùüǖǘǚǜĀÁǍÀĒÉĚÈÎÍǏÌĪĬÔÓǑÒÛŪÚǓÙÜǕǗǙǛ]/i;
+  const syl = (s) => (s || '').trim().split(/[\s']+/).filter(t => PINY.test(t));
+  const bad = [];
+  for (const x of items) {
+    const nCn = cn(x.word).length;
+    const nSyl = syl(x.pinyin).length;
+    if (nCn !== nSyl) bad.push({ word: x.word, pinyin: x.pinyin, nCn, nSyl });
+  }
+  return bad;
+}
+
 function stamp(items) {
   return {
     updatedAt: new Date().toISOString(),
@@ -53,6 +95,16 @@ console.log('生成模块数据 JSON：');
 const IDIOMS_FULL = buildIdioms();
 if (IDIOMS_FULL.length !== 1200) {
   console.warn('  ⚠️ 成语总数 = ' + IDIOMS_FULL.length + '（目标 1200），请检查 fillers 是否足够/有重复词');
+}
+// 叠加汉典权威释义 overlay
+const overlayStat = applyZdicOverlay(IDIOMS_FULL);
+console.log('  汉典核验覆盖：' + overlayStat.verified + '/' + overlayStat.total + ' 条已采用权威释义');
+// 拼音 sanity 校验（仅告警）
+const pinyinBad = checkPinyin(IDIOMS_FULL);
+if (pinyinBad.length) {
+  console.warn('  ⚠️ 拼音音节数疑似异常（需人工复核）：');
+  pinyinBad.slice(0, 30).forEach(b => console.warn('     ' + b.word + ' | ' + b.pinyin + ' (汉字' + b.nCn + '/音节' + b.nSyl + ')'));
+  if (pinyinBad.length > 30) console.warn('     …（共 ' + pinyinBad.length + ' 条）');
 }
 write('idioms.json', stamp(IDIOMS_FULL));
 write('idiom-pairs.json', stamp(IDIOM_PAIRS_DB));

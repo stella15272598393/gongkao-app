@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v42';
+const APP_VERSION = '2026-08-06-v43';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -3621,10 +3621,11 @@ function renderIdioms() {
                 '<button class="idiom-fav-btn ' + (faved ? 'faved' : '') + '" onclick="toggleFavIdiom(\'' + it.id + '\');renderIdioms()">' + (faved ? '⭐' : '☆') + '</button>' +
                 '<button class="idiom-err-btn ' + (erred ? 'erred' : '') + '" onclick="toggleIdiomError(\'' + it.id + '\');renderIdioms()" title="加入/移出错词本">' + (erred ? '📕' : '➕') + '</button>' +
             '</div>' +
-            '<div class="idiom-word">' + it.word + '</div>' +
+            '<div class="idiom-word">' + it.word + (it.verified ? ' <span class="idiom-verified" title="释义已与汉典权威源逐条核验">✅ 汉典核验</span>' : '') + '</div>' +
             '<div class="idiom-pinyin">' + it.pinyin + '</div>' +
             (showMeaning
                 ? '<div class="idiom-meaning">' + it.meaning + '</div>' +
+                  (it.source ? '<div class="idiom-block"><span class="idiom-label">📚 出处</span>' + it.source + '</div>' : '') +
                   '<div class="idiom-block"><span class="idiom-label">易混辨析</span>' + (it.distinguish || '（暂无专项易混辨析，重点把握本义与陷阱）') + '</div>' +
                   '<div class="idiom-block"><span class="idiom-label">真题例句</span>' + it.example + '</div>' +
                   '<div class="idiom-block trap"><span class="idiom-label">易错陷阱</span>' + it.trap + '</div>'
