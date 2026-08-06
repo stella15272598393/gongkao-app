@@ -351,9 +351,8 @@ body.sidebar-collapsed .content-area {
     margin-top: 8px;
     white-space: pre-wrap;
     word-break: break-word;
-    max-height: 400px;
-    overflow-y: auto;
 }
+/* v39：展开后不限制高度，让用户能读到完整文章 */
 .news-full-text.show { display: block; }
 .news-footer {
     display: flex; align-items: center; justify-content: space-between;
