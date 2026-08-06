@@ -89,6 +89,8 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
     let verified = 0, skipped = 0, errored = 0;
     const today = bjToday();
+    // v37：无论是否复验，都记录「巡检脚本上次运行日」，让用户看到脚本每日确实执行
+    data.lastVerifyRun = today;
     console.log(`[verify_idiom_pairs] 共 ${items.length} 组，逐组核验中（${SOURCE_NAME}，每 ${REVERIFY_DAYS} 天复验一次）...`);
 
     for (const it of items) {

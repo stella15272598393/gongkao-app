@@ -80,6 +80,15 @@ function cleanSentence(t) {
     return (t || '').replace(/\s+/g, ' ').trim();
 }
 
+/** 过滤明显是「新闻陈述句」而非可背诵金句的内容（v37 修复：避免把含具体人名/数字/职务的句子当金句） */
+function isLikelyNewsProse(t) {
+    if (!t) return true;
+    if (t.length > 80) return true; // 金句应精炼，过长多为新闻铺陈
+    if (/[\d]{2,}人|[\d]{4}年|书记|镇长|部长|局长|记者|通讯员|据了解|据悉|近年来|据介绍|数据显示|据.*统计/.test(t)) return true;
+    if ((t.endsWith('，') || t.endsWith('。')) && t.length > 50 && !/[「」""''（）()]/.test(t)) return true;
+    return false;
+}
+
 function main() {
     console.log('='.repeat(56));
     console.log('  金句库聚合（来自每日时政/求是文章原句）');
@@ -108,6 +117,7 @@ function main() {
             for (const b of buckets) {
                 const text = cleanSentence(b.t);
                 if (text.length < 12 || text.length > 160) continue;
+                if (isLikelyNewsProse(text)) continue; // v37：剔除新闻陈述风，不当作金句
                 const id = stableId('q', text);
                 if (seen.has(id)) continue;
                 seen.add(id);
@@ -145,7 +155,9 @@ function main() {
     for (const q of [...balanced, ...old]) {
         if (!mergedMap.has(q.id)) mergedMap.set(q.id, q);
     }
-    const merged = [...mergedMap.values()].slice(0, 55);
+    // v37 修复：此前 .slice(0, 55) 会把整个金句库每日截断到 55 条，摧毁历史积累。
+    // 改为保留大库（上限 500），并保留旧条目上的自定义字段（如 excludeFromDaily）。
+    const merged = [...mergedMap.values()].slice(0, 500);
 
     fs.writeFileSync(file, JSON.stringify({
         updatedAt: new Date().toISOString(),

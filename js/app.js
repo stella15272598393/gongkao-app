@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v36';
+const APP_VERSION = '2026-08-06-v37';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -154,7 +154,7 @@ let favBox = loadFavBox();
 function loadFavBox() {
     try { return JSON.parse(localStorage.getItem('favBox') || '[]'); } catch (e) { return []; }
 }
-function saveFavBox() { try { localStorage.setItem('favBox', JSON.stringify(favBox)); } catch (e) {} }
+function saveFavBox() { try { localStorage.setItem('favBox', JSON.stringify(favBox)); } catch (e) {} monitorDrop('favBox', '收藏'); }
 function favBoxKey(module, id) { return module + ':' + id; }
 function isFaved(module, id) {
     return favBox.some(f => f.module === module && String(f.id) === String(id));
@@ -188,6 +188,71 @@ function toggleFavBox(module, id, type, item) {
     if (isFaved(module, id)) removeFav(module, id); else addFav(module, id, type, item);
 }
 
+// ========== 数据防护：数量骤降检测 + 备份提醒（v37） ==========
+// 用户曾因爬虫/版本更新丢失收藏，故新增：保存时检测数量骤降并警告；启动与备份超时提醒。
+const MONITOR_KEYS = [
+    { k: 'favBox', label: '收藏' },
+    { k: 'favQuotes', label: '金句收藏' },
+    { k: 'favIdioms', label: '成语收藏' },
+    { k: 'mockRecords', label: '模考记录' },
+    { k: 'quoteCheckins', label: '金句打卡' },
+    { k: 'susuanErrors', label: '速算错题' },
+    { k: 'idiomErrors', label: '成语错词' }
+];
+function _lenOf(key) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v).length : 0; }
+    catch (e) { return 0; }
+}
+function monitorDrop(key, label) {
+    const base = parseInt(localStorage.getItem('__base_' + key) || '-1', 10);
+    const cur = _lenOf(key);
+    if (base >= 0 && cur > 0 && cur < base * 0.7) {
+        const msg = '⚠️ ' + label + '从 ' + base + ' 条骤降到 ' + cur + ' 条，数据可能丢失，建议立即备份！';
+        if (typeof showToast === 'function') showToast(msg); else alert(msg);
+    }
+    if (cur > 0) localStorage.setItem('__base_' + key, String(cur));
+}
+function saveMockRecords(records) {
+    try { saveMockRecords(records); } catch (e) {}
+    monitorDrop('mockRecords', '模考记录');
+}
+function touchBackup() { try { localStorage.setItem('lastBackupAt', new Date().toISOString()); } catch (e) {} }
+function daysSinceBackup() {
+    const t = localStorage.getItem('lastBackupAt');
+    if (!t) return 999;
+    const d = (Date.now() - new Date(t).getTime()) / 86400000;
+    return isNaN(d) ? 999 : Math.floor(d);
+}
+function showBackupBanner() {
+    if (document.getElementById('backupReminder')) return;
+    const b = document.createElement('div');
+    b.id = 'backupReminder';
+    b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:#fff4e5;border:1px solid #ffb74d;border-radius:12px;padding:12px 14px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:10px;font-size:13px;color:#5d4037;';
+    b.innerHTML = '<span style="font-size:18px;">💾</span><span style="flex:1;">距离上次备份已 <b>' + daysSinceBackup() + '</b> 天，建议备份本机数据，防止丢失。</span>';
+    const btn = document.createElement('button');
+    btn.textContent = '立即备份';
+    btn.style.cssText = 'border:none;background:#ff9800;color:#fff;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;';
+    btn.onclick = function () { if (typeof exportFavTxt === 'function') exportFavTxt(); touchBackup(); b.remove(); };
+    const close = document.createElement('span');
+    close.textContent = '✕';
+    close.style.cssText = 'cursor:pointer;color:#999;font-size:16px;';
+    close.onclick = function () { b.remove(); };
+    b.appendChild(btn); b.appendChild(close);
+    document.body.appendChild(b);
+}
+function checkBackupReminder() {
+    MONITOR_KEYS.forEach(function (m) {
+        const base = parseInt(localStorage.getItem('__base_' + m.k) || '-1', 10);
+        const cur = _lenOf(m.k);
+        if (base >= 0 && cur > 0 && cur < base * 0.7) {
+            const msg = '⚠️ 检测到' + m.label + '数量骤降（' + base + '→' + cur + '），建议立即备份';
+            if (typeof showToast === 'function') showToast(msg); else alert(msg);
+        }
+        if (cur > 0) localStorage.setItem('__base_' + m.k, String(cur));
+    });
+    if (daysSinceBackup() >= 7) showBackupBanner();
+}
+
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', () => {
     initCountdown();
@@ -195,6 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initGlobalSearch();
     const vEl = document.getElementById('appVersionLabel');
     if (vEl) vEl.textContent = 'v' + APP_VERSION;
+    // v37：启动时检测数据数量骤降 + 备份提醒
+    try { checkBackupReminder(); } catch (e) {}
     switchModule('home');
     initShizheng();
     initShenlun();
@@ -424,6 +491,7 @@ function exportFavTxt() {
     a.download = '莲莲工作台_收藏_' + bjToday() + '.txt';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    touchBackup();
 }
 
 /* 导出收藏为图片（canvas 拼贴） */
@@ -467,6 +535,7 @@ function exportFavImage() {
     a.href = cv.toDataURL('image/png');
     a.download = '莲莲工作台_收藏_' + bjToday() + '.png';
     a.click();
+    touchBackup();
     function clip(c, text, maxW) { if (c.measureText(text).width <= maxW) return text; let t = text; while (t.length > 1 && c.measureText(t + '…').width > maxW) t = t.slice(0, -1); return t + '…'; }
 }
 
@@ -538,7 +607,7 @@ function renderHome() {
         { icon: '⭐', label: '人物素材', val: (typeof RENWU_DATABASE !== 'undefined' ? RENWU_DATABASE.length : 0) },
         { icon: '🌅', label: '晨读文章', val: (typeof MORNING_DB !== 'undefined' ? MORNING_DB.length : 0) },
         { icon: '✍️', label: '申论范文', val: (typeof ESSAYS_DB !== 'undefined' ? ESSAYS_DB.length : 0) },
-        { icon: '💡', label: '金句', val: (typeof QUOTES_DB !== 'undefined' ? QUOTES_DB.length : 0) },
+        { icon: '💡', label: '金句', val: (typeof QUOTES_DB !== 'undefined' ? QUOTES_DB.filter(q => !q.excludeFromDaily).length : 0) },
         { icon: '📌', label: '我的收藏', val: (typeof favBox !== 'undefined' ? favBox.length : 0) }
     ];
 
@@ -1259,6 +1328,7 @@ async function cloudBackup() {
         const json = await res.json();
         const newId = json.id;
         localStorage.setItem('gk_cloud_gist', newId);
+        touchBackup();
         const inp = document.getElementById('cloudGistId');
         if (inp) inp.value = newId;
         cloudStatus('已备份到云端 ✅（' + Object.keys(payload.data).length + ' 项，Gist ID 已回填）', true);
@@ -1336,8 +1406,10 @@ function switchShenlunTab(tab) {
 }
 
 function showRandomQuote(filter = 'all') {
-    let pool = filter === 'all' ? [...QUOTES_DB] : QUOTES_DB.filter(q => q.theme === filter);
-    if (pool.length === 0) pool = [...QUOTES_DB];
+    // v37：剔除被标记为 excludeFromDaily 的新闻陈述风条目（不当作可背诵金句）
+    const recitePool = QUOTES_DB.filter(q => !q.excludeFromDaily);
+    let pool = filter === 'all' ? [...recitePool] : recitePool.filter(q => q.theme === filter);
+    if (pool.length === 0) pool = [...recitePool];
     const idx = Math.floor(Math.random() * pool.length);
     currentQuoteIndex = QUOTES_DB.indexOf(pool[idx]);
     const quote = pool[idx];
@@ -1389,6 +1461,7 @@ function checkinQuote() {
     if (!checkins[today].includes(quote.id)) {
         checkins[today].push(quote.id);
         localStorage.setItem('quoteCheckins', JSON.stringify(checkins));
+        monitorDrop('quoteCheckins', '金句打卡');
         alert('✅ 打卡成功！今日已背诵此条金句。');
         loadCheckinStats();
     } else {
@@ -2773,13 +2846,13 @@ function submitMockRecord() {
             const idx = records.findIndex(r => r.id === editingMockId);
             if (idx !== -1) records[idx] = { ...records[idx], date, module, xingce, shenlun, score, rank, note, total: null, correct: null, accuracy: null, time: 0 };
             editingMockId = null;
-            localStorage.setItem('mockRecords', JSON.stringify(records));
+            saveMockRecords(records);
             alert('✅ 模考成绩已更新！');
             renderRecordForm(); renderRecentRecords();
             return;
         }
         records.unshift({ id: Date.now(), date, module, xingce, shenlun, score, rank, note, total: null, correct: null, accuracy: null, time: 0 });
-        localStorage.setItem('mockRecords', JSON.stringify(records));
+        saveMockRecords(records);
         alert('✅ 模考成绩已保存！');
         renderRecordForm(); renderRecentRecords();
         return;
@@ -2797,7 +2870,7 @@ function submitMockRecord() {
         const idx = records.findIndex(r => r.id === editingMockId);
         if (idx !== -1) records[idx] = { ...records[idx], date, module, total, correct, accuracy, time: time || 0, note, xingce: null, shenlun: null, score: null, rank: '' };
         editingMockId = null;
-        localStorage.setItem('mockRecords', JSON.stringify(records));
+        saveMockRecords(records);
         alert('✅ 记录已更新！');
         renderRecordForm(); renderRecentRecords();
         return;
@@ -2810,7 +2883,7 @@ function submitMockRecord() {
         xingce: null, shenlun: null, score: null, rank: ''
     };
     records.unshift(record);
-    localStorage.setItem('mockRecords', JSON.stringify(records));
+    saveMockRecords(records);
 
     // 清空表单
     document.getElementById('mockTotal').value = '';
@@ -2838,7 +2911,7 @@ function importSusuanErrors() {
                 time: 0,
                 note: `[速算错题] ${e.q} | 原因: ${e.reason || '未标记'}`
             });
-            localStorage.setItem('mockRecords', JSON.stringify(records));
+            saveMockRecords(records);
             e.imported = true;
             count++;
         }
@@ -2926,7 +2999,7 @@ function deleteMockRecord(id) {
         if (!ok) return;
         let records = JSON.parse(localStorage.getItem('mockRecords') || '[]');
         records = records.filter(r => r.id !== id);
-        localStorage.setItem('mockRecords', JSON.stringify(records));
+        saveMockRecords(records);
         if (editingMockId === id) editingMockId = null;
         renderRecordForm();
         renderRecentRecords();
@@ -3487,7 +3560,7 @@ let currentInterview = null; // 当前显示的面试短句（供搜索用）
 // 易错成语收藏（独立于全局收藏夹，单独归类）
 let favIdioms = loadFavIdioms();
 function loadFavIdioms() { try { return JSON.parse(localStorage.getItem('favIdioms') || '[]'); } catch (e) { return []; } }
-function saveFavIdioms() { try { localStorage.setItem('favIdioms', JSON.stringify(favIdioms)); } catch (e) {} }
+function saveFavIdioms() { try { localStorage.setItem('favIdioms', JSON.stringify(favIdioms)); } catch (e) {} monitorDrop('favIdioms', '成语收藏'); }
 function isFavIdiom(id) { return favIdioms.indexOf(String(id)) >= 0; }
 function toggleFavIdiom(id) {
     const k = String(id);
@@ -3702,7 +3775,7 @@ function renderIdiomPairs() {
         '</div>' +
         '<div class="pair-note">' + p.note + '</div>' +
         '<div class="pair-tags">' + tagsHtml + '</div>' +
-        (p.verifiedAt ? '<div class="pair-verify">✅ 已核验 ' + p.verifiedAt + (p.source ? ' · ' + p.source : '') + '</div>' : '') +
+        (p.verifiedAt ? '<div class="pair-verify">✅ 已核验 ' + p.verifiedAt + (p.source ? ' · ' + p.source : '') + (window.IDIOM_VERIFY_RUN ? ' · 巡检 ' + window.IDIOM_VERIFY_RUN : '') + '</div>' : '') +
         '<div class="idiom-nav">' +
             (isDailyPick ? '<span class="pair-daily">📅 今日配对</span>' : '<span></span>') +
             '<button class="btn-outline btn-sm" onclick="pairStep(-1)">‹ 上一个</button>' +
