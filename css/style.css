@@ -1528,8 +1528,6 @@ input[type="range"]::-webkit-slider-thumb {
     margin-top: 8px;
     padding-top: 10px;
     border-top: 1px dashed #f0d5de;
-    max-height: 60vh; /* 限制最大高度避免过长 */
-    overflow-y: auto;
 }
 .morning-full-content.show { display: block !important; }
 .morning-expand-btn {

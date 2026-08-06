@@ -94,7 +94,7 @@ function cleanText(s) {
 /* ---------- 正文抽取（同 crawler-essay.js extractArticle） ---------- */
 const CONTENT_ANCHORS = ['word_show', 'text_box', 'article-content', 'con_txt', 'rm_txt_zw', 'TRS_Editor', 'content_area', 'artical_content', 'detail_content', 'content', 'article'];
 const END_ANCHORS = ['share_con', 'edit_bar', 'copyright', 'foot', 'relevant', 'ewm_box', 'footer', 'pageft', 'related'];
-const NOISE_RE = /^(来源|责编|编辑|分享|扫码|点击|相关阅读|原标题|版权|声明|【纠错】|返回|上一篇|下一篇|\(责任编辑|网站声明|违法和不良|共产党员网|发布时间|微信|微博|字号|打印|投稿|我要|查看余下全文|请使用浏览器|首页\s*&gt;|首页\s*滚动|2026年《|2026年《时事)/;
+const NOISE_RE = /^(来源|责编|编辑|分享|扫码|点击|相关阅读|原标题|版权|声明|【纠错】|返回|上一篇|下一篇|理论达人|\(责任编辑|网站声明|违法和不良|共产党员网|发布时间|微信|微博|字号|打印|投稿|我要|查看余下全文|请使用浏览器|首页\s*&gt;|首页\s*滚动|2026年《|2026年《时事|微视频|（微视频）)/;
 // JS/代码噪音行检测（不用^锚点，匹配行内任意位置）
 const CODE_NOISE_RE = /(function\s+\w+\s*\(|var\s+\w+\s*=|const\s+\w+\s*=|let\s+\w+\s*=|document\.(write|addEventListener)|showPlayer\(|window\.|console\.|\.innerHTML|\.src\s*=|posterUrl|playbackRates|videoInfo|createPageHTML|WeixinJSBridge|_bdhmProtocol|unescape\(|handleFontSize|wd_paramtracker|\$\(|ajaxurl|wx\.config|scriptid|label:\s*['"]|type:\s*['"]?(video|mp4|javascript)|hidPlaybackRates|nextOver|nCurrIndex|_nPageCount|_sPageName|_sPageExt|encodeURIComponent|\.on\(|\.ready\(|function\s*\(\s*\)\s*\{|typeof\s+WeixinJSBridge|setFontSizeCallback|menu[:.]setfont)/;
 
@@ -208,10 +208,11 @@ const MORNING_SOURCES = [
     },
     {
         name: '半月谈·评论',
-        entry: 'http://www.banyuetan.org/',
+        entry: 'http://www.banyuetan.org/byt/shizhengjiangjie/',
         domain: 'banyuetan.org',
         ref: 'http://www.banyuetan.org/',
-        linkPattern: /href="(https?:\/\/[^"]*banyuetan\.org\/[^"]+\.html)"/g,
+        // 收紧：只匹配具体文章页（/detail/YYYYMMDD/...html），避免抓到栏目首页
+        linkPattern: /href="(https?:\/\/[^"]*banyuetan\.org\/[^"]*detail\/\d{8}\/[^"]+\.html)"/g,
         minLen: 600,
         maxLinks: 6
     }
