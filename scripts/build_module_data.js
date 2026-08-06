@@ -107,10 +107,11 @@ if (pinyinBad.length) {
   if (pinyinBad.length > 30) console.warn('     …（共 ' + pinyinBad.length + ' 条）');
 }
 write('idioms.json', stamp(IDIOMS_FULL));
-write('idiom-pairs.json', stamp(IDIOM_PAIRS_DB));
-write('logic.json', stamp(LOGIC_DB));
-write('interview.json', stamp(INTERVIEW_DB));
-write('transitions.json', stamp(TRANSITION_DB));
+/* 注意：idiom-pairs / logic / interview / transitions 为手工维护内容（content/*.json 是唯一真源，
+ * 含 v44/v45 的汉典权威核验结果）。切勿在此用 js/data-modules.js 里的常量重写，否则会覆盖
+ * 已核验数据、并把混淆配对从 182 组退回 40 组（曾于 v42 因此丢失 142 组）。
+ * 若需重建这些模块，请直接编辑 content/*.json，不要用本脚本。 */
+console.log('  跳过 idiom-pairs/logic/interview/transitions：以 content/*.json 手工内容为准（含权威核验）');
 
 // meta 合并进现有 meta.json（若已有则保留旧字段）
 const metaFile = path.join(OUT, 'meta.json');
