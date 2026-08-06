@@ -27,3 +27,6 @@ __push*
 cron-job*
 *.bat
 .cache/
+
+# Python 缓存
+scripts/__pycache__/
