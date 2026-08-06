@@ -1,26 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFD1DC"/>
-      <stop offset="100%" style="stop-color:#FFB6C1"/>
+      <stop offset="0%" style="stop-color:#FFE4EC"/>
+      <stop offset="100%" style="stop-color:#FFCDD8"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="100" fill="url(#bg2)"/>
-  <!-- Hello Kitty face -->
-  <ellipse cx="256" cy="295" rx="145" ry="132" fill="#FFFFFF"/>
-  <ellipse cx="146" cy="160" rx="58" ry="74" fill="#FFFFFF"/>
-  <ellipse cx="366" cy="160" rx="58" ry="74" fill="#FFFFFF"/>
-  <ellipse cx="207" cy="268" rx="13" ry="16" fill="#333"/>
-  <ellipse cx="305" cy="268" rx="13" ry="16" fill="#333"/>
-  <ellipse cx="256" cy="298" rx="10" ry="8" fill="#FFB6C1"/>
-  <path d="M256 306 L256 328 M234 328 Q256 350 278 328" stroke="#333" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <line x1="153" y1="286" x2="93" y2="270" stroke="#333" stroke-width="3"/>
-  <line x1="153" y1="302" x2="93" y2="314" stroke="#333" stroke-width="3"/>
-  <line x1="359" y1="286" x2="419" y2="270" stroke="#333" stroke-width="3"/>
-  <line x1="359" y1="302" x2="419" y2="314" stroke="#333" stroke-width="3"/>
-  <ellipse cx="146" cy="156" rx="42" ry="32" fill="#FF69B4"/>
-  <circle cx="146" cy="156" r="10" fill="#E91E63"/>
-  <ellipse cx="112" cy="148" rx="26" ry="18" fill="#FF69B4" transform="rotate(-20 112 148)"/>
-  <ellipse cx="180" cy="148" rx="26" ry="18" fill="#FF69B4" transform="rotate(20 180 148)"/>
-  <text x="256" y="468" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="#FFFFFF">备考工作台</text>
+  <!-- 圆角背景 -->
+  <rect width="512" height="512" rx="106" fill="url(#bg2)"/>
+  <!-- 左耳 -->
+  <ellipse cx="154" cy="166" rx="54" ry="90" fill="#FFFFFF" transform="rotate(-15 154 166)"/>
+  <ellipse cx="154" cy="170" rx="32" ry="64" fill="#FFB6C1" transform="rotate(-15 154 170)" opacity="0.5"/>
+  <!-- 右耳 -->
+  <ellipse cx="358" cy="166" rx="54" ry="90" fill="#FFFFFF" transform="rotate(15 358 166)"/>
+  <ellipse cx="358" cy="170" rx="32" ry="64" fill="#FFB6C1" transform="rotate(15 358 170)" opacity="0.5"/>
+  <!-- 圆脸 -->
+  <ellipse cx="256" cy="306" rx="138" ry="122" fill="#FFFFFF"/>
+  <!-- 眼睛 -->
+  <circle cx="208" cy="294" r="13" fill="#444"/>
+  <circle cx="304" cy="294" r="13" fill="#444"/>
+  <!-- 腮红 -->
+  <ellipse cx="176" cy="326" rx="24" ry="13" fill="#FFB6C1" opacity="0.45"/>
+  <ellipse cx="336" cy="326" rx="24" ry="13" fill="#FFB6C1" opacity="0.45"/>
+  <!-- 鼻子 -->
+  <ellipse cx="256" cy="320" rx="10" ry="6.5" fill="#FF91A4"/>
+  <!-- 嘴 -->
+  <path d="M256 326 L256 340 M245 344 Q256 356 267 344" stroke="#444" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <!-- 文字 -->
+  <text x="256" y="464" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="38" font-weight="600" fill="#FF91A4">备考工作台</text>
 </svg>
