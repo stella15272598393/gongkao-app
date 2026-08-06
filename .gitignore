@@ -30,3 +30,6 @@ cron-job*
 
 # Python 缓存
 scripts/__pycache__/
+
+# 临时渲染脚本(不入库)
+scripts/_render_icons.js
