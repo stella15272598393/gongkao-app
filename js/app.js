@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v54';
+const APP_VERSION = '2026-08-06-v55';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -391,24 +391,63 @@ function forceUpdate() {
     }
 }
 
-// ========== 进入APP欢迎页（受控：淡粉底 + 新兔子图标，停留约1.8s再淡出）==========
+// ========== 进入APP欢迎页（每日一次：日期星期 + 问候 + 当日随机金句 + 开始按钮）==========
 function showWelcomeScreen() {
     if (document.getElementById('welcomeScreen')) return;
+    // ★ 每天只展示一次：用 localStorage 记录最近展示日期（北京时间）
+    const bjNow = new Date(Date.now() + (new Date().getTimezoneOffset() + 480) * 60000);
+    const p2 = x => String(x).padStart(2, '0');
+    const todayKey = bjNow.getFullYear() + '-' + p2(bjNow.getMonth() + 1) + '-' + p2(bjNow.getDate());
+    try {
+        if (localStorage.getItem('welcomeShownDate') === todayKey) return; // 今天已展示过 → 不弹
+    } catch (e) {}
+
+    const wd = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][bjNow.getDay()];
+    const dateStr = bjNow.getFullYear() + '年' + (bjNow.getMonth() + 1) + '月' + bjNow.getDate() + '日 ' + wd;
+
+    // 每日夸赞金句（按日期稳定随机，同一天不变）
+    const QUOTES = [
+        '今天的你，比昨天又进步了一点点 ✨',
+        '认真努力的人，运气都不会太差',
+        '离上岸又近了一天，超棒的！',
+        '你的坚持，正在悄悄开花结果',
+        '慢慢来，比较快，你已经做得很好',
+        '相信你自己，你就是那个天选公务员',
+        '每天进步 1%，一年后就是 37 倍的你',
+        '你认真的样子，真的很好看',
+        '所有的从容，都是厚积薄发',
+        '今天的努力，是明天上岸的运气',
+        '别慌，你比想象中更厉害',
+        '保持热爱，奔赴山海，你一定行'
+    ];
+    let seed = 0;
+    for (const ch of todayKey) seed = (seed * 31 + ch.charCodeAt(0)) % 100000;
+    const quote = QUOTES[seed % QUOTES.length];
+
     const w = document.createElement('div');
     w.id = 'welcomeScreen';
     w.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#FFF0F5,#FFD6E6);' +
-        'display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease;';
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease;padding:24px;text-align:center;';
     w.innerHTML =
-        '<img src="./icons/icon-512.png?v=' + APP_VERSION + '" width="148" height="148" alt="logo" ' +
-        'style="border-radius:30px;box-shadow:0 10px 30px rgba(231,84,128,.28);">' +
-        '<div style="margin-top:20px;font-size:21px;font-weight:700;color:#E75480;letter-spacing:3px;">备考工作台</div>' +
-        '<div style="margin-top:12px;font-size:13px;color:#C2185B;opacity:.8;">正在加载…</div>';
+        '<img src="./icons/icon-512.png?v=' + APP_VERSION + '" width="118" height="118" alt="logo" ' +
+        'style="border-radius:26px;box-shadow:0 8px 26px rgba(231,84,128,.28);">' +
+        '<div style="margin-top:16px;font-size:14px;color:#C2185B;letter-spacing:1px;">' + dateStr + '</div>' +
+        '<div style="margin-top:10px;font-size:25px;font-weight:800;color:#E75480;letter-spacing:2px;">嗨，小公务员</div>' +
+        '<div style="margin-top:12px;font-size:15px;color:#AD1457;max-width:290px;line-height:1.6;">' + quote + '</div>' +
+        '<button id="welcomeStartBtn" style="margin-top:26px;border:none;background:linear-gradient(135deg,#FF8FB1,#FF6FA5);' +
+        'color:#fff;font-size:16px;font-weight:700;padding:12px 34px;border-radius:26px;cursor:pointer;' +
+        'box-shadow:0 6px 18px rgba(231,84,128,.35);">开始今天 ✨</button>';
     document.body.appendChild(w);
-    // 停留约1.8秒后淡出移除，确保用户能看清新兔子图标
-    setTimeout(() => {
+
+    const dismiss = () => {
+        try { localStorage.setItem('welcomeShownDate', todayKey); } catch (e) {}
         w.style.opacity = '0';
-        setTimeout(() => { if (w.parentNode) w.parentNode.removeChild(w); }, 520);
-    }, 1800);
+        setTimeout(() => { if (w.parentNode) w.parentNode.removeChild(w); }, 400);
+    };
+    const btn = document.getElementById('welcomeStartBtn');
+    if (btn) btn.onclick = dismiss;
+    // 兜底：10秒后自动消失，避免卡住（通常用户会直接点按钮进入）
+    setTimeout(() => { if (document.getElementById('welcomeScreen') === w) dismiss(); }, 10000);
 }
 
 // ========== 版本自检（v52：防止手机端静默卡在旧版本）==========
