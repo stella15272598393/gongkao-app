@@ -8,23 +8,32 @@
   <!-- 圆角背景 -->
   <rect width="512" height="512" rx="106" fill="url(#bg2)"/>
   <!-- 左耳 -->
-  <ellipse cx="154" cy="166" rx="54" ry="90" fill="#FFFFFF" transform="rotate(-15 154 166)"/>
-  <ellipse cx="154" cy="170" rx="32" ry="64" fill="#FFB6C1" transform="rotate(-15 154 170)" opacity="0.5"/>
+  <ellipse cx="154" cy="166" rx="54" ry="85" fill="#FFFFFF" transform="rotate(-12 154 166)"/>
   <!-- 右耳 -->
-  <ellipse cx="358" cy="166" rx="54" ry="90" fill="#FFFFFF" transform="rotate(15 358 166)"/>
-  <ellipse cx="358" cy="170" rx="32" ry="64" fill="#FFB6C1" transform="rotate(15 358 170)" opacity="0.5"/>
-  <!-- 圆脸 -->
-  <ellipse cx="256" cy="306" rx="138" ry="122" fill="#FFFFFF"/>
-  <!-- 眼睛 -->
-  <circle cx="208" cy="294" r="13" fill="#444"/>
-  <circle cx="304" cy="294" r="13" fill="#444"/>
-  <!-- 腮红 -->
-  <ellipse cx="176" cy="326" rx="24" ry="13" fill="#FFB6C1" opacity="0.45"/>
-  <ellipse cx="336" cy="326" rx="24" ry="13" fill="#FFB6C1" opacity="0.45"/>
+  <ellipse cx="358" cy="166" rx="54" ry="85" fill="#FFFFFF" transform="rotate(12 358 166)"/>
+  <!-- 圆脸（偏上居中，更大更圆润） -->
+  <ellipse cx="256" cy="288" rx="144" ry="128" fill="#FFFFFF"/>
+  <!-- 大眼睛 -->
+  <ellipse cx="197" cy="277" rx="27" ry="35" fill="#444"/>
+  <ellipse cx="315" cy="277" rx="27" ry="35" fill="#444"/>
+  <!-- 眼睛高光 -->
+  <circle cx="205" cy="264" r="9.5" fill="#FFF"/>
+  <circle cx="323" cy="264" r="9.5" fill="#FFF"/>
   <!-- 鼻子 -->
-  <ellipse cx="256" cy="320" rx="10" ry="6.5" fill="#FF91A4"/>
-  <!-- 嘴 -->
-  <path d="M256 326 L256 340 M245 344 Q256 356 267 344" stroke="#444" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <!-- 文字 -->
-  <text x="256" y="464" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="38" font-weight="600" fill="#FF91A4">备考工作台</text>
+  <ellipse cx="256" cy="310" rx="10.5" ry="8" fill="#FF91A4"/>
+  <!-- 嘴（小w形） -->
+  <path d="M239 322 Q248 334 256 322 Q264 334 273 322" stroke="#444" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <!-- 腮红 -->
+  <ellipse cx="160" cy="308" rx="29" ry="18" fill="#FFB6C1" opacity="0.5"/>
+  <ellipse cx="352" cy="308" rx="29" ry="18" fill="#FFB6C1" opacity="0.5"/>
+  <!-- 胡须 -->
+  <line x1="138" y1="292" x2="80" y2="280" stroke="#DDD" stroke-width="4" stroke-linecap="round"/>
+  <line x1="138" y1="310" x2="80" y2="320" stroke="#DDD" stroke-width="4" stroke-linecap="round"/>
+  <line x1="374" y1="292" x2="432" y2="280" stroke="#DDD" stroke-width="4" stroke-linecap="round"/>
+  <line x1="374" y1="310" x2="432" y2="320" stroke="#DDD" stroke-width="4" stroke-linecap="round"/>
+  <!-- 蝴蝶结（左耳上） -->
+  <ellipse cx="146" cy="150" rx="40" ry="29" fill="#FF69B4"/>
+  <circle cx="146" cy="150" r="11" fill="#E91E63"/>
+  <ellipse cx="114" cy="140" rx="24" ry="17" fill="#FF69B4" transform="rotate(-18 114 140)"/>
+  <ellipse cx="178" cy="140" rx="24" ry="17" fill="#FF69B4" transform="rotate(18 178 140)"/>
 </svg>

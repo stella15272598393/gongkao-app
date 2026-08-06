@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v48';
+const APP_VERSION = '2026-08-06-v49';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -58,7 +58,7 @@ function daysBetweenYMD(fromKey, toKey) {
     return Math.round((b - a) / 86400000);
 }
 const APP_AUTHOR = '莲莲';  // 作者昵称，借给别人用时显示你的署名
-const APP_NAME = '🪷 莲莲工作台';
+const APP_NAME = '🐰 莲莲工作台';
 let currentRenwuDailyIndex = -1;
 let practiceState = {
     questions: [],
@@ -527,7 +527,7 @@ function exportFavImage() {
     const ctx = cv.getContext('2d');
     ctx.fillStyle = '#FFF0F5'; ctx.fillRect(0, 0, W, estH);
     ctx.fillStyle = '#E75480'; ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText('🪷 莲莲工作台 · 我的收藏', W / 2, 46);
+    ctx.fillText('🐰 莲莲工作台 · 我的收藏', W / 2, 46);
     ctx.fillStyle = '#888'; ctx.font = '14px sans-serif';
     ctx.fillText('导出时间 ' + new Date().toLocaleString('zh-CN') + ' · 共 ' + favBox.length + ' 条', W / 2, 72);
     ctx.textAlign = 'left';
