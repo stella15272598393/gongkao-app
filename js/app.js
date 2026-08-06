@@ -283,6 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
     bindFavFilters();
     registerSW();
     checkVersion();
+    const btnU = document.getElementById('btnCheckUpdate');
+    if (btnU) btnU.onclick = forceUpdate;
     checkDailyReset();
     // 新增模块初始化
     initIdioms();
@@ -372,6 +374,24 @@ function registerSW() {
     });
 }
 
+// ========== 强制更新（终极兜底：注销 SW 后硬刷新，确保从网络拉取最新）==========
+function forceUpdate() {
+    try {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(regs => {
+                let p = Promise.resolve();
+                regs.forEach(r => { p = p.then(() => r.unregister()); });
+                p.then(() => { window.location.reload(true); })
+                 .catch(() => { window.location.reload(true); });
+            }).catch(() => { window.location.reload(true); });
+        } else {
+            window.location.reload(true);
+        }
+    } catch (e) {
+        window.location.reload(true);
+    }
+}
+
 // ========== 版本自检（v52：防止手机端静默卡在旧版本）==========
 // 打开任意旧版本时，向服务端查询最新版本号（带时间戳绕过 SW 缓存），
 // 若与服务端不一致则弹出"发现新版本"横幅，点"立即刷新"即可拉取最新。
@@ -398,7 +418,7 @@ function showUpdateBanner(newVer) {
     const btn = document.createElement('button');
     btn.textContent = '立即刷新';
     btn.style.cssText = 'border:none;background:#FF6FA5;color:#fff;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;';
-    btn.onclick = function () { window.location.reload(); };
+    btn.onclick = function () { forceUpdate(); };
     const close = document.createElement('span');
     close.textContent = '✕';
     close.style.cssText = 'cursor:pointer;color:#bbb;font-size:16px;';
