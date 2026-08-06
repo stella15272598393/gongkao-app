@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v50';
+const APP_VERSION = '2026-08-06-v51';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -351,6 +351,17 @@ function registerSW() {
                 refreshing = true;
                 if (window.__DEBUG__) console.log('v25: 新 SW 已接管，刷新页面获取最新资源');
                 window.location.reload();
+            }
+        });
+
+        // v51：SW 通知强制刷新（防止旧 SW 缓存导致手机端卡在旧版本，sessionStorage 防循环）
+        navigator.serviceWorker.addEventListener('message', event => {
+            if (event.data && event.data.type === 'FORCE_RELOAD') {
+                const key = '__reloaded_' + APP_VERSION;
+                if (!sessionStorage.getItem(key)) {
+                    sessionStorage.setItem(key, '1');
+                    window.location.reload();
+                }
             }
         });
 

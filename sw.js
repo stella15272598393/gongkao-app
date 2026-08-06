@@ -3,7 +3,7 @@
    支持离线缓存和PWA安装
    ======================================== */
 
-const CACHE_NAME = 'gongzuotai-v7';
+const CACHE_NAME = 'gongzuotai-v8';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -49,6 +49,12 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
+    }
+    // 收到版本检查 → 通知所有页面强制刷新，确保拿到最新资源（解决"手机端卡在旧版本"）
+    if (event.data && event.data.type === 'CHECK_VERSION') {
+        self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+            clients.forEach(client => client.postMessage({ type: 'FORCE_RELOAD' }));
+        });
     }
 });
 
