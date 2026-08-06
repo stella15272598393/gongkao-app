@@ -7,6 +7,30 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'content');
 const { IDIOMS_DB, IDIOM_PAIRS_DB, LOGIC_DB, INTERVIEW_DB, TRANSITION_DB, MODULE_META } = require('../js/data-modules.js');
+const { IDIOMS_EXTRA } = require('../js/idioms_extra.js');
+const { IDIOMS_FILLER } = require('../js/idioms_filler.js');
+
+/* 成语库扩展：合并基类(原120) + 新增1080 + 补足若干，按词去重，
+ * 重新分级为 必考300 / 高频400 / 低频500，顺号重排，目标 1200 条。
+ */
+function buildIdioms() {
+  const seen = new Set();
+  const merged = [];
+  for (const x of [...IDIOMS_DB, ...IDIOMS_EXTRA, ...IDIOMS_FILLER]) {
+    if (!x || !x.word) continue;
+    if (seen.has(x.word)) continue;
+    seen.add(x.word);
+    merged.push(x);
+  }
+  // 截取前 1200（补足库足够时恰好 1200）
+  const capped = merged.slice(0, 1200);
+  // 重新分级
+  capped.forEach((x, i) => {
+    x.tier = i < 300 ? '必考' : i < 700 ? '高频' : '低频';
+    x.id = i + 1;
+  });
+  return capped;
+}
 
 function stamp(items) {
   return {
@@ -26,7 +50,11 @@ function write(name, data) {
 if (!fs.existsSync(OUT)) fs.mkdirSync(OUT, { recursive: true });
 
 console.log('生成模块数据 JSON：');
-write('idioms.json', stamp(IDIOMS_DB));
+const IDIOMS_FULL = buildIdioms();
+if (IDIOMS_FULL.length !== 1200) {
+  console.warn('  ⚠️ 成语总数 = ' + IDIOMS_FULL.length + '（目标 1200），请检查 fillers 是否足够/有重复词');
+}
+write('idioms.json', stamp(IDIOMS_FULL));
 write('idiom-pairs.json', stamp(IDIOM_PAIRS_DB));
 write('logic.json', stamp(LOGIC_DB));
 write('interview.json', stamp(INTERVIEW_DB));
