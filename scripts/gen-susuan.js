@@ -66,7 +66,7 @@ function genGrowth() {
         fmt(round1(A / (N + 2)))        // 偏小估算
     ]);
     return {
-        question: `${fmt(A)} × (1 + ${r}%) 中，同比增长量约为？`,
+        question: `现期量为 ${fmt(A)}，同比增长 ${r}%，求同比增长量约为？`,
         options, answer, category: '求增长量', difficulty: '⭐⭐',
         correctText: correct,
         methods: [

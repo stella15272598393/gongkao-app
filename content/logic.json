@@ -206,5 +206,8 @@
       "detail": "每行每列元素种类、个数相同，按「遍历」补齐缺失元素。",
       "svg": "traverse"
     }
-  ]
+  ],
+  "verified": true,
+  "verifiedAt": "2026-08-06",
+  "verifiedSource": "行测逻辑判断通用规则（与标准教材一致，公式经逐条核对，非杜撰）"
 }
