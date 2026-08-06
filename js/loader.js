@@ -346,9 +346,9 @@
         }
         const t = meta && meta.updatedAtLocal ? meta.updatedAtLocal : '未知时间';
         const tips = {
-            remote: `🐰 已同步最新内容<br>更新于 ${t}`,
-            cache: `🐰 离线内容已载入<br>更新于 ${t}`,
-            builtin: `🐰 使用内置示例内容`
+            remote: `🎀 已同步最新内容<br>更新于 ${t}`,
+            cache: `🎀 离线内容已载入<br>更新于 ${t}`,
+            builtin: `🎀 使用内置示例内容`
         };
         el.innerHTML = tips[origin] || '';
         el.style.opacity = '1';
