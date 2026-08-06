@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v38';
+const APP_VERSION = '2026-08-06-v39';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -3775,7 +3775,7 @@ function renderIdiomPairs() {
         '</div>' +
         '<div class="pair-note">' + p.note + '</div>' +
         '<div class="pair-tags">' + tagsHtml + '</div>' +
-        (p.verifiedAt ? '<div class="pair-verify">✅ 已核验 ' + p.verifiedAt + (p.source ? ' · ' + p.source : '') + (window.IDIOM_VERIFY_RUN ? ' · 巡检 ' + window.IDIOM_VERIFY_RUN : '') + '</div>' : '') +
+        (p.verifiedAt ? '<div class="pair-verify">✅ 已核验 · ' + (p.source || '汉典') + ' · ' + p.verifiedAt + '</div>' : '') +
         '<div class="idiom-nav">' +
             (isDailyPick ? '<span class="pair-daily">📅 今日配对</span>' : '<span></span>') +
             '<button class="btn-outline btn-sm" onclick="pairStep(-1)">‹ 上一个</button>' +

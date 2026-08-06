@@ -251,8 +251,6 @@
                 pairs.forEach(x => IDIOM_PAIRS_DB.push(x));
                 changed = true;
             }
-            // v37：暴露顶层「巡检脚本上次运行日」，让用户看到核验脚本每天确实跑了
-            window.IDIOM_VERIFY_RUN = payload.lastVerifyRun || '';
         }
         if (payload.logic && payload.logic.length) {
             if (typeof LOGIC_DB !== 'undefined') {
