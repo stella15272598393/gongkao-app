@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v53';
+const APP_VERSION = '2026-08-06-v54';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -399,7 +399,7 @@ function showWelcomeScreen() {
     w.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#FFF0F5,#FFD6E6);' +
         'display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease;';
     w.innerHTML =
-        '<img src="./icons/icon-512.svg?v=' + APP_VERSION + '" width="148" height="148" alt="logo" ' +
+        '<img src="./icons/icon-512.png?v=' + APP_VERSION + '" width="148" height="148" alt="logo" ' +
         'style="border-radius:30px;box-shadow:0 10px 30px rgba(231,84,128,.28);">' +
         '<div style="margin-top:20px;font-size:21px;font-weight:700;color:#E75480;letter-spacing:3px;">备考工作台</div>' +
         '<div style="margin-top:12px;font-size:13px;color:#C2185B;opacity:.8;">正在加载…</div>';
