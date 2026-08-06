@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v52';
+const APP_VERSION = '2026-08-06-v53';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -283,8 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bindFavFilters();
     registerSW();
     checkVersion();
-    const btnU = document.getElementById('btnCheckUpdate');
-    if (btnU) btnU.onclick = forceUpdate;
+    showWelcomeScreen();
     checkDailyReset();
     // 新增模块初始化
     initIdioms();
@@ -390,6 +389,26 @@ function forceUpdate() {
     } catch (e) {
         window.location.reload(true);
     }
+}
+
+// ========== 进入APP欢迎页（受控：淡粉底 + 新兔子图标，停留约1.8s再淡出）==========
+function showWelcomeScreen() {
+    if (document.getElementById('welcomeScreen')) return;
+    const w = document.createElement('div');
+    w.id = 'welcomeScreen';
+    w.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#FFF0F5,#FFD6E6);' +
+        'display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease;';
+    w.innerHTML =
+        '<img src="./icons/icon-512.svg?v=' + APP_VERSION + '" width="148" height="148" alt="logo" ' +
+        'style="border-radius:30px;box-shadow:0 10px 30px rgba(231,84,128,.28);">' +
+        '<div style="margin-top:20px;font-size:21px;font-weight:700;color:#E75480;letter-spacing:3px;">备考工作台</div>' +
+        '<div style="margin-top:12px;font-size:13px;color:#C2185B;opacity:.8;">正在加载…</div>';
+    document.body.appendChild(w);
+    // 停留约1.8秒后淡出移除，确保用户能看清新兔子图标
+    setTimeout(() => {
+        w.style.opacity = '0';
+        setTimeout(() => { if (w.parentNode) w.parentNode.removeChild(w); }, 520);
+    }, 1800);
 }
 
 // ========== 版本自检（v52：防止手机端静默卡在旧版本）==========
