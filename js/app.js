@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-05-v35';
+const APP_VERSION = '2026-08-06-v36';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -1001,6 +1001,7 @@ function buildNewsCardHtml(item) {
             '<div class="news-full-text" id="fulltext-' + item.id + '">' + item.fullText + '</div>' +
             '<div class="news-footer">' +
                 '<span>来源: ' + (item.source || '') + ' · ' + (item.date || '') + '</span>' +
+                (item.url ? '<a class="quote-source-link" onclick="window.open(\'' + item.url + '\',\'_blank\')" title="查看原文">🔗 查看原文</a>' : '') +
                 '<button class="expand-btn" onclick="toggleFullText(' + item.id + ')">展开全文</button>' +
             '</div>' +
         '</div>' +
@@ -1552,6 +1553,7 @@ function renderMorningList() {
             '<div class="morning-summary" id="morning-summary-' + item.id + '">' + ((item.content || '').slice(0, 200)) + '</div>' +
             '<div class="morning-full-content" id="morning-full-' + item.id + '">' + ((item.content || '').replace(/\n/g, '<br>')) + '</div>' +
             '<button class="morning-expand-btn" id="morning-expand-btn-' + item.id + '" onclick="toggleMorningExpand(\'' + item.id + '\')">展开 ▾</button>' +
+            (item.url ? '<div style="text-align:right;margin:2px 8px 6px;"><a class="quote-source-link" onclick="window.open(\'' + item.url + '\',\'_blank\')" title="查看原文">🔗 查看原文</a></div>' : '') +
             '<div class="morning-card-actions">' +
                 '<button class="action-btn" onclick="toggleMorningLike(' + idx + ', this)">👍 0</button>' +
                 '<button class="action-btn" onclick="toggleFavMorning(\'' + item.id + '\', this)">🤍</button>' +
