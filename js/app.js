@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v46';
+const APP_VERSION = '2026-08-06-v47';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -216,19 +216,26 @@ function saveMockRecords(records) {
     try { saveMockRecords(records); } catch (e) {}
     monitorDrop('mockRecords', '模考记录');
 }
-function touchBackup() { try { localStorage.setItem('lastBackupAt', new Date().toISOString()); } catch (e) {} }
+function touchBackup() { try { localStorage.setItem('lastBackupAt', new Date().toISOString()); localStorage.removeItem('backupDismissUntil'); } catch (e) {} }
 function daysSinceBackup() {
     const t = localStorage.getItem('lastBackupAt');
-    if (!t) return 999;
+    if (!t) return -1; // -1 表示从未备份
     const d = (Date.now() - new Date(t).getTime()) / 86400000;
-    return isNaN(d) ? 999 : Math.floor(d);
+    return isNaN(d) ? -1 : Math.floor(d);
 }
 function showBackupBanner() {
     if (document.getElementById('backupReminder')) return;
+    // 用户手动关闭过且未到期，不再弹
+    const until = localStorage.getItem('backupDismissUntil');
+    if (until && Date.now() < new Date(until).getTime()) return;
+    // 没有收藏数据可备份，不弹
+    try { const fav = JSON.parse(localStorage.getItem('favBox') || '[]'); if (!fav || fav.length === 0) return; } catch(e) {}
+    const days = daysSinceBackup();
     const b = document.createElement('div');
     b.id = 'backupReminder';
     b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:#fff4e5;border:1px solid #ffb74d;border-radius:12px;padding:12px 14px;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;gap:10px;font-size:13px;color:#5d4037;';
-    b.innerHTML = '<span style="font-size:18px;">💾</span><span style="flex:1;">距离上次备份已 <b>' + daysSinceBackup() + '</b> 天，建议备份本机数据，防止丢失。</span>';
+    const dayText = days < 0 ? '尚未备份' : days + ' 天';
+    b.innerHTML = '<span style="font-size:18px;">💾</span><span style="flex:1;">距离上次备份已 <b>' + dayText + '</b>，建议备份本机数据，防止丢失。</span>';
     const btn = document.createElement('button');
     btn.textContent = '立即备份';
     btn.style.cssText = 'border:none;background:#ff9800;color:#fff;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;';
@@ -236,7 +243,7 @@ function showBackupBanner() {
     const close = document.createElement('span');
     close.textContent = '✕';
     close.style.cssText = 'cursor:pointer;color:#999;font-size:16px;';
-    close.onclick = function () { b.remove(); };
+    close.onclick = function () { try { localStorage.setItem('backupDismissUntil', new Date(Date.now() + 7 * 86400000).toISOString()); } catch(e){} b.remove(); };
     b.appendChild(btn); b.appendChild(close);
     document.body.appendChild(b);
 }
@@ -250,7 +257,9 @@ function checkBackupReminder() {
         }
         if (cur > 0) localStorage.setItem('__base_' + m.k, String(cur));
     });
-    if (daysSinceBackup() >= 7) showBackupBanner();
+    const days = daysSinceBackup();
+    // 仅当已备份超过7天 或 从未备份但有收藏数据时才提示（showBackupBanner内部会再检查收藏+dismiss状态）
+    if (days >= 7 || (days < 0 && JSON.parse(localStorage.getItem('favBox') || '[]').length > 0)) showBackupBanner();
 }
 
 // ========== 初始化 ==========
