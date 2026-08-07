@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-08-07T06:48:19.024Z",
+ "updatedAt": "2026-08-07T12:08:44.666Z",
  "count": 500,
  "items": [
   {
@@ -713,13 +713,13 @@
    "category": "文化传承"
   },
   {
-   "id": "q_18grvb6",
+   "id": "q_1yog0bf",
    "theme": "wenhua",
    "themeName": "文化传承",
    "kind": "金句",
-   "text": "进入新时代，我国社会主要矛盾发生转化，传统发展方式的深层矛盾逐渐凸显，发展中的矛盾和问题集中体现在发展质量上",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0806/c461530-40774623.html",
+   "text": "另一方面，把马克思主义基本原理同中华优秀传统文化相结合，赋予了中国梦深厚的文化底蕴和精神气象",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774846.html",
    "category": "文化传承"
   },
   {
@@ -963,6 +963,16 @@
    "category": "湖北地域发展"
   },
   {
+   "id": "q_18grvb6",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "进入新时代，我国社会主要矛盾发生转化，传统发展方式的深层矛盾逐渐凸显，发展中的矛盾和问题集中体现在发展质量上",
+   "source": "人民网",
+   "url": "http://opinion.people.com.cn/n1/2026/0806/c461530-40774623.html",
+   "category": "文化传承"
+  },
+  {
    "id": "q_13pf05u",
    "theme": "jiceng",
    "themeName": "基层治理",
@@ -1161,16 +1171,6 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-08/03/content_20118996.html",
    "category": "民生医疗"
-  },
-  {
-   "id": "q_1yog0bf",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "另一方面，把马克思主义基本原理同中华优秀传统文化相结合，赋予了中国梦深厚的文化底蕴和精神气象",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774846.html",
-   "category": "文化传承"
   },
   {
    "id": "q_1y67gft",
