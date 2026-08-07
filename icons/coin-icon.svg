@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFDCEA"/>
+      <stop offset="100%" stop-color="#FF9DBE"/>
+    </linearGradient>
+    <radialGradient id="cg" cx="38%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#FFF7CE"/>
+      <stop offset="42%" stop-color="#FFD24D"/>
+      <stop offset="78%" stop-color="#F5B301"/>
+      <stop offset="100%" stop-color="#D98E00"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="262" r="152" fill="url(#cg)" stroke="#C8860D" stroke-width="11"/>
+  <circle cx="256" cy="262" r="133" fill="none" stroke="#FFE9A8" stroke-width="6" opacity="0.75"/>
+  <ellipse cx="196" cy="186" rx="58" ry="36" fill="#FFFFFF" opacity="0.45"/>
+  <!-- ￥ 符号（矢量描边，免字体依赖） -->
+  <g stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" fill="none" opacity="0.85">
+    <line x1="256" y1="166" x2="256" y2="249"/>
+    <line x1="256" y1="249" x2="189" y2="326"/>
+    <line x1="256" y1="249" x2="323" y2="326"/>
+    <line x1="202" y1="284" x2="310" y2="284"/>
+    <line x1="214" y1="323" x2="298" y2="323"/>
+  </g>
+  <g stroke="#7A4E00" stroke-width="19" stroke-linecap="round" fill="none">
+    <line x1="256" y1="166" x2="256" y2="249"/>
+    <line x1="256" y1="249" x2="189" y2="326"/>
+    <line x1="256" y1="249" x2="323" y2="326"/>
+    <line x1="202" y1="284" x2="310" y2="284"/>
+    <line x1="214" y1="323" x2="298" y2="323"/>
+  </g>
+  <path d="M404 150 l9 24 24 9 -24 9 -9 24 -9 -24 -24 -9 24 -9 z" fill="#FFF7CE" opacity="0.95"/>
+  <circle cx="120" cy="150" r="7" fill="#FFFFFF" opacity="0.9"/>
+</svg>

@@ -9,7 +9,8 @@
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
     <title>🪷 莲莲工作台</title>
     <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="icons/apple-touch-coin.png">
+    <link rel="icon" type="image/svg+xml" href="icons/gold-coin.svg">
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -109,7 +110,7 @@
                     <span>面试短句</span>
                 </li>
                 <li class="nav-item" data-module="gold" onclick="switchModule('gold')">
-                    <div class="nav-icon">🪙</div>
+                    <div class="nav-icon"><img class="nav-coin" src="icons/gold-coin.svg" alt="金币"></div>
                     <span>考公金币台账</span>
                 </li>
                 <li class="nav-item" data-module="favbox" onclick="switchModule('favbox')">
@@ -576,7 +577,7 @@
             <!-- 模块：考公金币台账 -->
             <section class="module-panel" id="panel-gold">
                 <div class="module-header">
-                    <h2>🪙 考公金币台账 <span class="today-new-badge gold-badge" id="tn-gold">本地记账</span></h2>
+                    <h2><img class="gold-coin-ic" src="icons/gold-coin.svg" alt=""> 考公金币台账 <span class="today-new-badge gold-badge" id="tn-gold">本地记账</span></h2>
                     <p class="module-desc">记录每天任务金币，复制后粘贴到「日常生活工作台」入账。本工作台只记账、不持有全局余额。</p>
                 </div>
 
@@ -653,6 +654,7 @@
                         <button class="tag-btn" data-fav="shenlun">范文</button>
                         <button class="tag-btn" data-fav="morning">晨读</button>
                         <button class="tag-btn" data-fav="quote">金句</button>
+                        <button class="tag-btn" data-fav="changshi">常识</button>
                     </div>
                     <div class="fav-export-btns">
                         <button class="btn-outline btn-sm" onclick="exportFavTxt()">📄 导出TXT</button>
@@ -774,7 +776,10 @@
 
     <script src="./js/data.js?v=34"></script>
     <script src="./js/data-modules.js?v=34"></script>
-    <script src="./js/app.js?v=58"></script>
-    <script src="./js/loader.js?v=58"></script>
+    <script src="./js/app.js?v=60"></script>
+    <script src="./js/loader.js?v=60"></script>
+
+    <!-- 金币获取特效浮层 -->
+    <div id="goldFxLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;"></div>
 </body>
 </html>

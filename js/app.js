@@ -167,6 +167,7 @@ function favMeta(item, module) {
         case 'renwu':    return { title: item.name, source: item.source, date: '', snippet: item.story || '' };
         case 'quote':    return { title: item.text || item.quote, source: item.source || '', date: '', snippet: (item.text || item.quote || '').slice(0, 120) };
         case 'morning':  return { title: item.title, source: item.source, date: item.date, snippet: (item.content || '').slice(0, 160) };
+        case 'changshi': return { title: (item.text || '').slice(0, 90), source: '常识积累', date: '', snippet: item.text || '' };
         default:         return { title: '', source: '', date: '', snippet: '' };
     }
 }
@@ -292,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initInterview();
     initGoldLedger();
     scheduleDailyPush();
+    syncChangshiFavToFavBox();   // 常识收藏同步进「我的收藏」模块
 });
 
 // ========== Service Worker 注册 ==========
@@ -580,7 +582,7 @@ function renderFavBox() {
         container.innerHTML = '<div style="text-align:center;color:#999;padding:48px 20px;">该分类下暂无收藏</div>';
         return;
     }
-    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读' };
+    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读', changshi: '常识积累' };
     const sorted = [...list].sort((a, b) => b.ts - a.ts);
     container.innerHTML = sorted.map(f => `
         <div class="fav-item">
@@ -616,7 +618,7 @@ function bindFavFilters() {
 /* 导出收藏为 TXT */
 function exportFavTxt() {
     if (favBox.length === 0) { alert('还没有收藏内容可导出~'); return; }
-    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读' };
+    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读', changshi: '常识积累' };
     let txt = '【莲莲工作台 · 我的收藏】\n导出时间：' + new Date().toLocaleString('zh-CN') + '\n共 ' + favBox.length + ' 条\n\n';
     const sorted = [...favBox].sort((a, b) => b.ts - a.ts);
     sorted.forEach((f, i) => {
@@ -638,7 +640,7 @@ function exportFavTxt() {
 /* 导出收藏为图片（canvas 拼贴） */
 function exportFavImage() {
     if (favBox.length === 0) { alert('还没有收藏内容可导出~'); return; }
-    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读' };
+    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读', changshi: '常识积累' };
     const sorted = [...favBox].sort((a, b) => b.ts - a.ts).slice(0, 30);
     const W = 720;
     const lineH = 22;
@@ -920,6 +922,11 @@ function renderTodos() {
 }
 
 function gotoFavSource(module, id) {
+    if (module === 'changshi') {
+        switchModule('changshi');
+        setTimeout(() => switchChangshiCat('fav'), 160);
+        return;
+    }
     if (module === 'quote') {
         switchModule('shenlun');
         alert('已切到「申论 · 金句」面板，往下翻找对应金句即可～');
@@ -948,13 +955,19 @@ function removeFavItem(module, id) {
         const btn = document.getElementById('btnFavQuote');
         if (btn) btn.innerHTML = isFaved('quote', id) ? '❤️ 已收藏' : '🤍 收藏';
     }
+    else if (module === 'changshi') {
+        changshiFav = changshiFav.filter(x => x !== Number(id));
+        saveGold('gk_changshi_fav', changshiFav);
+        renderChangshiStats();
+        if (changshiCurrentCat === 'fav') renderChangshiList();
+    }
 }
 
 /* 单条收藏导出（复制到剪贴板） */
 function copyFavItem(module, id) {
     const f = favBox.find(x => x.module === module && x.id === id);
     if (!f) { alert('未找到该收藏项'); return; }
-    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读' };
+    const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读', changshi: '常识积累' };
     let txt = '【' + (moduleNames[f.module] || f.module) + '】' + (f.type === 'fav' ? ' ❤️收藏' : ' 👍点赞') + '\n';
     txt += '标题：' + (f.title || '(无标题)') + '\n';
     if (f.source) txt += '来源：' + f.source + (f.date ? ' · ' + f.date : '') + '\n';
@@ -4441,6 +4454,7 @@ function addGoldLedger() {
     document.getElementById('goldLedgerTask').value = '';
     renderGoldLedger();
     showToast('已记一笔：' + task + ' +' + gold);
+    playGoldEffect(gold, document.getElementById('goldTodayNum'));
 }
 function editGoldFlow(kind, id) {
     const isCheckin = kind === 'checkin';
@@ -4541,6 +4555,33 @@ function setModuleDefault(moduleKey, val) {
     const inp = document.getElementById('ca-' + moduleKey);
     if (inp) inp.value = n;
 }
+/* v60 获取金币特效：弹跳硬币 + +N 飘字 + 闪光 */
+function playGoldEffect(amount, anchor) {
+    var layer = document.getElementById('goldFxLayer');
+    if (!layer) return;
+    var rect = (anchor && anchor.getBoundingClientRect) ? anchor.getBoundingClientRect() : { left: innerWidth/2, top: innerHeight/2, width:0, height:0 };
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    // 闪光
+    var flash = document.createElement('div');
+    flash.className = 'gold-fx-flash';
+    flash.style.left = cx + 'px'; flash.style.top = cy + 'px';
+    layer.appendChild(flash);
+    // 硬币
+    var coin = document.createElement('img');
+    coin.src = 'icons/gold-coin.svg';
+    coin.className = 'gold-fx-coin';
+    coin.style.left = (cx - 28) + 'px'; coin.style.top = (cy - 28) + 'px';
+    layer.appendChild(coin);
+    // +N 飘字
+    var txt = document.createElement('div');
+    txt.className = 'gold-fx-text';
+    txt.textContent = '+' + amount + ' 🪙';
+    txt.style.left = cx + 'px'; txt.style.top = cy + 'px';
+    layer.appendChild(txt);
+    setTimeout(function() { flash.remove(); coin.remove(); txt.remove(); }, 1400);
+}
+
 function doCheckIn(moduleKey) {
     const today = bjToday();
     const inp = document.getElementById('ca-' + moduleKey);
@@ -4551,6 +4592,7 @@ function doCheckIn(moduleKey) {
     renderModuleCheckin(moduleKey);
     renderGoldLedger();
     showToast(`${GOLD_MODULE_NAMES[moduleKey]} 打卡 +${gold} 已计入今日合计`);
+    playGoldEffect(gold, document.getElementById('checkin-' + moduleKey));
 }
 
 /* ================================================================
@@ -4662,16 +4704,45 @@ function changshiCard(it, isNote) {
 
 function toggleChangshiFav(id) {
     id = Number(id);
+    const item = CHANGSHI_DB.find(x => x.id === id);
     const i = changshiFav.indexOf(id);
-    if (i >= 0) changshiFav.splice(i, 1); else changshiFav.push(id);
+    if (i >= 0) {
+        changshiFav.splice(i, 1);
+        removeFav('changshi', id);          // 同步移出全局「我的收藏」
+        showToast('已取消收藏');
+    } else {
+        changshiFav.push(id);
+        if (item) addFav('changshi', id, 'fav', item);  // 同步进全局「我的收藏」
+        showToast('已收藏 ⭐ 已收进「我的收藏」');
+    }
     saveGold('gk_changshi_fav', changshiFav);
     renderChangshiStats();
+    // 侧边栏「我的收藏」角标实时更新
+    const navFav = document.querySelector('.nav-item[data-module="favbox"]');
+    if (navFav) navFav.dataset.count = String(favBox.length);
     if (changshiCurrentCat === 'fav') { renderChangshiList(); }
     else {
         const btn = document.querySelector(`.cs-fav-btn[onclick="toggleChangshiFav(${id})"]`);
         if (btn) { const f = changshiFav.includes(id); btn.classList.toggle('faved', f); btn.textContent = f ? '⭐' : '☆'; }
     }
-    showToast(changshiFav.includes(id) ? '已收藏 ⭐' : '已取消收藏');
+}
+
+/* 启动时把已存在的常识收藏同步进全局「我的收藏」（favBox），
+   让旧收藏也能在「我的收藏」模块看到，无需重新点收藏 */
+function syncChangshiFavToFavBox() {
+    if (!changshiFav || !changshiFav.length) return;
+    let changed = false;
+    changshiFav.forEach(id => {
+        if (!isFaved('changshi', id)) {
+            const it = CHANGSHI_DB.find(x => x.id === id);
+            if (it) { addFav('changshi', id, 'fav', it); changed = true; }
+        }
+    });
+    if (changed) renderFavBoxCount();
+}
+function renderFavBoxCount() {
+    const c = document.getElementById('favBoxCount');
+    if (c) c.textContent = String(favBox.length);
 }
 
 function changshiNewBatch() {

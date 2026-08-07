@@ -2074,3 +2074,31 @@ input[type="range"]::-webkit-slider-thumb {
     font-size: 13px; outline: none;
 }
 .cs-note-row input[type="text"]:focus { border-color: #E75480; }
+
+/* ========== v60 金币图标 + 获取金币特效 ========== */
+.nav-coin { width: 22px; height: 22px; vertical-align: middle; filter: drop-shadow(0 1px 2px rgba(197,134,13,.35)); }
+.gold-coin-ic { width: 28px; height: 28px; vertical-align: middle; margin-right: 3px; filter: drop-shadow(0 1px 3px rgba(245,179,1,.5)); }
+
+/* 金币弹跳 + 飘字特效 */
+.gold-fx-coin { position: fixed; width: 56px; height: 56px; transform: translateY(20px) scale(.4) rotate(-30deg); opacity: 0; animation: goldCoinPop 1.15s ease-out forwards; filter: drop-shadow(0 5px 12px rgba(245,179,1,.7)); pointer-events: none; }
+@keyframes goldCoinPop {
+    0%   { transform: translateY(20px) scale(.4) rotate(-30deg); opacity: 0; }
+    22%  { transform: translateY(-8px) scale(1.18) rotate(12deg);  opacity: 1; }
+    55%  { transform: translateY(-28px) scale(1) rotate(-6deg);     opacity: .95; }
+    100% { transform: translateY(-76px) scale(.92) rotate(0);      opacity: 0; }
+}
+.gold-fx-text { position: fixed; font-weight: 800; font-size: 23px; color: #F5B301;
+    text-shadow: 0 2px 7px rgba(255,255,255,.95), 0 0 3px #C8860D;
+    transform: translate(-50%, 6px); opacity: 0; animation: goldFloat 1.25s ease-out forwards; pointer-events: none; white-space: nowrap; }
+@keyframes goldFloat {
+    0%   { transform: translate(-50%, 6px);  opacity: 0; }
+    20%  { transform: translate(-50%, -2px); opacity: 1; }
+    100% { transform: translate(-50%, -58px); opacity: 0; }
+}
+.gold-fx-flash { position: fixed; width: 120px; height: 120px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,242,180,.55) 0%, transparent 70%);
+    transform: translate(-50%,-50%) scale(0); animation: goldFlash .65s ease-out forwards; pointer-events: none; }
+@keyframes goldFlash {
+    0% { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%,-50%) scale(2.2); opacity: 0; }
+}
