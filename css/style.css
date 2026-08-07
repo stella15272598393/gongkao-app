@@ -1829,3 +1829,129 @@ input[type="range"]::-webkit-slider-thumb {
 .dp-text { font-size: 14.5px; line-height: 1.7; color: #444; font-weight: 600; }
 .dp-tag { display: inline-block; margin-top: 6px; font-size: 11px; color: #fff; background: var(--primary-dark); padding: 2px 10px; border-radius: 10px; }
 .daily-push-actions { display: flex; gap: 10px; justify-content: flex-end; padding: 12px 20px; border-top: 1px solid var(--border-color); }
+
+/* ============================================================
+   考公金币台账模块（v56 新增）
+   ============================================================ */
+
+/* 模块头部的「今日新增 X 条」小徽章 */
+.today-new-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary-dark);
+    background: var(--primary-light);
+    padding: 2px 10px;
+    border-radius: 12px;
+    vertical-align: middle;
+    margin-left: 6px;
+    letter-spacing: .3px;
+}
+.today-new-badge.has-new { background: linear-gradient(135deg, #FFB6C1, #E75480); color: #fff; }
+.gold-badge { background: #FFF0F5; color: #E75480; }
+
+/* 重要提醒条 */
+.gold-notice {
+    background: linear-gradient(135deg, #FFF3E0, #FFE9F1);
+    border: 1px solid #FFD6E7;
+    border-left: 4px solid #E75480;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: #8a4a63;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+/* 今日合计大卡 */
+.gold-today-card {
+    background: linear-gradient(135deg, #FFF5F7, #FFFFFF);
+    border: 1.5px solid var(--primary-light);
+    border-radius: 16px;
+    padding: 22px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+}
+.gold-today-label { font-size: 13px; color: var(--text-secondary); }
+.gold-today-num {
+    font-size: 46px; font-weight: 800; color: var(--primary-dark);
+    line-height: 1.1; margin: 6px 0 2px;
+    text-shadow: 0 2px 6px rgba(231,84,128,0.18);
+}
+.gold-today-sub { font-size: 12px; color: var(--text-light); margin-bottom: 14px; }
+.gold-today-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* 区块标题 */
+.gold-section { background: #fff; border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+.gold-section-title { font-size: 15px; font-weight: 700; color: #C2185B; margin-bottom: 12px; }
+
+/* 每日任务列表 */
+.gold-task-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.gold-task-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-gray); border-radius: 12px; padding: 10px 12px;
+}
+.gold-task-check { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+.gold-task-main { flex: 1; min-width: 0; }
+.gold-task-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.gold-task-meta { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.gold-task-gold { font-size: 15px; font-weight: 700; color: var(--primary-dark); white-space: nowrap; }
+.gold-task-gold.done { color: #2E7D32; }
+.gold-task-ops { display: flex; gap: 6px; flex-shrink: 0; }
+
+/* 统计卡片 */
+.gold-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0; }
+
+/* 流水列表 */
+.gold-flow-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin: 14px 0 8px; }
+.gold-flow-list { display: flex; flex-direction: column; gap: 8px; }
+.gold-flow-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-white); border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 10px 12px;
+}
+.gold-flow-main { flex: 1; min-width: 0; }
+.gold-flow-top { display: flex; align-items: center; gap: 8px; }
+.gold-flow-src {
+    font-size: 11px; font-weight: 600; color: #fff; background: var(--primary-dark);
+    padding: 1px 9px; border-radius: 10px; flex-shrink: 0;
+}
+.gold-flow-src.ledger { background: #8b5cf6; }
+.gold-flow-src.task { background: #2E7D32; }
+.gold-flow-task { font-size: 13.5px; color: var(--text-primary); font-weight: 600; }
+.gold-flow-date { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.gold-flow-gold { font-size: 16px; font-weight: 700; color: var(--primary-dark); white-space: nowrap; }
+.gold-flow-ops { display: flex; gap: 6px; flex-shrink: 0; }
+.gold-empty { text-align: center; color: #bbb; font-size: 13px; padding: 18px 0; }
+
+/* 模块底部打卡奖励组件 */
+.module-checkin {
+    margin-top: 18px; padding: 14px 16px;
+    background: linear-gradient(135deg, #FFF7FA, #FFFFFF);
+    border: 1.5px dashed var(--primary-light);
+    border-radius: 14px;
+}
+.checkin-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.checkin-title { font-size: 13px; font-weight: 700; color: #C2185B; display: flex; align-items: center; gap: 6px; }
+.checkin-default {
+    display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-secondary);
+}
+.checkin-default input {
+    width: 56px; padding: 4px 6px; border: 1.5px solid var(--border-color);
+    border-radius: 8px; font-size: 13px; text-align: center; outline: none;
+}
+.checkin-default input:focus { border-color: var(--primary); }
+.checkin-amount {
+    width: 64px; padding: 6px 8px; border: 1.5px solid var(--border-color);
+    border-radius: 10px; font-size: 14px; text-align: center; outline: none;
+}
+.checkin-amount:focus { border-color: var(--primary); }
+.checkin-today { font-size: 12px; color: var(--text-light); margin-left: auto; }
+.checkin-today b { color: var(--primary-dark); }
+.checkin-history { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.checkin-hist-item {
+    display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary);
+    background: #fafafa; border-radius: 8px; padding: 6px 10px;
+}
+.checkin-hist-item .ch-gold { margin-left: auto; font-weight: 700; color: var(--primary-dark); }

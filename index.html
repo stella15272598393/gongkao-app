@@ -104,6 +104,10 @@
                     <div class="nav-icon">🎤</div>
                     <span>面试短句</span>
                 </li>
+                <li class="nav-item" data-module="gold" onclick="switchModule('gold')">
+                    <div class="nav-icon">🪙</div>
+                    <span>考公金币台账</span>
+                </li>
                 <li class="nav-item" data-module="favbox" onclick="switchModule('favbox')">
                     <div class="nav-icon">📌</div>
                     <span>我的收藏</span>
@@ -146,7 +150,7 @@
             <!-- 模块1: 时政热点 -->
             <section class="module-panel" id="panel-shizheng">
                 <div class="module-header">
-                    <h2>📰 时政热点</h2>
+                    <h2>📰 时政热点 <span class="today-new-badge" id="tn-shizheng">新增 0 条</span></h2>
                     <p class="module-desc">国考 + 湖北省考双源聚合，AI提取核心观点、金句与人物素材</p>
                 </div>
                 <div class="action-bar">
@@ -167,7 +171,7 @@
             <!-- 模块2: 申论 -->
             <section class="module-panel" id="panel-shenlun">
                 <div class="module-header">
-                    <h2>✍️ 申论</h2>
+                    <h2>✍️ 申论 <span class="today-new-badge" id="tn-shenlun">新增 0 条</span></h2>
                     <p class="module-desc">优秀范文（点击展开，支持 Markdown）</p>
                 </div>
                 <div class="tab-container">
@@ -242,7 +246,7 @@
             <!-- 模块3: 求是网文章 -->
             <section class="module-panel" id="panel-qiushi">
                 <div class="module-header">
-                    <h2>📖 求是网文章</h2>
+                    <h2>📖 求是网文章 <span class="today-new-badge" id="tn-qiushi">新增 0 条</span></h2>
                     <p class="module-desc">理论文章深度拆解 · 申论维度分析</p>
                 </div>
                 <div class="qiushi-search">
@@ -263,7 +267,7 @@
             <!-- 模块4: 人物素材库 -->
             <section class="module-panel" id="panel-renwu">
                 <div class="module-header">
-                    <h2>⭐ 人物素材库</h2>
+                    <h2>⭐ 人物素材库 <span class="today-new-badge" id="tn-renwu">新增 0 条</span></h2>
                     <p class="module-desc">时代楷模 · 基层干部 · 青年榜样 · 湖北本土先进人物</p>
                 </div>
                 <div class="renwu-daily" id="renwuDailyCard"></div>
@@ -288,7 +292,7 @@
             <!-- 模块5: 资料分析速算 -->
             <section class="module-panel" id="panel-susuan">
                 <div class="module-header">
-                    <h2>🧮 资料分析速算</h2>
+                    <h2>🧮 资料分析速算 <span class="today-new-badge" id="tn-susuan">新增 0 条</span></h2>
                     <p class="module-desc">百化分 · 假设分配法 · 截位直除 · 分数比较</p>
                 </div>
                 <div class="susuan-tabs">
@@ -340,6 +344,7 @@
                     <div class="susuan-panel" id="susuan-baifenbi">
                         <div class="baifenbi-table" id="baifenbiTable"></div>
                     </div>
+                    <div class="module-checkin" id="checkin-susuan"></div>
                 </div>
             </section>
 
@@ -409,7 +414,7 @@
             <!-- 今日晨读：每日权威媒体评论/时评 -->
             <section class="module-panel" id="panel-morning">
                 <div class="module-header">
-                    <h2>🌅 今日晨读</h2>
+                    <h2>🌅 今日晨读 <span class="today-new-badge" id="tn-morning">新增 0 条</span></h2>
                     <p class="module-desc" id="morningDateLabel">每日精选权威媒体评论，晨读积累申论素材</p>
                 </div>
                 <div class="action-bar">
@@ -419,12 +424,13 @@
                 </div>
                 <div class="source-tags" id="morningSources"></div>
                 <div class="morning-list" id="morningList"></div>
+                <div class="module-checkin" id="checkin-morning"></div>
             </section>
 
             <!-- 高频成语模块 -->
             <section class="module-panel" id="panel-idioms">
                 <div class="module-header">
-                    <h2>🀄 高频成语</h2>
+                    <h2>🀄 高频成语 <span class="today-new-badge" id="tn-idioms">新增 0 条</span></h2>
                     <p class="module-desc">言语 1200 高频成语 · 按考频分级 · 碎片秒看 · 遮挡自测</p>
                 </div>
                 <div class="action-bar">
@@ -442,12 +448,13 @@
                 <div class="idiom-card-wrap" id="idiomCardWrap"></div>
                 <div class="idiom-progress" id="idiomProgress"></div>
                 <div class="idiom-list" id="idiomList"></div>
+                <div class="module-checkin" id="checkin-idioms"></div>
             </section>
 
             <!-- 混淆成语配对模块 -->
             <section class="module-panel" id="panel-idiomPairs">
                 <div class="module-header">
-                    <h2>🔗 混淆成语配对</h2>
+                    <h2>🔗 混淆成语配对 <span class="today-new-badge" id="tn-idiomPairs">新增 0 条</span></h2>
                     <p class="module-desc">易混成语对照记忆 · 望文生义坑 / 近义辨析 / 感情色彩</p>
                 </div>
                 <div class="action-bar">
@@ -461,12 +468,13 @@
                 </div>
                 <div class="pair-card-wrap" id="pairCardWrap"></div>
                 <div class="pair-list" id="pairList"></div>
+                <div class="module-checkin" id="checkin-idiomPairs"></div>
             </section>
 
             <!-- 判断推理逻辑口诀模块 -->
             <section class="module-panel" id="panel-logic">
                 <div class="module-header">
-                    <h2>🧠 判断推理逻辑口诀</h2>
+                    <h2>🧠 判断推理逻辑口诀 <span class="today-new-badge" id="tn-logic">新增 0 条</span></h2>
                     <p class="module-desc">翻译推理 · 真假推理 · 类比关系 · 图形推理规律 · 图推特征图</p>
                 </div>
                 <div class="filter-tags" id="logicCatFilters">
@@ -483,7 +491,7 @@
             <!-- 结构化面试短句模块 -->
             <section class="module-panel" id="panel-interview">
                 <div class="module-header">
-                    <h2>🎤 结构化面试短句</h2>
+                    <h2>🎤 结构化面试短句 <span class="today-new-badge" id="tn-interview">新增 0 条</span></h2>
                     <p class="module-desc">一行一句万能短句 · 六大题型 · 救场金句 · 通勤碎片背</p>
                 </div>
                 <div class="action-bar">
@@ -510,6 +518,90 @@
                 </div>
                 <div class="interview-card-wrap" id="interviewCardWrap"></div>
                 <div class="interview-list" id="interviewList"></div>
+            </section>
+
+            <!-- 模块：考公金币台账 -->
+            <section class="module-panel" id="panel-gold">
+                <div class="module-header">
+                    <h2>🪙 考公金币台账 <span class="today-new-badge gold-badge" id="tn-gold">本地记账</span></h2>
+                    <p class="module-desc">记录每天任务金币，复制后粘贴到「日常生活工作台」入账。本工作台只记账、不持有全局余额。</p>
+                </div>
+
+                <div class="gold-notice">⚠️ 本工作台只记账，不会真正增加总金币；复制出来的数字，需粘贴到日常生活工作台、选择来源「考公任务」入账，才会进入全局金币总账。</div>
+
+                <!-- 今日合计大卡 -->
+                <div class="gold-today-card">
+                    <div class="gold-today-label">今日合计应得金币</div>
+                    <div class="gold-today-num" id="goldTodayNum">0</div>
+                    <div class="gold-today-sub" id="goldTodaySub">含每日任务 + 四模块打卡</div>
+                    <div class="gold-today-actions">
+                        <button class="btn-pink" onclick="copyTodayGold()">📋 复制今日应得金币</button>
+                        <button class="btn-outline btn-sm" onclick="editTodayOverride()">✏️ 手动调整</button>
+                    </div>
+                </div>
+
+                <!-- 每日任务 -->
+                <div class="gold-section">
+                    <div class="gold-section-title">✅ 每日任务</div>
+                    <div class="record-form" id="goldTaskForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>任务名称</label>
+                                <input id="goldTaskName" placeholder="如：资料分析20题、完成一套模考" />
+                            </div>
+                            <div class="form-group">
+                                <label>分类标签</label>
+                                <input id="goldTaskCat" placeholder="如：资料分析、申论" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>金币奖励</label>
+                                <input id="goldTaskGold" type="number" min="0" step="1" placeholder="如：10" />
+                            </div>
+                            <div class="form-group" style="display:flex;align-items:flex-end;justify-content:flex-end;">
+                                <button class="btn-pink" onclick="addGoldTask()">+ 添加任务</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gold-task-list" id="goldTaskList"></div>
+                </div>
+
+                <!-- 打卡流水 / 考公金币台账录入 -->
+                <div class="gold-section">
+                    <div class="gold-section-title">📒 考公金币台账（手动录入）</div>
+                    <div class="record-form" id="goldLedgerForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>日期（默认今天，可改）</label>
+                                <input id="goldLedgerDate" type="date" />
+                            </div>
+                            <div class="form-group">
+                                <label>本次获得金币</label>
+                                <input id="goldLedgerGold" type="number" min="0" step="1" placeholder="如：15" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>任务描述</label>
+                            <input id="goldLedgerTask" placeholder="如：完成一套模考、晨读学习" />
+                        </div>
+                        <button class="btn-pink" onclick="addGoldLedger()">+ 记一笔</button>
+                    </div>
+
+                    <div class="gold-stats">
+                        <div class="plan-stat-card">
+                            <div class="plan-stat-value" id="goldWeekNum">0</div>
+                            <div class="plan-stat-label">本周累计应得</div>
+                        </div>
+                        <div class="plan-stat-card">
+                            <div class="plan-stat-value" id="goldMonthNum">0</div>
+                            <div class="plan-stat-label">本月累计应得</div>
+                        </div>
+                    </div>
+
+                    <div class="gold-flow-title">🧾 全部流水（打卡 + 录入，可编辑 / 删除）</div>
+                    <div class="gold-flow-list" id="goldFlowList"></div>
+                </div>
             </section>
 
             <!-- 收藏夹：点赞/收藏的文章统一收纳 -->
@@ -648,7 +740,7 @@
 
     <script src="./js/data.js?v=34"></script>
     <script src="./js/data-modules.js?v=34"></script>
-    <script src="./js/app.js?v=55"></script>
-    <script src="./js/loader.js?v=55"></script>
+    <script src="./js/app.js?v=56"></script>
+    <script src="./js/loader.js?v=56"></script>
 </body>
 </html>

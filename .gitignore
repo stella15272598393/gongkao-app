@@ -25,6 +25,7 @@ _debug*.html
 __tmp*
 __push*
 cron-job*
+tmp_*.js
 *.bat
 .cache/
 

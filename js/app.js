@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v55';
+const APP_VERSION = '2026-08-06-v56';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -290,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initIdiomPairs();
     initLogic();
     initInterview();
+    initGoldLedger();
     scheduleDailyPush();
 });
 
@@ -552,6 +553,8 @@ function switchModule(moduleName) {
     if (moduleName === 'settings') { renderDataStats(); renderCloudConfig(); }
     // 进入工作台时刷新数据（打卡改为手动，不自动触发）
     if (moduleName === 'home') { renderHome(); }
+    // 进入金币台账时刷新（任务/打卡/流水/统计）
+    if (moduleName === 'gold') { renderGoldLedger(); }
 }
 
 // ========== 收藏夹页面 ==========
@@ -4150,5 +4153,369 @@ function scheduleDailyPush() {
         // 当天未生成过，或生成了未打卡，都弹出（每天最多一次视觉提醒）
         if (!rec || rec.date !== today || !rec.checked) showDailyPush();
     }, 1500);
+}
+
+/* ================================================================
+   考公金币台账（v56 新增）
+   ----------------------------------------------------------------
+   设计要点：
+   - 本工作台「只记账」，不持有全局金币余额；复制出的数字需粘贴到
+     日常生活工作台、选来源「考公任务」入账，才会进入全局总账。
+   - 今日合计应得金币 = 每日任务勾选金币 + 四模块打卡金币 + 手动录入金币
+   - 今日合计可被「手动调整」覆盖（覆盖自动计算值）
+   - 所有记录存 localStorage，刷新不丢失
+   ================================================================ */
+
+// 参与打卡奖励的四个侧边模块
+const GOLD_MODULES = ['susuan', 'morning', 'idiomPairs', 'idioms'];
+const GOLD_MODULE_NAMES = { susuan: '速算', morning: '晨读', idiomPairs: '混淆配对', idioms: '高频成语' };
+
+function goldEsc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function loadGold(key, def) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch (e) { return def; }
+}
+function saveGold(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+}
+function goldId() {
+    return 'g' + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36);
+}
+
+// 状态（从 localStorage 恢复）
+let goldTasks = loadGold('gk_gold_tasks', []);
+let goldTaskDone = loadGold('gk_gold_taskDone', {});   // { 'YYYY-MM-DD': { taskId: true } }
+let goldOverride = loadGold('gk_gold_override', {});   // { 'YYYY-MM-DD': number|null }
+let goldCheckins = loadGold('gk_gold_checkins', []);  // [{ id, date, module, gold }]
+let goldLedger = loadGold('gk_gold_ledger', []);       // [{ id, date, task, gold }]
+let goldModuleDefault = loadGold('gk_gold_moduleDefault', { susuan: 5, morning: 5, idiomPairs: 5, idioms: 5 });
+
+// ---- 计算 ----
+function dayTaskGold(dateKey) {
+    const done = goldTaskDone[dateKey] || {};
+    return goldTasks.reduce((s, t) => s + (done[t.id] ? (Number(t.gold) || 0) : 0), 0);
+}
+function dayCheckinGold(dateKey) {
+    return goldCheckins.filter(c => c.date === dateKey).reduce((s, c) => s + (Number(c.gold) || 0), 0);
+}
+function dayLedgerGold(dateKey) {
+    return goldLedger.filter(l => l.date === dateKey).reduce((s, l) => s + (Number(l.gold) || 0), 0);
+}
+function dayAutoTotal(dateKey) {
+    return dayTaskGold(dateKey) + dayCheckinGold(dateKey) + dayLedgerGold(dateKey);
+}
+function dayTotal(dateKey) {
+    const ov = goldOverride[dateKey];
+    if (ov !== undefined && ov !== null && ov !== '') {
+        const n = Number(ov);
+        if (!isNaN(n)) return n;
+    }
+    return dayAutoTotal(dateKey);
+}
+
+// ---- 初始化 ----
+function initGoldLedger() {
+    const dEl = document.getElementById('goldLedgerDate');
+    if (dEl && !dEl.value) dEl.value = bjToday();
+    renderGoldLedger();
+    renderAllCheckinBars();
+    loadContentMetaForBadges();
+}
+
+// ---- 渲染：金币台账主模块 ----
+function renderGoldLedger() {
+    const today = bjToday();
+    const total = dayTotal(today);
+    const numEl = document.getElementById('goldTodayNum');
+    if (numEl) numEl.textContent = String(total);
+    const subEl = document.getElementById('goldTodaySub');
+    if (subEl) {
+        const auto = dayAutoTotal(today);
+        const ov = goldOverride[today];
+        if (ov !== undefined && ov !== null && ov !== '') {
+            subEl.textContent = `手动调整为 ${total}（自动计算 ${auto}）`;
+        } else {
+            subEl.textContent = `含每日任务 + 四模块打卡（自动 ${auto}）`;
+        }
+    }
+    renderGoldTasks();
+    renderGoldFlow();
+    renderGoldStats();
+}
+
+function renderGoldTasks() {
+    const wrap = document.getElementById('goldTaskList');
+    if (!wrap) return;
+    const today = bjToday();
+    const done = goldTaskDone[today] || {};
+    if (goldTasks.length === 0) {
+        wrap.innerHTML = '<div class="gold-empty">还没有任务，先在上方添加一条吧～</div>';
+        return;
+    }
+    wrap.innerHTML = goldTasks.map(t => {
+        const isDone = !!done[t.id];
+        return `<div class="gold-task-item">
+            <input type="checkbox" class="gold-task-check" ${isDone ? 'checked' : ''} onchange="toggleTaskDone('${t.id}', this.checked)" />
+            <div class="gold-task-main">
+                <div class="gold-task-name">${goldEsc(t.name)}</div>
+                <div class="gold-task-meta">${goldEsc(t.category || '未分类')} · ${Number(t.gold) || 0} 金币</div>
+            </div>
+            <div class="gold-task-gold ${isDone ? 'done' : ''}">${isDone ? '+' + (Number(t.gold) || 0) : (Number(t.gold) || 0)}</div>
+            <div class="gold-task-ops">
+                <button class="mini-btn del" onclick="delGoldTask('${t.id}')" title="删除任务">🗑</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderGoldFlow() {
+    const wrap = document.getElementById('goldFlowList');
+    if (!wrap) return;
+    const rows = [];
+    goldCheckins.forEach(c => rows.push({ kind: 'checkin', id: c.id, date: c.date, src: GOLD_MODULE_NAMES[c.module] || c.module, srcKey: 'checkin', task: '模块打卡', gold: c.gold }));
+    goldLedger.forEach(l => rows.push({ kind: 'ledger', id: l.id, date: l.date, src: '录入', srcKey: 'ledger', task: l.task, gold: l.gold }));
+    rows.sort((a, b) => (b.date || '').localeCompare(a.date || '') || 0);
+    if (rows.length === 0) {
+        wrap.innerHTML = '<div class="gold-empty">还没有任何记录，去四模块底部打卡或上面记一笔吧～</div>';
+        return;
+    }
+    wrap.innerHTML = rows.map(r => `
+        <div class="gold-flow-item">
+            <div class="gold-flow-main">
+                <div class="gold-flow-top">
+                    <span class="gold-flow-src ${r.srcKey}">${goldEsc(r.src)}</span>
+                    <span class="gold-flow-task">${goldEsc(r.task || '')}</span>
+                </div>
+                <div class="gold-flow-date">${goldEsc(r.date)}</div>
+            </div>
+            <div class="gold-flow-gold">+${Number(r.gold) || 0}</div>
+            <div class="gold-flow-ops">
+                <button class="mini-btn edit" onclick="editGoldFlow('${r.kind}','${r.id}')" title="编辑">✏️</button>
+                <button class="mini-btn del" onclick="delGoldFlow('${r.kind}','${r.id}')" title="删除">🗑</button>
+            </div>
+        </div>`).join('');
+}
+
+function renderGoldStats() {
+    const weekEl = document.getElementById('goldWeekNum');
+    const monthEl = document.getElementById('goldMonthNum');
+    if (weekEl) weekEl.textContent = String(weekTotal(bjToday()));
+    if (monthEl) monthEl.textContent = String(monthTotal(bjToday()));
+}
+
+function weekTotal(refKey) {
+    const ref = new Date(refKey + 'T00:00:00');
+    const dow = ref.getDay(); // 0=周日
+    const monOffset = dow === 0 ? -6 : -(dow - 1);
+    let sum = 0;
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(ref); d.setDate(ref.getDate() + monOffset + i);
+        sum += dayTotal(fmtYMD(d));
+    }
+    return sum;
+}
+function monthTotal(refKey) {
+    const ref = new Date(refKey + 'T00:00:00');
+    const y = ref.getFullYear(), m = ref.getMonth();
+    const days = new Date(y, m + 1, 0).getDate();
+    let sum = 0;
+    for (let i = 1; i <= days; i++) {
+        sum += dayTotal(`${y}-${String(m + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`);
+    }
+    return sum;
+}
+
+// ---- 交互：每日任务 ----
+function addGoldTask() {
+    const name = (document.getElementById('goldTaskName').value || '').trim();
+    const cat = (document.getElementById('goldTaskCat').value || '').trim();
+    const gold = Number(document.getElementById('goldTaskGold').value || 0);
+    if (!name) { appAlert('请填写任务名称'); return; }
+    if (isNaN(gold) || gold < 0) { appAlert('金币奖励需为非负数字'); return; }
+    goldTasks.push({ id: goldId(), name, category: cat, gold });
+    saveGold('gk_gold_tasks', goldTasks);
+    document.getElementById('goldTaskName').value = '';
+    document.getElementById('goldTaskCat').value = '';
+    document.getElementById('goldTaskGold').value = '';
+    renderGoldTasks(); renderGoldFlow(); renderGoldStats();
+    showToast('已添加任务：' + name);
+}
+function toggleTaskDone(id, checked) {
+    const today = bjToday();
+    if (!goldTaskDone[today]) goldTaskDone[today] = {};
+    if (checked) goldTaskDone[today][id] = true;
+    else delete goldTaskDone[today][id];
+    saveGold('gk_gold_taskDone', goldTaskDone);
+    renderGoldLedger();
+}
+function delGoldTask(id) {
+    appConfirm('确定删除该任务？历史打卡与录入不受影响。', ok => {
+        if (!ok) return;
+        goldTasks = goldTasks.filter(t => t.id !== id);
+        saveGold('gk_gold_tasks', goldTasks);
+        renderGoldTasks();
+    });
+}
+
+// ---- 交互：手动录入台账 ----
+function addGoldLedger() {
+    let date = document.getElementById('goldLedgerDate').value;
+    if (!date) date = bjToday();
+    const gold = Number(document.getElementById('goldLedgerGold').value || 0);
+    const task = (document.getElementById('goldLedgerTask').value || '').trim();
+    if (isNaN(gold) || gold < 0) { appAlert('金币需为非负数字'); return; }
+    if (!task) { appAlert('请填写任务描述'); return; }
+    goldLedger.push({ id: goldId(), date, task, gold });
+    saveGold('gk_gold_ledger', goldLedger);
+    document.getElementById('goldLedgerGold').value = '';
+    document.getElementById('goldLedgerTask').value = '';
+    renderGoldLedger();
+    showToast('已记一笔：' + task + ' +' + gold);
+}
+function editGoldFlow(kind, id) {
+    const isCheckin = kind === 'checkin';
+    const rec = isCheckin ? goldCheckins.find(c => c.id === id) : goldLedger.find(l => l.id === id);
+    if (!rec) return;
+    showAppModal({
+        title: isCheckin ? '编辑打卡记录' : '编辑录入记录',
+        body: '',
+        fields: [
+            { id: 'date', type: 'date', value: rec.date },
+            { id: 'task', type: 'text', value: isCheckin ? (GOLD_MODULE_NAMES[rec.module] || rec.module + '打卡') : rec.task, placeholder: '任务描述' },
+            { id: 'gold', type: 'number', value: rec.gold }
+        ],
+        okText: '保存', cancelText: '取消',
+        onOk: v => {
+            const date = v.date || bjToday();
+            const gold = Number(v.gold || 0);
+            if (isNaN(gold) || gold < 0) { appAlert('金币需为非负数字'); return; }
+            if (isCheckin) { rec.date = date; rec.gold = gold; saveGold('gk_gold_checkins', goldCheckins); }
+            else { rec.date = date; rec.task = (v.task || '').trim() || rec.task; rec.gold = gold; saveGold('gk_gold_ledger', goldLedger); }
+            renderGoldLedger();
+        }
+    });
+}
+function delGoldFlow(kind, id) {
+    appConfirm('确定删除这条记录？', ok => {
+        if (!ok) return;
+        if (kind === 'checkin') { goldCheckins = goldCheckins.filter(c => c.id !== id); saveGold('gk_gold_checkins', goldCheckins); }
+        else { goldLedger = goldLedger.filter(l => l.id !== id); saveGold('gk_gold_ledger', goldLedger); }
+        renderGoldLedger();
+    });
+}
+
+// ---- 今日合计：复制 / 手动调整 ----
+function copyTodayGold() {
+    const total = dayTotal(bjToday());
+    const txt = String(total);
+    const done = () => showToast('已复制今日应得金币：' + txt + '（粘贴到日常生活工作台、选来源「考公任务」入账）');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(done).catch(() => goldFallbackCopy(txt, done));
+    } else { goldFallbackCopy(txt, done); }
+}
+function goldFallbackCopy(txt, done) {
+    const ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { appAlert('复制失败，请手动记录：' + txt); }
+    document.body.removeChild(ta);
+}
+function editTodayOverride() {
+    const today = bjToday();
+    const cur = goldOverride[today];
+    const curVal = (cur === undefined || cur === null) ? '' : cur;
+    showAppModal({
+        title: '手动调整今日合计',
+        body: '留空则使用自动计算值（每日任务 + 四模块打卡）。填写后会覆盖自动计算的结果。',
+        fields: [{ id: 'val', type: 'number', value: curVal, placeholder: '如：120' }],
+        okText: '保存', cancelText: '清除',
+        onOk: v => {
+            const raw = (v.val || '').trim();
+            if (raw === '') { delete goldOverride[today]; }
+            else { const n = Number(raw); if (isNaN(n)) { appAlert('请输入数字'); return; } goldOverride[today] = n; }
+            saveGold('gk_gold_override', goldOverride);
+            renderGoldLedger();
+        },
+        onCancel: () => {
+            delete goldOverride[today]; saveGold('gk_gold_override', goldOverride); renderGoldLedger();
+            showToast('已清除手动调整，恢复自动计算');
+        }
+    });
+}
+
+// ---- 四模块底部打卡奖励组件 ----
+function renderModuleCheckin(moduleKey) {
+    const el = document.getElementById('checkin-' + moduleKey);
+    if (!el) return;
+    const today = bjToday();
+    const def = goldModuleDefault[moduleKey];
+    const todays = goldCheckins.filter(c => c.date === today && c.module === moduleKey);
+    const todayGold = todays.reduce((s, c) => s + (Number(c.gold) || 0), 0);
+    const hist = goldCheckins.filter(c => c.module === moduleKey).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+    el.innerHTML = `
+        <div class="checkin-bar">
+            <span class="checkin-title">🏅 打卡奖励 · ${GOLD_MODULE_NAMES[moduleKey]}</span>
+            <span class="checkin-default">默认 <input type="number" min="0" id="cd-${moduleKey}" value="${def}" onchange="setModuleDefault('${moduleKey}', this.value)" /> 金币</span>
+            <input type="number" min="0" class="checkin-amount" id="ca-${moduleKey}" value="${def}" placeholder="本次金币" />
+            <button class="btn-pink btn-sm" onclick="doCheckIn('${moduleKey}')">✅ 打卡</button>
+            <span class="checkin-today">今日已打卡 <b>${todays.length}</b> 次 · <b>+${todayGold}</b></span>
+        </div>
+        ${hist.length ? `<div class="checkin-history">${hist.map(h => `<div class="checkin-hist-item"><span>${h.date}</span><span class="ch-gold">+${h.gold}</span></div>`).join('')}</div>` : ''}
+    `;
+}
+function renderAllCheckinBars() { GOLD_MODULES.forEach(renderModuleCheckin); }
+function setModuleDefault(moduleKey, val) {
+    const n = Number(val || 0);
+    if (isNaN(n) || n < 0) return;
+    goldModuleDefault[moduleKey] = n;
+    saveGold('gk_gold_moduleDefault', goldModuleDefault);
+    const inp = document.getElementById('ca-' + moduleKey);
+    if (inp) inp.value = n;
+}
+function doCheckIn(moduleKey) {
+    const today = bjToday();
+    const inp = document.getElementById('ca-' + moduleKey);
+    let gold = Number(inp ? inp.value : goldModuleDefault[moduleKey]);
+    if (isNaN(gold) || gold < 0) gold = goldModuleDefault[moduleKey];
+    goldCheckins.push({ id: goldId(), date: today, module: moduleKey, gold });
+    saveGold('gk_gold_checkins', goldCheckins);
+    renderModuleCheckin(moduleKey);
+    renderGoldLedger();
+    showToast(`${GOLD_MODULE_NAMES[moduleKey]} 打卡 +${gold} 已计入今日合计`);
+}
+
+/* ================================================================
+   各模块「今日新增 X 条 / 新增 0 条」徽章（v56 新增）
+   ----------------------------------------------------------------
+   数据来源：content/meta.json 的 dailyNew[北京时间今天][模块]，
+   由爬虫在每次抓取时写入。今天没抓到（或抓取失败）则显示「新增 0 条」。
+   ================================================================ */
+function renderModuleTodayNew(meta) {
+    const today = bjToday();
+    const dn = (meta && meta.dailyNew && meta.dailyNew[today]) || {};
+    const map = {
+        shizheng: dn.shizheng || 0,
+        shenlun: (dn.essays || 0) + (dn.quotes || 0),
+        qiushi: dn.qiushi || 0,
+        renwu: dn.renwu || 0,
+        morning: dn.morning || 0,
+        susuan: dn.susuan || 0,
+        idioms: 0, idiomPairs: 0, logic: 0, interview: 0
+    };
+    Object.keys(map).forEach(k => {
+        const el = document.getElementById('tn-' + k);
+        if (!el) return;
+        const n = map[k];
+        if (n > 0) { el.textContent = '今日新增 ' + n + ' 条'; el.classList.add('has-new'); }
+        else { el.textContent = '新增 0 条'; el.classList.remove('has-new'); }
+    });
+}
+function loadContentMetaForBadges() {
+    // 优先用 loader 已加载的 meta；否则自行拉取（网络优先，离线则保持默认「新增 0 条」）
+    if (window.__contentMeta) { try { renderModuleTodayNew(window.__contentMeta); return; } catch (e) {} }
+    fetch('content/meta.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(r => r.ok ? r.json() : null)
+        .then(m => { if (m) renderModuleTodayNew(m); })
+        .catch(() => {});
 }
 
