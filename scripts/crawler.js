@@ -337,12 +337,34 @@ function decompose(paragraphs) {
  * ========================================================== */
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+// 随机礼貌延时：在 [min,max] 区间内随机取值，模拟真人访问节奏，
+// 避免固定间隔被反爬机制识别为脚本。默认 0.8~2.5 秒。
+async function randomDelay(min = 800, max = 2500) {
+    const ms = Math.floor(min + Math.random() * (max - min));
+    await sleep(ms);
+    return ms;
+}
+
+// 带指数退避重试的请求封装（仅用于顶层抓取；重定向递归仍走底层 request）
+async function requestWithRetry(url, referer, retries = 2) {
+    let lastErr;
+    for (let i = 0; i <= retries; i++) {
+        try {
+            return await request(url, referer);
+        } catch (e) {
+            lastErr = e;
+            if (i < retries) await sleep(1000 * (i + 1)); // 1s, 2s 退避
+        }
+    }
+    throw lastErr;
+}
+
 async function crawlSource(src) {
     const out = [];
     process.stdout.write(`\n[${src.name}] 抓取入口页 ... `);
     let indexHtml;
     try {
-        indexHtml = await request(src.entry, src.referer);
+        indexHtml = await requestWithRetry(src.entry, src.referer);
         process.stdout.write('OK\n');
     } catch (e) {
         console.log('失败:', e.message);
@@ -364,7 +386,7 @@ async function crawlSource(src) {
     let ok = 0, fail = 0;
     for (const url of urls.slice(0, src.max)) {
         try {
-            const html = await request(url, src.referer);
+            const html = await requestWithRetry(url, src.referer);
             const art = extractArticle(html);
 
             // 门槛1：正文长度（备考素材至少 800 字，短讯无价值）
@@ -406,7 +428,7 @@ async function crawlSource(src) {
             });
             ok++;
             process.stdout.write(`\r  已抓取 ${ok} 篇 / 跳过 ${fail} 篇`);
-            await sleep(350); // 礼貌延时
+            await randomDelay(); // 随机礼貌延时，降低反爬风险
         } catch (e) {
             fail++;
         }
@@ -427,7 +449,7 @@ async function crawlFenbiShizheng() {
     const listUrl = 'https://www.fenbi.com/page/exams-preparation-materials-list/12';
     let html;
     try {
-        html = await request(listUrl, listUrl);
+        html = await requestWithRetry(listUrl, listUrl);
     } catch (e) {
         console.log('  [粉笔时政] 列表抓取失败（跳过）: ' + e.message);
         return out;
@@ -441,7 +463,7 @@ async function crawlFenbiShizheng() {
     console.log('  [粉笔时政] 发现详情链接 ' + links.length + ' 条');
     for (const url of links) {
         try {
-            const page = await request(url, listUrl);
+            const page = await requestWithRetry(url, listUrl);
             const art = extractFenbi(page);
             if (!art.title || art.fullText.length < 400) continue;
             const cls = classify(art.title, art.paragraphs);
@@ -461,7 +483,7 @@ async function crawlFenbiShizheng() {
                 analysis: decompose(art.paragraphs),
                 crawledAt: new Date().toISOString()
             });
-            await sleep(300);
+            await randomDelay();
         } catch (e) { /* 单篇失败忽略 */ }
     }
     console.log('  [粉笔时政] 新增 ' + out.length + ' 篇');
@@ -478,7 +500,7 @@ async function crawlGovCn() {
     const entry = 'https://www.gov.cn/zhengce/guowuyuan/';
     let html;
     try {
-        html = await request(entry, entry);
+        html = await requestWithRetry(entry, entry);
     } catch (e) {
         console.log('  [政府网] 列表抓取失败（跳过）: ' + e.message);
         return out;
@@ -492,7 +514,7 @@ async function crawlGovCn() {
     console.log('  [政府网] 发现链接 ' + links.length + ' 条');
     for (const url of links) {
         try {
-            const page = await request(url, entry);
+            const page = await requestWithRetry(url, entry);
             const art = extractArticle(page);
             if (!art.title || art.fullText.length < 600) continue;
             const cls = classify(art.title, art.paragraphs);
@@ -513,7 +535,7 @@ async function crawlGovCn() {
                 analysis: decompose(art.paragraphs),
                 crawledAt: new Date().toISOString()
             });
-            await sleep(300);
+            await randomDelay();
         } catch (e) { /* 单篇失败忽略 */ }
     }
     console.log('  [政府网] 新增 ' + out.length + ' 篇');
@@ -521,15 +543,81 @@ async function crawlGovCn() {
 }
 
 /* ============================================================
+ * 频率守卫 + 非破坏性写入（v59 爬虫加固）
+ * ------------------------------------------------------------
+ * 1) CRAWL_INTERVAL_DAYS：两次「成功抓取」之间的最小间隔（天）。
+ *    即使外部触发器（cron-job.org / GitHub schedule）每天触发，
+ *    也只在间隔到期后真正访问新闻源，最大限度避免触发反爬。
+ *    可用环境变量覆盖：CRAWL_INTERVAL_DAYS=5 或 FORCE_CRAWL=1。
+ * 2) isValidItem：写入前结构校验，丢弃脏数据，避免损坏旧库。
+ * 3) writeContentFile：仅当确有有效内容时才覆盖旧 json，否则保留旧文件。
+ * ========================================================== */
+const CRAWL_INTERVAL_DAYS = Number(process.env.CRAWL_INTERVAL_DAYS || 7);
+const GUARD_FILE = path.join(OUT_DIR, '.crawl_guard.json');
+
+/** 距上次成功抓取不足间隔则跳过（防反爬核心开关） */
+function shouldSkipByInterval() {
+    if (process.env.FORCE_CRAWL) return false;     // 手动强制抓取
+    if (!fs.existsSync(GUARD_FILE)) return false;   // 首次运行，必抓
+    try {
+        const g = JSON.parse(fs.readFileSync(GUARD_FILE, 'utf8'));
+        const last = new Date(g.lastSuccessAt).getTime();
+        if (isNaN(last)) return false;
+        const days = (Date.now() - last) / 86400000;
+        return days < CRAWL_INTERVAL_DAYS;
+    } catch (e) { return false; }
+}
+
+/** 记录本次成功抓取时间（供频率守卫读取，需随 content/ 一起提交） */
+function saveCrawlGuard() {
+    fs.writeFileSync(GUARD_FILE, JSON.stringify({
+        lastSuccessAt: new Date().toISOString(),
+        intervalDays: CRAWL_INTERVAL_DAYS
+    }, null, 1), 'utf8');
+}
+
+/** 结构校验：仅当具备必要字段且正文足够长，才视为有效，避免写入脏数据 */
+function isValidItem(it) {
+    return it && typeof it === 'object'
+        && typeof it.title === 'string' && it.title.trim().length > 0
+        && typeof it.url === 'string' && /^https?:\/\//.test(it.url)
+        && typeof it.fullText === 'string' && it.fullText.length >= 200;
+}
+
+/** 非破坏性写盘：仅当 merged 数组有效（非空）才覆盖旧文件；否则保留旧 json */
+function writeContentFile(file, mergedItems) {
+    if (!mergedItems || mergedItems.length === 0) {
+        if (fs.existsSync(file)) {
+            console.log('  ⚠️ ' + path.basename(file) + '：本次无有效新内容，保留旧文件不覆盖。');
+            return false;
+        }
+        console.log('  ℹ️ ' + path.basename(file) + '：首次生成（空库）。');
+    }
+    fs.writeFileSync(file, JSON.stringify({
+        updatedAt: new Date().toISOString(),
+        count: mergedItems.length,
+        items: mergedItems
+    }, null, 1), 'utf8');
+    return true;
+}
+
+/* ============================================================
  * 入口
  * ========================================================== */
 async function main() {
     console.log('='.repeat(56));
-    console.log('  个人专属工作台 · 官方内容抓取');
+    console.log('  个人专属工作台 · 官方内容抓取（时政/求是）');
     console.log('  ' + new Date().toLocaleString('zh-CN'));
     console.log('='.repeat(56));
 
     if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+
+    // —— 频率守卫：不足间隔则直接跳过，不访问任何新闻源 ——
+    if (shouldSkipByInterval()) {
+        console.log('\n  ⏭️  距上次成功抓取不足 ' + CRAWL_INTERVAL_DAYS +
+            ' 天，本次跳过（不访问新闻源，保留旧数据）。');
+        return;
+    }
 
     let all = [];
     for (const src of SOURCES) {
@@ -557,6 +645,19 @@ async function main() {
         console.log('  [政府网] 抓取失败（忽略）: ' + e.message);
     }
 
+    // —— 数据校验：丢弃结构不完整（疑似解析失败/脏数据）的条目 ——
+    const before = all.length;
+    all = all.filter(it => isValidItem(it));
+    if (before !== all.length) {
+        console.log('  ⚠️  已过滤 ' + (before - all.length) + ' 条结构不完整的数据');
+    }
+
+    if (all.length === 0) {
+        // 本次完全没有抓到任何有效内容：绝不覆盖旧 json，保留历史库
+        console.log('\n  ❌ 本次抓取未获得任何有效内容，保留旧 json 文件不覆盖。');
+        return;
+    }
+
     // 按日期倒序
     all.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
@@ -570,18 +671,12 @@ async function main() {
         qiushi: mergeHistory(path.join(OUT_DIR, 'qiushi.json'), qiushi, 150)
     };
 
-    fs.writeFileSync(path.join(OUT_DIR, 'shizheng.json'),
-        JSON.stringify({ updatedAt: new Date().toISOString(), count: merged.shizheng.length, items: merged.shizheng }, null, 1), 'utf8');
-    fs.writeFileSync(path.join(OUT_DIR, 'qiushi.json'),
-        JSON.stringify({ updatedAt: new Date().toISOString(), count: merged.qiushi.length, items: merged.qiushi }, null, 1), 'utf8');
+    // —— 非破坏性写入：仅在确有有效新内容时才覆盖旧文件 ——
+    const wroteShizheng = writeContentFile(path.join(OUT_DIR, 'shizheng.json'), merged.shizheng);
+    const wroteQiushi = writeContentFile(path.join(OUT_DIR, 'qiushi.json'), merged.qiushi);
 
-    // 元信息
-    fs.writeFileSync(path.join(OUT_DIR, 'meta.json'), JSON.stringify({
-        updatedAt: new Date().toISOString(),
-        updatedAtLocal: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
-        todayNew: shizheng.length + qiushi.length,
-        totals: { shizheng: merged.shizheng.length, qiushi: merged.qiushi.length }
-    }, null, 1), 'utf8');
+    // 仅当确实写入了内容，才更新频率守卫的「上次成功时间」
+    if (wroteShizheng || wroteQiushi) saveCrawlGuard();
 
     console.log('\n' + '='.repeat(56));
     console.log(`  本次新增：时政 ${shizheng.length} 篇，求是 ${qiushi.length} 篇`);

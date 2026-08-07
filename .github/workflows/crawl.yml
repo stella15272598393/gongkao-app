@@ -1,17 +1,21 @@
-name: 每日抓取内容更新
+name: 内容抓取更新（低频）
 
-# 手机 PWA 联网自动更新机制：
-#   GitHub Actions 每天定时运行抓取脚本，更新 content/*.json，
-#   提交回仓库；GitHub Pages 直接托管整个仓库，PWA 在每次打开时
-#   联网拉取最新 content/*.json（network-first），无需重新安装 APP。
+# 抓取频率策略（v59 起）：
+#   常识时政内容依靠 GitHub 每 7 天更新追加，不再每日抓取。
+#   主触发器：cron-job.org 调用 workflow_dispatch（请在 cron-job.org 侧设为每周一 20:00）。
+#   冗余备份：GitHub schedule 每周一 北京时间 00:00（UTC 周日 16:00）。
+#   双重保险：scripts/crawler.js 内置「频率守卫」，即使触发器每天触发，
+#            也只在距上次成功抓取满 CRAWL_INTERVAL_DAYS(默认7) 天后才真正访问新闻源，
+#            从源头避免触发反爬机制。手动强制抓取：workflow_dispatch 传 inputs
+#            或设置环境变量 FORCE_CRAWL=1。
 on:
-  workflow_dispatch: {}        # 主触发器：cron-job.org 每天北京时间 20:00 调用（POST dispatch）
+  workflow_dispatch: {}        # 主触发器：cron-job.org（建议每周一 20:00）
   schedule:
-    - cron: '0 16 * * *'       # 冗余备份：北京时间每日 00:00（UTC 16:00）；防止 cron-job.org 失效时漏爬
+    - cron: '0 16 * * 0'       # 冗余备份：每周一 北京时间 00:00（UTC 周日 16:00）
 
 concurrency:
   group: crawler
-  cancel-in-progress: false    # 两个触发器若重叠则排队串行执行，互不取消/互不冲突（第二个发现无新内容会自动跳过）
+  cancel-in-progress: false    # 两个触发器若重叠则排队串行执行，互不取消/互不冲突
 
 permissions:
   contents: write
@@ -19,6 +23,8 @@ permissions:
 jobs:
   crawl:
     runs-on: ubuntu-latest
+    env:
+      CRAWL_INTERVAL_DAYS: '7'   # 两次成功抓取最小间隔（天）；可改为 5 提高新鲜度
     steps:
       - uses: actions/checkout@v5
 
