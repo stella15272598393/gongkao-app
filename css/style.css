@@ -1955,3 +1955,71 @@ input[type="range"]::-webkit-slider-thumb {
     background: #fafafa; border-radius: 8px; padding: 6px 10px;
 }
 .checkin-hist-item .ch-gold { margin-left: auto; font-weight: 700; color: var(--primary-dark); }
+
+/* ============================================================
+   v57：每日计划金币 + 计划任务摘要 + 打卡组件置顶
+   ============================================================ */
+/* 打卡组件移到模块顶部后，加点间距与视觉分隔 */
+.module-checkin { margin: 10px 0 14px; }
+
+/* 每日计划：金币说明条 */
+.plan-gold-tip {
+    background: linear-gradient(135deg, #FFF6E5, #FFF0F3);
+    border: 1px solid #FFD9A0; border-radius: 12px;
+    padding: 10px 14px; margin: 10px 0; font-size: 13px; color: #8a6a2f; line-height: 1.6;
+}
+.plan-gold-tip b { color: var(--primary-dark); }
+
+/* 每日计划：金币汇总条 */
+.plan-gold-bar {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: #fff; border: 1px solid var(--border-color); border-radius: 12px;
+    padding: 10px 14px; margin: 10px 0; font-size: 13px; color: var(--text-secondary);
+}
+.plan-gold-bar .pg-earned b { font-size: 18px; color: #E8A13A; font-weight: 800; }
+.plan-gold-bar .pg-sep { color: #ddd; }
+.plan-gold-bar button { margin-left: auto; }
+
+/* 每日计划表：金币列 */
+.plan-gold-cell { white-space: nowrap; }
+.plan-gold-input {
+    width: 54px; padding: 4px 6px; font-size: 13px; text-align: center;
+    border: 1px solid var(--border-color); border-radius: 8px; background: #fffdf7;
+}
+.plan-gold-unit { margin-left: 4px; font-size: 11px; color: var(--text-secondary); }
+.plan-gold-unit.earned { color: #46a049; font-weight: 700; }
+.plan-row-done { background: #f7fbf7; }
+.plan-row-done td { opacity: .85; }
+
+/* 金币台账：今日计划任务摘要 */
+.gold-plan-summary { margin-top: 6px; }
+.gold-plan-head {
+    font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;
+    background: #fffaf0; border-radius: 10px; padding: 8px 12px;
+}
+.gold-plan-head b { color: var(--text-primary); }
+.gold-plan-head .gp-num { color: #E8A13A; font-size: 16px; font-weight: 800; }
+.gold-plan-items { display: flex; flex-direction: column; gap: 6px; }
+.gold-plan-item {
+    display: flex; align-items: center; gap: 8px; font-size: 13px;
+    background: #fff; border: 1px solid var(--border-color);
+    border-radius: 10px; padding: 8px 12px;
+}
+.gold-plan-item.done { background: #f7fbf7; border-color: #cfe8cf; }
+.gold-plan-item .gp-task { flex: 1; color: var(--text-primary); }
+.gold-plan-item.done .gp-task { text-decoration: line-through; color: var(--text-secondary); }
+.gold-plan-item .gp-cat { font-size: 11px; color: var(--text-secondary); background: #f3f3f3; border-radius: 6px; padding: 2px 6px; }
+.gold-plan-item .gp-gold { font-weight: 700; color: #bbb; min-width: 34px; text-align: right; }
+.gold-plan-item.done .gp-gold { color: #E8A13A; }
+
+/* 流水：计划任务来源标签 */
+.gold-flow-src.plan { background: #E8F3E8; color: #46a049; }
+
+.gold-section-title button { margin-left: auto; }
+.gold-section-title { display: flex; align-items: center; gap: 8px; }
+
+@media (max-width: 600px) {
+    .plan-gold-bar { font-size: 12px; }
+    .plan-gold-bar button { margin-left: 0; width: 100%; }
+    .plan-gold-input { width: 46px; }
+}

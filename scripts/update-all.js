@@ -52,10 +52,38 @@ function readCount(file) {
     } catch (e) { return 0; }
 }
 
-function countsOf(modules) {
+// 读取某个内容文件里所有条目的唯一标识集合
+// ★ 为什么用 id 集合而不是条目数量：时政/晨读等模块是「滚动窗口」（超出上限会丢弃最旧的），
+//   抓到 3 条新内容的同时会顶掉 3 条旧内容，条目总数不变 → 用数量差会永远算出「新增 0 条」。
+//   改为比对 id 集合，才能得到真实的当日新增条目数。
+function readIds(file) {
+    try {
+        const d = JSON.parse(fs.readFileSync(path.join(OUT_DIR, file), 'utf8'));
+        const items = d.items || [];
+        const s = new Set();
+        items.forEach((it, idx) => {
+            if (!it) return;
+            // 优先 id，其次 url，最后退化为 标题+日期，确保任何模块都有稳定标识
+            const key = it.id != null ? String(it.id)
+                : (it.url ? 'u:' + it.url
+                    : (it.title || it.name || it.text ? 't:' + (it.title || it.name || it.text) + '|' + (it.date || '') : 'i:' + idx));
+            s.add(key);
+        });
+        return s;
+    } catch (e) { return new Set(); }
+}
+
+function idsOf(modules) {
     const o = {};
-    modules.forEach(m => { o[m] = readCount(MODULE_FILES[m]); });
+    modules.forEach(m => { o[m] = readIds(MODULE_FILES[m]); });
     return o;
+}
+
+// 抓取后相对抓取前，真正新出现的条目数
+function countNewIds(beforeSet, afterSet) {
+    let n = 0;
+    afterSet.forEach(id => { if (!beforeSet.has(id)) n++; });
+    return n;
 }
 
 // 北京时间「今天」键 YYYY-MM-DD（与前端 bjDayKey 保持一致）
@@ -132,13 +160,13 @@ try {
     dailyNew[todayKey] = {};
     let allOk = true;
     for (const [script, modules] of Object.entries(SCRIPT_MODULES)) {
-        const before = countsOf(modules);
+        const before = idsOf(modules);
         const ok = runSafe(script);
         if (!ok) allOk = false;
-        const after = countsOf(modules);
-        // 本次新增 = 抓取后数量 - 抓取前数量（窗口滚动可能丢旧，故下限取 0）
+        const after = idsOf(modules);
+        // 本次新增 = 抓取后出现的、抓取前不存在的条目数（滚动窗口下依然准确）
         modules.forEach(m => {
-            const added = Math.max(0, (after[m] || 0) - (before[m] || 0));
+            const added = countNewIds(before[m] || new Set(), after[m] || new Set());
             dailyNew[todayKey][m] = (dailyNew[todayKey][m] || 0) + added;
         });
     }

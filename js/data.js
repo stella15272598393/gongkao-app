@@ -933,15 +933,16 @@ const PRACTICE_QUESTIONS = [
 ];
 
 // ========== 默认每日计划模板 ==========
+// gold：完成该任务可得金币（v57 起，勾选完成后自动计入「考公金币台账」今日合计）
 const DEFAULT_PLAN_ITEMS = [
-    { id: 1, category: '行测', task: '言语理解刷题 30 道', done: false, progress: 0 },
-    { id: 2, category: '行测', task: '判断推理刷题 30 道', done: false, progress: 0 },
-    { id: 3, category: '申论', task: '背诵金句 2 条并默写', done: false, progress: 0 },
-    { id: 4, category: '申论', task: '阅读范文 1 篇并做笔记', done: false, progress: 0 },
-    { id: 5, category: '资料分析', task: '速算练习 10 道', done: false, progress: 0 },
-    { id: 6, category: '资料分析', task: '资料分析真题 2 篇', done: false, progress: 0 },
-    { id: 7, category: '常识时政', task: '时政热点阅读整理', done: false, progress: 0 },
-    { id: 8, category: '常识时政', task: '常识积累 20 条', done: false, progress: 0 }
+    { id: 1, category: '行测', task: '言语理解刷题 30 道', done: false, progress: 0, gold: 10 },
+    { id: 2, category: '行测', task: '判断推理刷题 30 道', done: false, progress: 0, gold: 10 },
+    { id: 3, category: '申论', task: '背诵金句 2 条并默写', done: false, progress: 0, gold: 5 },
+    { id: 4, category: '申论', task: '阅读范文 1 篇并做笔记', done: false, progress: 0, gold: 8 },
+    { id: 5, category: '资料分析', task: '速算练习 10 道', done: false, progress: 0, gold: 5 },
+    { id: 6, category: '资料分析', task: '资料分析真题 2 篇', done: false, progress: 0, gold: 10 },
+    { id: 7, category: '常识时政', task: '时政热点阅读整理', done: false, progress: 0, gold: 5 },
+    { id: 8, category: '常识时政', task: '常识积累 20 条', done: false, progress: 0, gold: 5 }
 ];
 
 // ========== 模考模块选项 ==========

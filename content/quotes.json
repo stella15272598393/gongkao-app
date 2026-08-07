@@ -1,7 +1,67 @@
 {
- "updatedAt": "2026-08-07T01:49:32.177Z",
- "count": 472,
+ "updatedAt": "2026-08-07T06:48:19.024Z",
+ "count": 500,
  "items": [
+  {
+   "id": "q_l6cvef",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "秘密，就藏在他们脚下的长江水里——湖北省首个“江水空调”系统，正在为这片街区源源不断输送冷气",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126634.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_9eogr",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "按照“村村走到”的硬要求，每一处隐患点、每一户临山居民，都必须走到、看到、查到位",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1mjk82l",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "”有老人行动迟缓，他搀扶着往外撤；有村民想回屋取财物，他一把拦住：“啥也别拿，人最要紧",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1vtxzco",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "村支书刘波穿着雨衣，与同伴手握手电筒，踏着积水深一脚浅一脚地巡查",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_17yw2o7",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "下一步，武汉还将推动服务从“便捷办理”向“增值赋能”升级，努力打造全国数智经济一线城市",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126557.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_zzgmlq",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "规范表述",
+   "text": "推动服务从“便捷办理”向“增值赋能”升级，努力打造全国数智经济一线城市。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126557.html",
+   "category": "基层治理"
+  },
   {
    "id": "q_1r400ar",
    "theme": "jiceng",
@@ -63,64 +123,84 @@
    "category": "基层治理"
   },
   {
-   "id": "q_13pf05u",
-   "theme": "jiceng",
-   "themeName": "基层治理",
+   "id": "q_q75ujg",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
    "kind": "金句",
-   "text": "全村121户要搬迁，占总数的五分之一，谭敏家就在其中",
+   "text": "8月，湖北将重点面向先进制造业、现代服务业产业集群以及各地特色优势产业，吸纳符合条件的经营主体进入培育库",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125616.html",
-   "category": "基层治理"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126559.html",
+   "category": "乡村振兴"
   },
   {
-   "id": "q_1u7rz66",
-   "theme": "jiceng",
-   "themeName": "基层治理",
+   "id": "q_17e88i0",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
    "kind": "金句",
-   "text": "破晓晨曦未醒，城市尚在酣眠，清晨5点50分，荆州的街头巷尾褪去夜色静谧，7路公交车，已准时驶出场站，缓缓启程",
+   "text": "”维智捷全球副总裁兼中国区总裁祁松表示，持续追投武汉，得益于雄厚的产业基础、优质的人才储备和高效的企业服务",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
-   "category": "基层治理"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126511.html",
+   "category": "乡村振兴"
   },
   {
-   "id": "q_1ifo5wd",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "7路公交沿线全长20公里，起于沙市区观音垱公交场站，止于新沙路，沿途经过丫角、观音垱、锣场、关沮等多个乡村区域",
+   "id": "q_165a00m",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "提升智能传感器领域创新能力和产业竞争力。",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
-   "category": "基层治理"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126557.html",
+   "category": "乡村振兴"
   },
   {
-   "id": "q_13c50s9",
-   "theme": "jiceng",
-   "themeName": "基层治理",
+   "id": "q_kjo9q3",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
    "kind": "金句",
-   "text": "对当地村民来说，7路公交不仅是日常出行的主要交通工具，更是运送果蔬进城售卖的便民通道",
+   "text": "此外，HKT还计划将网络延伸至沙岭数据园区集群，支持香港推动其成为先进算力产业基地",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
-   "category": "基层治理"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126560.html",
+   "category": "乡村振兴"
   },
   {
-   "id": "q_1m9anei",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "线路一头连着乡村农户的生计收入，一头连着城市市民的日常餐桌，承载着普通群众最实在的生活期盼",
+   "id": "q_5a3gyq",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "推动其成为先进算力产业基地。",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
-   "category": "基层治理"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126560.html",
+   "category": "乡村振兴"
   },
   {
-   "id": "q_22ycfa",
-   "theme": "jiceng",
-   "themeName": "基层治理",
+   "id": "q_37x1ar",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
    "kind": "金句",
-   "text": "主干道的改造是“面子”，那么沿线三个社区的同步整治，才是真正触及民生的“里子”",
+   "text": "“最近领到4万多元生活补贴，随州尊才爱才重才的优良环境，激励我在这里深耕产业、施展才干",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124257.html",
-   "category": "基层治理"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126553.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_19qkcks",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "他服务的随州海富特五金有限公司，深耕金属3D打印，长期为路易威登、都彭等品牌提供定制服务，产业前景广阔",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126553.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_17hkk6q",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "扩大民营企业覆盖范围，重点支持专汽应急、现代农业等。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126553.html",
+   "category": "乡村振兴"
   },
   {
    "id": "q_1ua9aus",
@@ -160,86 +240,6 @@
    "text": "构建上下游协同、产供销一体的完整吉他产业生态。",
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_13c0tyv",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "“武汉是华中地区汽车产业核心，聚集了众多整车与零部件配套企业，与我们的业务高度契合",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122747.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_6mwidl",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "“这项技术如果顺利实现产业化，就能进入千家万户，有效监测并精准预防心源性猝死的发生",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122561.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1bzrtbr",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动这项技术从实验室走向产业化。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122561.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_98te7r",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动这项技术迈向产业化。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122561.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_hgzngm",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "从看得见的荷花，到看不见的基因密码，这项研究让莲的科学研究和产业应用迈上新台阶",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122578.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1twb6mc",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "从数据表面看，是稳中有进、进中向好的增长曲线；向深处探究，却是生产要素的重组、产业链条的跃升和新旧动能的转换",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122594.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_118ep2a",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "静水深流，潜行之中，一场深刻的产业变革正在成形",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122594.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1o78eon",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "第三产业增加值302.52亿元，增速高达9%，高于全省4.5个百分点，占GDP比重升至49.7%，首次超过第二产业",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122594.html",
    "category": "乡村振兴"
   },
   {
@@ -363,6 +363,26 @@
    "category": "青年奋斗"
   },
   {
+   "id": "q_pwwoy0",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "”市民吕先生得知冷气来自江水换热后，颇为惊喜：“取材于自然，既环保又高级",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126634.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_1fw7dbk",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "华工高理研发出监测PM2.5、有害气体、挥发性有机物的多合一传感器，体积小、成本低，让普通老百姓也能享受优质座舱环境",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126593.html",
+   "category": "生态文明"
+  },
+  {
    "id": "q_1k6vfp1",
    "theme": "shengtai",
    "themeName": "生态文明",
@@ -463,24 +483,44 @@
    "category": "生态文明"
   },
   {
-   "id": "q_1n1yaap",
-   "theme": "shengtai",
-   "themeName": "生态文明",
-   "kind": "规范表述",
-   "text": "强化地质灾害等风险防范，协同推动长江生态环境保护，全力守护长江黄金水道安全畅通。",
+   "id": "q_o4fcd3",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "此时，7户中苏吉国、苏吉海两户外出务工家中无人，其余5户共14名群众仍在家中",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/03/content_20120702.html",
-   "category": "生态文明"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "民生医疗"
   },
   {
-   "id": "q_txlwfu",
-   "theme": "shengtai",
-   "themeName": "生态文明",
+   "id": "q_1h6e0ap",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
    "kind": "金句",
-   "text": "依托72.4%的超高森林覆盖率，罗田坐拥得天独厚的生态资源，是华中地区优质的避暑康养胜地",
+   "text": "截至目前，136户群众已拿到期盼已久的证书，后续群众可以即来即办",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/03/content_20119116.html",
-   "category": "生态文明"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126566.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_19ckmbz",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "针对开发企业资金链断裂、主体灭失的情况，县级财政将先行垫付鉴定、测绘费用，以确保群众权益不受损害",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126566.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_mk5mqa",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "保障等重点民生领域信访占比高达64.5%，41.7%为重复访，部分信访件久办不决。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126566.html",
+   "category": "民生医疗"
   },
   {
    "id": "q_yr70gi",
@@ -563,44 +603,14 @@
    "category": "民生医疗"
   },
   {
-   "id": "q_e7cme1",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
+   "id": "q_1s03ils",
+   "theme": "wenhua",
+   "themeName": "文化传承",
    "kind": "金句",
-   "text": "镇上建有福利院，也有民办养老院，周家善从未踏足",
+   "text": "在武汉经开区支持下，维智捷打破传统供应链串行模式，推行“研发并联”和“地理并联”",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_19evsbg",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "规范表述",
-   "text": "构建现代化、多元化农村养老模式，已经成为亟待破解的民生课题。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_1gkgc0e",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "活动由湖北省委宣传部指导，省新闻出版局、团省委、省教育厅、省市场监督管理局主办，湖北教育出版社和湖北省新华书店集团承办",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/03/content_20119021.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_npymww",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "未来，该项目将打造成中国人保健康管理业务的核心运营平台，服务全国客户",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/03/content_20118996.html",
-   "category": "民生医疗"
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126511.html",
+   "category": "文化传承"
   },
   {
    "id": "q_13fdonb",
@@ -703,23 +713,13 @@
    "category": "文化传承"
   },
   {
-   "id": "q_1yog0bf",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "另一方面，把马克思主义基本原理同中华优秀传统文化相结合，赋予了中国梦深厚的文化底蕴和精神气象",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774846.html",
-   "category": "文化传承"
-  },
-  {
    "id": "q_18grvb6",
    "theme": "wenhua",
    "themeName": "文化传承",
    "kind": "金句",
    "text": "进入新时代，我国社会主要矛盾发生转化，传统发展方式的深层矛盾逐渐凸显，发展中的矛盾和问题集中体现在发展质量上",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774824.html",
+   "source": "人民网",
+   "url": "http://opinion.people.com.cn/n1/2026/0806/c461530-40774623.html",
    "category": "文化传承"
   },
   {
@@ -841,6 +841,336 @@
    "source": "人民网·理论",
    "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772707.html",
    "category": "法治建设"
+  },
+  {
+   "id": "q_nq2ea8",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "三伏天的武汉，气温飙升，室外热浪滚滚",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126634.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1iep5cy",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "但工作人员用测温枪实测发现，大厅门头出风口温度仅16℃，室内出风口则稳定在20℃上下",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126634.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_cqgwk3",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "在负一楼健身房，正在跑步机上锻炼的程女士同样点赞：“顶上吹出来的凉风，感觉比家里的空调风更加柔和",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126634.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_16q15hm",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "在武汉雅诗阁保利滨江服务公寓，工程部经理陈检保按下空调开关，室内很快凉爽下来",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126634.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1qxyn8e",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "”陈检保说，正因如此，公寓还吸引了月子中心等对温度、湿度十分敏感的商户入驻",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126634.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1lrtff9",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "要求很高，而且我们的房间有独立全新风换热系统，效果很好。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126634.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1ugyc7n",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "申报产品如主要使用进口材料组装，国产化率原则上应达到50%以上，并具有自主知识产权，服务类项目不受这一条限制",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126559.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_cwza2c",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "要使用进口材料组装，国产化率原则上应达到50%以上，并具有自主知识产权，服务类项目不受这一条限制。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126559.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_15clry3",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "秦巴山脉深处，郧西县、竹溪县于8月5日同一天，接连上演两场与地质灾害的惊险赛跑",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_19jd7ao",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "8月4日晚9时，漫天雨水倾泻，如墨的夜色吞没山道，天地间只剩急促雨声",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_sc544u",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "要求，每一处隐患点、每一户临山居民，都必须走到、看到、查到位。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_10typd6",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "要发泥石流了，马上跟我走！",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_13pf05u",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "全村121户要搬迁，占总数的五分之一，谭敏家就在其中",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125616.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1u7rz66",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "破晓晨曦未醒，城市尚在酣眠，清晨5点50分，荆州的街头巷尾褪去夜色静谧，7路公交车，已准时驶出场站，缓缓启程",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1ifo5wd",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "7路公交沿线全长20公里，起于沙市区观音垱公交场站，止于新沙路，沿途经过丫角、观音垱、锣场、关沮等多个乡村区域",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_13c50s9",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "对当地村民来说，7路公交不仅是日常出行的主要交通工具，更是运送果蔬进城售卖的便民通道",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1m9anei",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "线路一头连着乡村农户的生计收入，一头连着城市市民的日常餐桌，承载着普通群众最实在的生活期盼",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_22ycfa",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "主干道的改造是“面子”，那么沿线三个社区的同步整治，才是真正触及民生的“里子”",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124257.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_13c0tyv",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "“武汉是华中地区汽车产业核心，聚集了众多整车与零部件配套企业，与我们的业务高度契合",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122747.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_6mwidl",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "“这项技术如果顺利实现产业化，就能进入千家万户，有效监测并精准预防心源性猝死的发生",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122561.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1bzrtbr",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "推动这项技术从实验室走向产业化。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122561.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_98te7r",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "推动这项技术迈向产业化。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122561.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_hgzngm",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "从看得见的荷花，到看不见的基因密码，这项研究让莲的科学研究和产业应用迈上新台阶",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122578.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1twb6mc",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "从数据表面看，是稳中有进、进中向好的增长曲线；向深处探究，却是生产要素的重组、产业链条的跃升和新旧动能的转换",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122594.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_118ep2a",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "静水深流，潜行之中，一场深刻的产业变革正在成形",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122594.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1o78eon",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "第三产业增加值302.52亿元，增速高达9%，高于全省4.5个百分点，占GDP比重升至49.7%，首次超过第二产业",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122594.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1n1yaap",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "强化地质灾害等风险防范，协同推动长江生态环境保护，全力守护长江黄金水道安全畅通。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/03/content_20120702.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_txlwfu",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "依托72.4%的超高森林覆盖率，罗田坐拥得天独厚的生态资源，是华中地区优质的避暑康养胜地",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/03/content_20119116.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_e7cme1",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "镇上建有福利院，也有民办养老院，周家善从未踏足",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_19evsbg",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "构建现代化、多元化农村养老模式，已经成为亟待破解的民生课题。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1gkgc0e",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "活动由湖北省委宣传部指导，省新闻出版局、团省委、省教育厅、省市场监督管理局主办，湖北教育出版社和湖北省新华书店集团承办",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/03/content_20119021.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_npymww",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "未来，该项目将打造成中国人保健康管理业务的核心运营平台，服务全国客户",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/03/content_20118996.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1yog0bf",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "另一方面，把马克思主义基本原理同中华优秀传统文化相结合，赋予了中国梦深厚的文化底蕴和精神气象",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774846.html",
+   "category": "文化传承"
   },
   {
    "id": "q_1y67gft",
@@ -4691,56 +5021,6 @@
    "themeName": "湖北地域发展",
    "kind": "金句",
    "text": "当天特地赶来分享喜悦的该校副校长魏勇鹏说，刘心蕊高中三年稳居年级前十，是光荣榜常客",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120916.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_18an6o0",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "金句",
-   "text": "年级副主任林涛说，高中三年刘同学从不叫苦，也几乎没请过假，“所有人都被她的坚韧鼓舞，老师、同学们都尽力帮助她",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120916.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_10lpzza",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "金句",
-   "text": "比如说她之前语文比较一般，高三张娜老师给她很多辅导，高考她给了我们一个大惊喜",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120916.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_20uubn",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "金句",
-   "text": "刘心蕊说，这种坚韧，也许源自父母一直以来的“狠心放手”",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120916.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_15i7hxq",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "规范表述",
-   "text": "坚持做康复，但上小学后，她还是比别人慢不少，同学写一行字，她才能写1个。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120916.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_15l1r46",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "规范表述",
-   "text": "坚持完成，学校的各种活动包括军训她都全程参加。",
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-08/04/content_20120916.html",
    "category": "湖北地域发展"

@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-06-v56';
+const APP_VERSION = '2026-08-07-v57';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -553,8 +553,10 @@ function switchModule(moduleName) {
     if (moduleName === 'settings') { renderDataStats(); renderCloudConfig(); }
     // 进入工作台时刷新数据（打卡改为手动，不自动触发）
     if (moduleName === 'home') { renderHome(); }
-    // 进入金币台账时刷新（任务/打卡/流水/统计）
+    // 进入金币台账时刷新（计划任务/打卡/流水/统计）
     if (moduleName === 'gold') { renderGoldLedger(); }
+    // 进入每日计划时刷新表格（跨天/金币变动同步）
+    if (moduleName === 'plan') { loadPlanItems(); renderPlanStats(); }
 }
 
 // ========== 收藏夹页面 ==========
@@ -2660,14 +2662,53 @@ function renderPlanTable(items) {
     const tbody = document.getElementById('planTableBody');
     if (!tbody) return;
     tbody.innerHTML = items.map(item => `
-        <tr>
+        <tr class="${item.done ? 'plan-row-done' : ''}">
             <td><input type="checkbox" class="plan-checkbox" ${item.done ? 'checked' : ''} onchange="togglePlanDone('${item.id}', this.checked)"/></td>
             <td><span style="display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;background:${getCategoryColor(item.category)};color:#fff;">${item.category}</span></td>
             <td>${item.task}</td>
+            <td class="plan-gold-cell">
+                <input type="number" class="plan-gold-input" min="0" step="1" value="${Number(item.gold) || 0}" onchange="updatePlanGold('${item.id}', this.value)" title="完成该任务可得金币" />
+                <span class="plan-gold-unit ${item.done ? 'earned' : ''}">${item.done ? '✓已得' : '🪙'}</span>
+            </td>
             <td><input type="range" class="plan-progress-slider" min="0" max="100" value="${item.progress}" onchange="updatePlanProgress('${item.id}', this.value)"/><span style="margin-left:6px;font-size:12px;color:#4A90D9;">${item.progress}%</span></td>
             <td><button class="btn-outline btn-sm" onclick="deletePlanItem('${item.id}')">删除</button></td>
         </tr>
     `).join('');
+    renderPlanGoldBar(items);
+}
+
+// 计划任务金币汇总条（显示在统计卡区域，实时反映今日已得/可得）
+function renderPlanGoldBar(items) {
+    const host = document.getElementById('planStats');
+    if (!host) return;
+    let bar = document.getElementById('planGoldBar');
+    if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'planGoldBar';
+        bar.className = 'plan-gold-bar';
+        host.parentNode.insertBefore(bar, host.nextSibling);
+    }
+    const earned = items.filter(i => i.done).reduce((s, i) => s + (Number(i.gold) || 0), 0);
+    const totalGold = items.reduce((s, i) => s + (Number(i.gold) || 0), 0);
+    bar.innerHTML = `<span class="pg-earned">今日已得 <b>${earned}</b> 金币</span>
+        <span class="pg-sep">/</span>
+        <span class="pg-total">全部完成可得 ${totalGold}</span>
+        <button class="btn-outline btn-sm" onclick="switchModule('gold')">查看金币台账 →</button>`;
+}
+
+// 修改某条计划任务的金币奖励
+function updatePlanGold(id, val) {
+    const n = Number(val);
+    if (isNaN(n) || n < 0) { appAlert('金币需为非负数字'); loadPlanItems(); return; }
+    const key = getTodayKey();
+    let items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
+    const item = items.find(i => String(i.id) === String(id));
+    if (item) {
+        item.gold = n;
+        localStorage.setItem(`plan_${key}`, JSON.stringify(items));
+    }
+    loadPlanItems();
+    if (typeof renderGoldLedger === 'function') renderGoldLedger();
 }
 
 function getCategoryColor(cat) {
@@ -2682,6 +2723,13 @@ function togglePlanDone(id, done) {
     if (item) { item.done = done; localStorage.setItem(`plan_${key}`, JSON.stringify(items)); }
     renderPlanStats();
     if (!planStatMonth) renderHistoryStats(); // 完成率随勾选实时更新
+    // v57：完成任务即得金币，实时同步到「考公金币台账」
+    loadPlanItems();
+    if (typeof renderGoldLedger === 'function') renderGoldLedger();
+    if (item && typeof showToast === 'function') {
+        const g = Number(item.gold) || 0;
+        if (g > 0) showToast(done ? `完成「${item.task}」 +${g} 金币` : `已取消「${item.task}」 -${g} 金币`);
+    }
 }
 
 function updatePlanProgress(id, progress) {
@@ -2698,16 +2746,19 @@ function addPlanItem() {
         title: '➕ 添加今日任务',
         fields: [
             { id: 'task', label: '任务内容', type: 'text', placeholder: '如：做2套言语真题' },
-            { id: 'cat', label: '分类', type: 'select', options: ['行测', '申论', '资料分析', '常识时政'], value: '行测' }
+            { id: 'cat', label: '分类', type: 'select', options: ['行测', '申论', '资料分析', '常识时政'], value: '行测' },
+            { id: 'gold', label: '完成可得金币', type: 'number', value: 5, placeholder: '如：10' }
         ],
         okText: '保存', cancelText: '取消',
         onOk: (v) => {
             const task = (v.task || '').trim();
             if (!task) { appAlert('请填写任务内容哦～'); return; }
             const cat = v.cat || '行测';
+            let gold = Number(v.gold);
+            if (isNaN(gold) || gold < 0) gold = 0;
             const key = getTodayKey();
             let items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
-            items.push({ id: Date.now(), category: cat, task, done: false, progress: 0 });
+            items.push({ id: Date.now(), category: cat, task, done: false, progress: 0, gold });
             localStorage.setItem(`plan_${key}`, JSON.stringify(items));
             loadPlanItems();
             renderPlanStats();
@@ -4192,9 +4243,20 @@ let goldLedger = loadGold('gk_gold_ledger', []);       // [{ id, date, task, gol
 let goldModuleDefault = loadGold('gk_gold_moduleDefault', { susuan: 5, morning: 5, idiomPairs: 5, idioms: 5 });
 
 // ---- 计算 ----
+// v57：任务金币来源改为「每日计划」模块中已完成的任务（不再单独维护一套任务）
+// 同时兼容 v56 遗留的 gk_gold_tasks 数据，避免用户已录入的金币丢失
+function planDoneItems(dateKey) {
+    try {
+        const items = JSON.parse(localStorage.getItem('plan_' + dateKey) || '[]');
+        return Array.isArray(items) ? items.filter(i => i && i.done) : [];
+    } catch (e) { return []; }
+}
 function dayTaskGold(dateKey) {
+    const planGold = planDoneItems(dateKey).reduce((s, i) => s + (Number(i.gold) || 0), 0);
+    // 兼容旧版单独任务（v56），无数据时为 0
     const done = goldTaskDone[dateKey] || {};
-    return goldTasks.reduce((s, t) => s + (done[t.id] ? (Number(t.gold) || 0) : 0), 0);
+    const legacyGold = goldTasks.reduce((s, t) => s + (done[t.id] ? (Number(t.gold) || 0) : 0), 0);
+    return planGold + legacyGold;
 }
 function dayCheckinGold(dateKey) {
     return goldCheckins.filter(c => c.date === dateKey).reduce((s, c) => s + (Number(c.gold) || 0), 0);
@@ -4236,37 +4298,42 @@ function renderGoldLedger() {
         if (ov !== undefined && ov !== null && ov !== '') {
             subEl.textContent = `手动调整为 ${total}（自动计算 ${auto}）`;
         } else {
-            subEl.textContent = `含每日任务 + 四模块打卡（自动 ${auto}）`;
+            const t = dayTaskGold(today), c = dayCheckinGold(today), l = dayLedgerGold(today);
+            subEl.textContent = `计划任务 ${t} + 模块打卡 ${c} + 手动录入 ${l} = ${auto}`;
         }
     }
-    renderGoldTasks();
+    renderGoldPlanSummary();
     renderGoldFlow();
     renderGoldStats();
 }
 
-function renderGoldTasks() {
-    const wrap = document.getElementById('goldTaskList');
+// v57：今日计划任务金币摘要（只读，任务在「每日计划」模块管理）
+function renderGoldPlanSummary() {
+    const wrap = document.getElementById('goldPlanSummary');
     if (!wrap) return;
     const today = bjToday();
-    const done = goldTaskDone[today] || {};
-    if (goldTasks.length === 0) {
-        wrap.innerHTML = '<div class="gold-empty">还没有任务，先在上方添加一条吧～</div>';
+    let items = [];
+    try { items = JSON.parse(localStorage.getItem('plan_' + today) || '[]'); } catch (e) { items = []; }
+    if (!Array.isArray(items) || items.length === 0) {
+        wrap.innerHTML = '<div class="gold-empty">今天还没有计划任务，去「每日计划」添加吧～</div>';
         return;
     }
-    wrap.innerHTML = goldTasks.map(t => {
-        const isDone = !!done[t.id];
-        return `<div class="gold-task-item">
-            <input type="checkbox" class="gold-task-check" ${isDone ? 'checked' : ''} onchange="toggleTaskDone('${t.id}', this.checked)" />
-            <div class="gold-task-main">
-                <div class="gold-task-name">${goldEsc(t.name)}</div>
-                <div class="gold-task-meta">${goldEsc(t.category || '未分类')} · ${Number(t.gold) || 0} 金币</div>
-            </div>
-            <div class="gold-task-gold ${isDone ? 'done' : ''}">${isDone ? '+' + (Number(t.gold) || 0) : (Number(t.gold) || 0)}</div>
-            <div class="gold-task-ops">
-                <button class="mini-btn del" onclick="delGoldTask('${t.id}')" title="删除任务">🗑</button>
-            </div>
+    const doneList = items.filter(i => i.done);
+    const earned = doneList.reduce((s, i) => s + (Number(i.gold) || 0), 0);
+    const totalGold = items.reduce((s, i) => s + (Number(i.gold) || 0), 0);
+    wrap.innerHTML = `
+        <div class="gold-plan-head">
+            已完成 <b>${doneList.length}</b>/${items.length} 项 · 已得 <b class="gp-num">${earned}</b> 金币（全部完成可得 ${totalGold}）
+        </div>
+        <div class="gold-plan-items">
+            ${items.map(i => `
+                <div class="gold-plan-item ${i.done ? 'done' : ''}">
+                    <span class="gp-check">${i.done ? '✅' : '⬜'}</span>
+                    <span class="gp-task">${goldEsc(i.task || '')}</span>
+                    <span class="gp-cat">${goldEsc(i.category || '')}</span>
+                    <span class="gp-gold">${i.done ? '+' : ''}${Number(i.gold) || 0}</span>
+                </div>`).join('')}
         </div>`;
-    }).join('');
 }
 
 function renderGoldFlow() {
@@ -4275,9 +4342,11 @@ function renderGoldFlow() {
     const rows = [];
     goldCheckins.forEach(c => rows.push({ kind: 'checkin', id: c.id, date: c.date, src: GOLD_MODULE_NAMES[c.module] || c.module, srcKey: 'checkin', task: '模块打卡', gold: c.gold }));
     goldLedger.forEach(l => rows.push({ kind: 'ledger', id: l.id, date: l.date, src: '录入', srcKey: 'ledger', task: l.task, gold: l.gold }));
+    // v57：把「每日计划」中已完成的任务也并入流水（只读，编辑请回每日计划模块）
+    collectPlanGoldRows().forEach(r => rows.push(r));
     rows.sort((a, b) => (b.date || '').localeCompare(a.date || '') || 0);
     if (rows.length === 0) {
-        wrap.innerHTML = '<div class="gold-empty">还没有任何记录，去四模块底部打卡或上面记一笔吧～</div>';
+        wrap.innerHTML = '<div class="gold-empty">还没有任何记录，去各模块顶部打卡、或在每日计划完成任务吧～</div>';
         return;
     }
     wrap.innerHTML = rows.map(r => `
@@ -4291,10 +4360,34 @@ function renderGoldFlow() {
             </div>
             <div class="gold-flow-gold">+${Number(r.gold) || 0}</div>
             <div class="gold-flow-ops">
-                <button class="mini-btn edit" onclick="editGoldFlow('${r.kind}','${r.id}')" title="编辑">✏️</button>
-                <button class="mini-btn del" onclick="delGoldFlow('${r.kind}','${r.id}')" title="删除">🗑</button>
+                ${r.kind === 'plan'
+            ? '<button class="mini-btn" onclick="switchModule(\'plan\')" title="去每日计划修改">📅</button>'
+            : `<button class="mini-btn edit" onclick="editGoldFlow('${r.kind}','${r.id}')" title="编辑">✏️</button>
+                   <button class="mini-btn del" onclick="delGoldFlow('${r.kind}','${r.id}')" title="删除">🗑</button>`}
             </div>
         </div>`).join('');
+}
+
+// 扫描 localStorage 中所有 plan_YYYY-MM-DD，收集已完成且有金币的任务作为流水
+function collectPlanGoldRows() {
+    const out = [];
+    try {
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (!k || !/^plan_\d{4}-\d{2}-\d{2}$/.test(k)) continue;
+            const date = k.slice(5);
+            let items = [];
+            try { items = JSON.parse(localStorage.getItem(k) || '[]'); } catch (e) { continue; }
+            if (!Array.isArray(items)) continue;
+            items.forEach(it => {
+                const g = Number(it && it.gold) || 0;
+                if (it && it.done && g > 0) {
+                    out.push({ kind: 'plan', id: String(it.id), date, src: '计划任务', srcKey: 'plan', task: it.task || '', gold: g });
+                }
+            });
+        }
+    } catch (e) {}
+    return out;
 }
 
 function renderGoldStats() {
@@ -4326,37 +4419,9 @@ function monthTotal(refKey) {
     return sum;
 }
 
-// ---- 交互：每日任务 ----
-function addGoldTask() {
-    const name = (document.getElementById('goldTaskName').value || '').trim();
-    const cat = (document.getElementById('goldTaskCat').value || '').trim();
-    const gold = Number(document.getElementById('goldTaskGold').value || 0);
-    if (!name) { appAlert('请填写任务名称'); return; }
-    if (isNaN(gold) || gold < 0) { appAlert('金币奖励需为非负数字'); return; }
-    goldTasks.push({ id: goldId(), name, category: cat, gold });
-    saveGold('gk_gold_tasks', goldTasks);
-    document.getElementById('goldTaskName').value = '';
-    document.getElementById('goldTaskCat').value = '';
-    document.getElementById('goldTaskGold').value = '';
-    renderGoldTasks(); renderGoldFlow(); renderGoldStats();
-    showToast('已添加任务：' + name);
-}
-function toggleTaskDone(id, checked) {
-    const today = bjToday();
-    if (!goldTaskDone[today]) goldTaskDone[today] = {};
-    if (checked) goldTaskDone[today][id] = true;
-    else delete goldTaskDone[today][id];
-    saveGold('gk_gold_taskDone', goldTaskDone);
-    renderGoldLedger();
-}
-function delGoldTask(id) {
-    appConfirm('确定删除该任务？历史打卡与录入不受影响。', ok => {
-        if (!ok) return;
-        goldTasks = goldTasks.filter(t => t.id !== id);
-        saveGold('gk_gold_tasks', goldTasks);
-        renderGoldTasks();
-    });
-}
+/* v57：原「每日任务」独立表单已移除，任务改在【每日计划】模块管理，
+   完成即由 dayTaskGold() 计入今日合计。goldTasks / goldTaskDone 仅保留读取，
+   用于兼容 v56 已录入的旧数据，不再提供新增入口。 */
 
 // ---- 交互：手动录入台账 ----
 function addGoldLedger() {
@@ -4492,7 +4557,15 @@ function doCheckIn(moduleKey) {
    ================================================================ */
 function renderModuleTodayNew(meta) {
     const today = bjToday();
-    const dn = (meta && meta.dailyNew && meta.dailyNew[today]) || {};
+    // meta.json 尚未包含 dailyNew（旧版爬虫产出）时，不谎报「新增 0 条」，改为提示等待今晚更新
+    if (!meta || !meta.dailyNew) {
+        ['shizheng', 'shenlun', 'qiushi', 'renwu', 'morning', 'susuan', 'idioms', 'idiomPairs', 'logic', 'interview'].forEach(k => {
+            const el = document.getElementById('tn-' + k);
+            if (el) { el.textContent = '今日待更新'; el.classList.remove('has-new'); }
+        });
+        return;
+    }
+    const dn = meta.dailyNew[today] || {};
     const map = {
         shizheng: dn.shizheng || 0,
         shenlun: (dn.essays || 0) + (dn.quotes || 0),
