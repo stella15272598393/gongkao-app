@@ -96,6 +96,10 @@
                     <div class="nav-icon">🔗</div>
                     <span>混淆配对</span>
                 </li>
+                <li class="nav-item" data-module="changshi" onclick="switchModule('changshi')">
+                    <div class="nav-icon">💡</div>
+                    <span>常识积累</span>
+                </li>
                 <li class="nav-item" data-module="logic" onclick="switchModule('logic')">
                     <div class="nav-icon">🧠</div>
                     <span>逻辑口诀</span>
@@ -473,6 +477,53 @@
                 <div class="pair-list" id="pairList"></div>
             </section>
 
+            <!-- 常识积累：碎片浏览·收藏·笔记·打卡 -->
+            <section class="module-panel" id="panel-changshi">
+                <div class="module-header">
+                    <h2>💡 常识积累</h2>
+                    <p class="module-desc">碎片时间 · 看一点记一点 · 轻量积累，不搞大量刷题</p>
+                </div>
+
+                <!-- 打卡奖励组件（页面顶部，与速算/晨读等模块保持一致） -->
+                <div class="module-checkin" id="checkin-changshi"></div>
+
+                <!-- 简易统计小卡片 -->
+                <div class="changshi-stats">
+                    <div class="changshi-stat-card">
+                        <div class="cs-stat-value" id="csStatDays">0</div>
+                        <div class="cs-stat-label">常识累计打卡天数</div>
+                    </div>
+                    <div class="changshi-stat-card">
+                        <div class="cs-stat-value" id="csStatFav">0</div>
+                        <div class="cs-stat-label">我的收藏数量</div>
+                    </div>
+                </div>
+
+                <!-- 内容展示区 -->
+                <div class="action-bar">
+                    <button class="btn-pink btn-refresh" onclick="changshiNewBatch()">🔄 换一批</button>
+                    <span class="update-info" id="changshiInfo">随机 5-8 条常识小点</span>
+                </div>
+                <div class="filter-tags" id="changshiCats"></div>
+                <div class="changshi-list" id="changshiList"></div>
+
+                <!-- 手写笔记输入框（自己的知识库） -->
+                <div class="cs-note-box">
+                    <div class="cs-note-title">📝 记一条我的常识</div>
+                    <div class="cs-note-row">
+                        <select id="changshiNoteCat">
+                            <option value="shizheng">时政</option>
+                            <option value="falv">法律</option>
+                            <option value="lishi">历史</option>
+                            <option value="dili">地理</option>
+                            <option value="keji">科技</option>
+                        </select>
+                        <input id="changshiNoteInput" type="text" placeholder="看到的有用知识点，写下来保存…" onkeydown="if(event.key==='Enter')addChangshiNote()" />
+                        <button class="btn-pink btn-sm" onclick="addChangshiNote()">保存</button>
+                    </div>
+                </div>
+            </section>
+
             <!-- 判断推理逻辑口诀模块 -->
             <section class="module-panel" id="panel-logic">
                 <div class="module-header">
@@ -723,7 +774,7 @@
 
     <script src="./js/data.js?v=34"></script>
     <script src="./js/data-modules.js?v=34"></script>
-    <script src="./js/app.js?v=57"></script>
-    <script src="./js/loader.js?v=57"></script>
+    <script src="./js/app.js?v=58"></script>
+    <script src="./js/loader.js?v=58"></script>
 </body>
 </html>

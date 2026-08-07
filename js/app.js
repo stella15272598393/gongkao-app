@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-07-v57';
+const APP_VERSION = '2026-08-08-v58';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -557,6 +557,8 @@ function switchModule(moduleName) {
     if (moduleName === 'gold') { renderGoldLedger(); }
     // 进入每日计划时刷新表格（跨天/金币变动同步）
     if (moduleName === 'plan') { loadPlanItems(); renderPlanStats(); }
+    // 进入常识积累时刷新（打卡栏/统计/分类/随机列表）
+    if (moduleName === 'changshi') { renderChangshi(); }
 }
 
 // ========== 收藏夹页面 ==========
@@ -4218,8 +4220,10 @@ function scheduleDailyPush() {
    ================================================================ */
 
 // 参与打卡奖励的四个侧边模块
-const GOLD_MODULES = ['susuan', 'morning', 'idiomPairs', 'idioms'];
-const GOLD_MODULE_NAMES = { susuan: '速算', morning: '晨读', idiomPairs: '混淆配对', idioms: '高频成语' };
+const GOLD_MODULES = ['susuan', 'morning', 'idiomPairs', 'idioms', 'changshi'];
+const GOLD_MODULE_NAMES = { susuan: '速算', morning: '晨读', idiomPairs: '混淆配对', idioms: '高频成语', changshi: '常识积累' };
+// 各模块打卡按钮文案（常识积累强调"今日阅读打卡"）
+const GOLD_CHECKIN_LABELS = { susuan: '✅ 打卡', morning: '✅ 打卡', idiomPairs: '✅ 打卡', idioms: '✅ 打卡', changshi: '✅ 今日阅读打卡' };
 
 function goldEsc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -4240,7 +4244,7 @@ let goldTaskDone = loadGold('gk_gold_taskDone', {});   // { 'YYYY-MM-DD': { task
 let goldOverride = loadGold('gk_gold_override', {});   // { 'YYYY-MM-DD': number|null }
 let goldCheckins = loadGold('gk_gold_checkins', []);  // [{ id, date, module, gold }]
 let goldLedger = loadGold('gk_gold_ledger', []);       // [{ id, date, task, gold }]
-let goldModuleDefault = loadGold('gk_gold_moduleDefault', { susuan: 5, morning: 5, idiomPairs: 5, idioms: 5 });
+let goldModuleDefault = loadGold('gk_gold_moduleDefault', { susuan: 5, morning: 5, idiomPairs: 5, idioms: 5, changshi: 5 });
 
 // ---- 计算 ----
 // v57：任务金币来源改为「每日计划」模块中已完成的任务（不再单独维护一套任务）
@@ -4522,7 +4526,7 @@ function renderModuleCheckin(moduleKey) {
             <span class="checkin-title">🏅 打卡奖励 · ${GOLD_MODULE_NAMES[moduleKey]}</span>
             <span class="checkin-default">默认 <input type="number" min="0" id="cd-${moduleKey}" value="${def}" onchange="setModuleDefault('${moduleKey}', this.value)" /> 金币</span>
             <input type="number" min="0" class="checkin-amount" id="ca-${moduleKey}" value="${def}" placeholder="本次金币" />
-            <button class="btn-pink btn-sm" onclick="doCheckIn('${moduleKey}')">✅ 打卡</button>
+            <button class="btn-pink btn-sm" onclick="doCheckIn('${moduleKey}')">${GOLD_CHECKIN_LABELS[moduleKey] || '✅ 打卡'}</button>
             <span class="checkin-today">今日已打卡 <b>${todays.length}</b> 次 · <b>+${todayGold}</b></span>
         </div>
         ${hist.length ? `<div class="checkin-history">${hist.map(h => `<div class="checkin-hist-item"><span>${h.date}</span><span class="ch-gold">+${h.gold}</span></div>`).join('')}</div>` : ''}
@@ -4547,6 +4551,157 @@ function doCheckIn(moduleKey) {
     renderModuleCheckin(moduleKey);
     renderGoldLedger();
     showToast(`${GOLD_MODULE_NAMES[moduleKey]} 打卡 +${gold} 已计入今日合计`);
+}
+
+/* ================================================================
+   常识积累模块（碎片浏览 · 收藏 · 笔记 · 打卡）
+   定位：轻量积累，不做大量刷题；金币台账只记账不持余额
+   ================================================================ */
+const CHANGSHI_CATS = [
+    { key: 'all', name: '全部' },
+    { key: 'shizheng', name: '时政' },
+    { key: 'falv', name: '法律' },
+    { key: 'lishi', name: '历史' },
+    { key: 'dili', name: '地理' },
+    { key: 'keji', name: '科技' },
+    { key: 'fav', name: '我的收藏' },
+    { key: 'note', name: '我的笔记' }
+];
+let changshiFav = loadGold('gk_changshi_fav', []);       // 收藏的内置知识点 id 数组
+let changshiNotes = loadGold('gk_changshi_notes', []);   // 自定义笔记 [{ id, cat, text, ts }]
+let changshiCurrentCat = 'all';
+
+function renderChangshi() {
+    const el = document.getElementById('panel-changshi');
+    if (!el) return;
+    renderModuleCheckin('changshi');   // 顶部打卡栏（与其他模块一致）
+    renderChangshiStats();
+    renderChangshiCatTabs();
+    renderChangshiList();
+}
+
+function renderChangshiStats() {
+    const daysEl = document.getElementById('csStatDays');
+    const favEl = document.getElementById('csStatFav');
+    if (daysEl) {
+        const dates = new Set(goldCheckins.filter(c => c.module === 'changshi').map(c => c.date));
+        daysEl.textContent = String(dates.size);
+    }
+    if (favEl) favEl.textContent = String(changshiFav.length);
+}
+
+function renderChangshiCatTabs() {
+    const box = document.getElementById('changshiCats');
+    if (!box) return;
+    box.innerHTML = CHANGSHI_CATS.map(c =>
+        `<button class="tag-btn ${c.key === changshiCurrentCat ? 'active' : ''}" data-cat="${c.key}" onclick="switchChangshiCat('${c.key}')">${c.name}</button>`
+    ).join('');
+}
+
+function switchChangshiCat(cat) {
+    changshiCurrentCat = cat;
+    renderChangshiCatTabs();
+    renderChangshiList();
+}
+
+function csCatName(key) {
+    const c = CHANGSHI_CATS.find(x => x.key === key);
+    return c ? c.name : '';
+}
+
+function csPool() {
+    if (changshiCurrentCat === 'fav') return CHANGSHI_DB.filter(it => changshiFav.includes(it.id));
+    if (changshiCurrentCat === 'note') return changshiNotes.slice();
+    if (changshiCurrentCat === 'all') return CHANGSHI_DB.slice();
+    return CHANGSHI_DB.filter(it => it.cat === changshiCurrentCat);
+}
+
+function csShuffle(a) {
+    a = a.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function renderChangshiList() {
+    const wrap = document.getElementById('changshiList');
+    if (!wrap) return;
+    const pool = csPool();
+    if (pool.length === 0) {
+        if (changshiCurrentCat === 'fav') wrap.innerHTML = '<div class="cs-empty">还没有收藏的常识~ 浏览时点 ☆ 即可收藏 ⭐</div>';
+        else if (changshiCurrentCat === 'note') wrap.innerHTML = '<div class="cs-empty">还没有自己的笔记，用下方输入框记一条吧 📝</div>';
+        else wrap.innerHTML = '<div class="cs-empty">该分类暂无内容</div>';
+        return;
+    }
+    // 全部 / 具体分类：随机展示 5-8 条；收藏 / 笔记：全部展示
+    const isRandom = changshiCurrentCat === 'all' || ['shizheng', 'falv', 'lishi', 'dili', 'keji'].includes(changshiCurrentCat);
+    const list = isRandom ? csShuffle(pool).slice(0, Math.max(5, Math.min(8, pool.length))) : pool;
+    const isNote = changshiCurrentCat === 'note';
+    wrap.innerHTML = list.map(it => changshiCard(it, isNote)).join('');
+    const info = document.getElementById('changshiInfo');
+    if (info) info.textContent = isRandom ? `随机 ${list.length} 条常识小点` : `共 ${list.length} 条`;
+}
+
+function changshiCard(it, isNote) {
+    if (isNote) {
+        return `<div class="cs-card note">
+            <div class="cs-card-top"><span class="cs-cat">📝 ${csCatName(it.cat)}</span>
+                <button class="cs-fav-btn" onclick="delChangshiNote('${it.id}')" title="删除笔记">🗑</button></div>
+            <div class="cs-text">${goldEsc(it.text)}</div>
+        </div>`;
+    }
+    const faved = changshiFav.includes(it.id);
+    return `<div class="cs-card">
+        <div class="cs-card-top"><span class="cs-cat">${csCatName(it.cat)}</span>
+            <button class="cs-fav-btn ${faved ? 'faved' : ''}" onclick="toggleChangshiFav(${it.id})" title="收藏">${faved ? '⭐' : '☆'}</button></div>
+        <div class="cs-text">${goldEsc(it.text)}</div>
+    </div>`;
+}
+
+function toggleChangshiFav(id) {
+    id = Number(id);
+    const i = changshiFav.indexOf(id);
+    if (i >= 0) changshiFav.splice(i, 1); else changshiFav.push(id);
+    saveGold('gk_changshi_fav', changshiFav);
+    renderChangshiStats();
+    if (changshiCurrentCat === 'fav') { renderChangshiList(); }
+    else {
+        const btn = document.querySelector(`.cs-fav-btn[onclick="toggleChangshiFav(${id})"]`);
+        if (btn) { const f = changshiFav.includes(id); btn.classList.toggle('faved', f); btn.textContent = f ? '⭐' : '☆'; }
+    }
+    showToast(changshiFav.includes(id) ? '已收藏 ⭐' : '已取消收藏');
+}
+
+function changshiNewBatch() {
+    renderChangshiList();
+    if (changshiCurrentCat !== 'fav' && changshiCurrentCat !== 'note') showToast('已换一批常识 ✨');
+}
+
+function addChangshiNote() {
+    const ta = document.getElementById('changshiNoteInput');
+    if (!ta) return;
+    const text = ta.value.trim();
+    if (!text) { appAlert('请输入要记录的常识内容'); return; }
+    const sel = document.getElementById('changshiNoteCat');
+    const cat = sel ? sel.value : 'shizheng';
+    changshiNotes.unshift({ id: goldId(), cat, text, ts: Date.now() });
+    saveGold('gk_changshi_notes', changshiNotes);
+    ta.value = '';
+    renderChangshiStats();
+    if (changshiCurrentCat === 'note') renderChangshiList();
+    showToast('已保存到我的笔记 📝');
+}
+
+function delChangshiNote(id) {
+    appConfirm('确定删除这条笔记？', ok => {
+        if (!ok) return;
+        changshiNotes = changshiNotes.filter(n => n.id !== id);
+        saveGold('gk_changshi_notes', changshiNotes);
+        renderChangshiStats();
+        renderChangshiList();
+    });
 }
 
 /* ================================================================
