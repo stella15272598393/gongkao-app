@@ -5,9 +5,8 @@ name: 每日抓取内容更新
 #   提交回仓库；GitHub Pages 直接托管整个仓库，PWA 在每次打开时
 #   联网拉取最新 content/*.json（network-first），无需重新安装 APP。
 on:
-  workflow_dispatch: {}        # 每日定时由 cron-job.org 负责触发（POST dispatch）；Actions 页面也可手动触发验证
-  schedule:
-    - cron: '0 16 * * *'       # 北京时间每日 00:00（UTC 16:00 前一日）冗余触发，防止外部调度失效
+  workflow_dispatch: {}        # 每日由 cron-job.org 触发（POST dispatch）；Actions 页面也可手动触发验证
+                             # 只保留这一个触发器 → 每天仅抓取一次（cron-job 已设为北京时间 20:00）
 
 permissions:
   contents: write
