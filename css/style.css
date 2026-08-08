@@ -34,60 +34,7 @@
     --transition: all 0.3s ease;
 }
 
-/* 主题：蓝色小鸡 · 黄绿系列 */
-:root[data-theme="bluechick"] {
-    /* 淡蓝 — 主色调（天空蓝/婴儿蓝） */
-    --primary: #A8D8EA;
-    --primary-light: #D4F1F9;
-    --primary-dark: #6BB8D6;
-    /* 小鸡黄 — 强调色（温暖奶油黄） */
-    --accent: #FFE082;
-    --accent-strong: #FFCA28;
-    /* 淡绿 — 辅助色（薄荷/草绿） */
-    --border-soft: #C8E6C9;
-    --bg-soft: #F1F8E9;
-    --card-bg: #FFFFFF;
-    --app-bg: #F0FAFE;
-    --sidebar-bg: linear-gradient(180deg, #E0F4FD, #FFFDE7);
-    --topbar-bg: linear-gradient(135deg, #A8D8EA, #FFE082);
-    --nav-active-bg: linear-gradient(135deg, #A8D8EA, #C8E6C9);
-    --btn-bg: linear-gradient(135deg, #A8D8EA, #FFE082);
-    --btn-bg-hover: linear-gradient(135deg, #92D0E8, #FFD54F);
-    --shadow: 0 2px 12px rgba(168, 216, 234, 0.18);
-    --shadow-hover: 0 4px 20px rgba(168, 216, 234, 0.28);
-}
-
-/* 暗色 / 护眼模式 */
-:root[data-dark="1"] {
-    --bg-white: #262633;
-    --bg-gray: #2A2A38;
-    --card-bg: #262633;
-    --app-bg: #15151F;
-    --text-primary: #ECECF1;
-    --text-secondary: #B0B0BE;
-    --text-light: #7C7C8E;
-    --border-color: #34344A;
-    --border-soft: #34344A;
-    --bg-soft: #23232F;
-    --sidebar-bg: linear-gradient(180deg, #1C1C28, #181820);
-    --topbar-bg: linear-gradient(135deg, #2A2A38, #20202C);
-    --nav-active-bg: linear-gradient(135deg, #34344A, #2A2A38);
-    --btn-bg: linear-gradient(135deg, #4FA3C7, #2E7D32);
-    --btn-bg-hover: linear-gradient(135deg, #5FB3D7, #388E3C);
-    --shadow: 0 2px 12px rgba(0,0,0,0.4);
-    --shadow-hover: 0 4px 20px rgba(0,0,0,0.5);
-}
-/* 暗色 + 蓝色小鸡主题叠加 */
-:root[data-dark="1"][data-theme="bluechick"] {
-    --primary: #72C2DE;
-    --primary-light: #1E3A3F;
-    --primary-dark: #A8D8EA;
-    --accent: #FFD54F;
-    --accent-strong: #FFE082;
-    --sidebar-bg: linear-gradient(180deg, #141E24, #0F181D);
-    --topbar-bg: linear-gradient(135deg, #1A3040, #141E24);
-    --nav-active-bg: linear-gradient(135deg, #1E3540, #141E24);
-}
+/* ★ v75: 已删除主题切换系统（bluechick/暗色/🎨按钮），统一使用上方粉色默认变量，避免主题相关故障 */
 
 /* 重置 */
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -2553,44 +2500,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* ============ 暗色 / 护眼模式 全局覆盖 ============ */
-:root[data-dark="1"] body { background: var(--app-bg); }
-:root[data-dark="1"] .sidebar { background: var(--sidebar-bg); color: var(--text-primary); }
-:root[data-dark="1"] .top-bar { background: var(--topbar-bg); }
-:root[data-dark="1"] .module-panel,
-:root[data-dark="1"] .settings-card,
-:root[data-dark="1"] .card,
-:root[data-dark="1"] .modal,
-:root[data-dark="1"] .chart-container,
-:root[data-dark="1"] .record-form,
-:root[data-dark="1"] .recent-records,
-:root[data-dark="1"] .home-stat-card,
-:root[data-dark="1"] .home-quick-btn,
-:root[data-dark="1"] .mock-content,
-:root[data-dark="1"] .gold-flow-item,
-:root[data-dark="1"] .todo-item,
-:root[data-dark="1"] .plan-row,
-:root[data-dark="1"] .fav-card,
-:root[data-dark="1"] .stat-card { background: var(--card-bg) !important; }
-:root[data-dark="1"] .module-panel,
-:root[data-dark="1"] .settings-card,
-:root[data-dark="1"] .card,
-:root[data-dark="1"] .modal,
-:root[data-dark="1"] .home-stat-card,
-:root[data-dark="1"] .home-quick-btn { color: var(--text-primary) !important; }
-:root[data-dark="1"] input,
-:root[data-dark="1"] select,
-:root[data-dark="1"] textarea {
-    background: var(--bg-gray) !important;
-    color: var(--text-primary) !important;
-    border-color: var(--border-color) !important;
-}
-:root[data-dark="1"] .nav-item span { color: var(--text-secondary); }
-:root[data-dark="1"] ::-webkit-scrollbar-thumb { background: #4a4a5e; }
-:root[data-dark="1"] .toast { border-color: rgba(255,255,255,.12) !important; }
-:root[data-dark="1"] .home-stat-val {
-    background: linear-gradient(135deg, var(--accent), var(--primary));
-    -webkit-background-clip: text; background-clip: text;
-}
+/* ★ v75: 已删除暗色模式（随主题系统一并移除） */
 
 /* 首页成长趋势 */
 .home-trend { margin-top: 16px; padding: 16px; background: var(--card-bg); border-radius: 14px; box-shadow: var(--shadow); }

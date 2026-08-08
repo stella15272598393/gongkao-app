@@ -7,13 +7,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v74 内联版本号：用于检测缓存是否过期 -->
-    <meta name="app-version" content="2026-08-08-v74">
+    <!-- ★ v75 内联版本号：用于检测缓存是否过期 -->
+    <meta name="app-version" content="2026-08-08-v75">
     <title>🪷 莲莲工作台</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=74">
+    <link rel="stylesheet" href="./css/style.css?v=75">
 </head>
 <body>
     <!-- 顶部状态栏 -->
@@ -36,8 +36,6 @@
         <div class="top-bar-right">
             <span class="datetime" id="datetimeDisplay"></span>
             <span class="app-version" id="appVersionLabel" title="当前代码版本"></span>
-            <!-- 主题快捷切换 -->
-            <button class="theme-quick-btn" id="themeQuickBtn" onclick="cycleTheme()" title="切换主题配色">🎨</button>
             <div class="search-box">
                 <input type="text" id="globalSearch" placeholder="全局搜索..." />
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -696,28 +694,6 @@
                 <div class="settings-card">
                     <div class="settings-row">
                         <div class="settings-info">
-                            <div class="settings-title">🎨 主题配色</div>
-                            <div class="settings-sub">选择你喜欢的风格（粉色 HelloKitty / 蓝色小鸡·黄绿）</div>
-                        </div>
-                        <select id="themeSelect" class="modal-input" style="width:auto;min-width:150px;font-size:13px;padding:6px 10px;" onchange="setTheme(this.value)">
-                            <option value="pink">🌸 粉色 HelloKitty</option>
-                            <option value="bluechick">🐤 蓝色小鸡·黄绿</option>
-                        </select>
-                    </div>
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <div class="settings-title">🌙 暗色护眼模式</div>
-                            <div class="settings-sub">夜间低亮度，减少刺眼（可与主题叠加）</div>
-                        </div>
-                        <label class="switch-wrap">
-                            <input type="checkbox" id="darkToggle" onchange="toggleDark(this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="settings-card">
-                    <div class="settings-row">
-                        <div class="settings-info">
                             <div class="settings-title">📤 导出全部学习数据</div>
                             <div class="settings-sub">收藏、成语错词、打卡、待办、速算错题等，导出为一个 JSON 文件</div>
                         </div>
@@ -846,8 +822,8 @@
 
     <script src="./js/data.js?v=34"></script>
     <script src="./js/data-modules.js?v=34"></script>
-    <script src="./js/app.js?v=74"></script>
-    <script src="./js/loader.js?v=74"></script>
+    <script src="./js/app.js?v=75"></script>
+    <script src="./js/loader.js?v=75"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
