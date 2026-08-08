@@ -1667,6 +1667,10 @@ input[type="range"]::-webkit-slider-thumb {
 .hm-body { overflow: hidden; transition: max-height .35s ease, opacity .25s ease; max-height: 800px; opacity: 1; }
 .hm-body.collapsed { max-height: 0 !important; opacity: 0; margin: 0; padding: 0; pointer-events: none; }
 
+/* 热力图年份导航 */
+.yhm-year-nav { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+.yhm-year-nav .hm-tab { font-size: 11px; padding: 3px 10px; }
+
 /* 全年格子 */
 .yhm-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0; }
 .yhm-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 3px; }
@@ -1701,6 +1705,9 @@ input[type="range"]::-webkit-slider-thumb {
 /* ========== 首页驾驶舱：快捷入口 ========== */
 .home-quick { background: #fff; border: 1px solid var(--border-soft); border-radius: 14px; padding: 14px; margin-top: 14px; }
 .home-quick-title { font-size: 14px; font-weight: 600; color: var(--accent-strong); margin-bottom: 10px; }
+.home-quick-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.home-quick-edit-btn { font-size: 16px; background: none; border: 1px solid var(--border-soft); border-radius: 8px; padding: 2px 8px; cursor: pointer; transition: all .2s; line-height: 1.4; }
+.home-quick-edit-btn:hover { background: #fff0f6; transform: scale(1.1); }
 .home-quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .home-quick-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; border: 1px solid var(--border-soft); border-radius: 12px; background: #FFF7FA; color: var(--accent-strong); font-size: 12px; cursor: pointer; transition: .15s; }
 .home-quick-btn:hover { background: #FFE9F1; transform: translateY(-2px); }

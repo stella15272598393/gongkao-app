@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v83';
+const APP_VERSION = '2026-08-08-v84';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -864,18 +864,9 @@ function fillHomeStatsFallback(statsEl) {
     });
     html += '</div>';
 
-    // 快捷入口
-    var quick = [
-        { icon: '🔢', label: '速算练习', act: "switchModule('susuan')" },
-        { icon: '🌅', label: '晨读', act: "switchModule('morning')" },
-        { icon: '📌', label: '收藏夹', act: "switchModule('favbox')" },
-        { icon: '📊', label: '模考成绩', act: "switchModule('mock')" },
-        { icon: '🀄', label: '高频成语', act: "switchModule('idioms')" },
-        { icon: '🎤', label: '面试短句', act: "switchModule('interview')" },
-        { icon: '🗞️', label: '时政热点', act: "switchModule('shizheng')" },
-        { icon: '🔄', label: '强制刷新', act: "location.reload(true)" }
-    ];
-    html += '<div class="home-quick"><div class="home-quick-title">🚀 快捷入口</div><div class="home-quick-grid">';
+    // 快捷入口（可编辑，与 _renderHomeCore 共用 getUserQuickEntries）
+    var quick = getUserQuickEntries();
+    html += '<div class="home-quick"><div class="home-quick-title-row"><span class="home-quick-title">🚀 快捷入口</span><button class="home-quick-edit-btn" onclick="openQuickEntryEditor()" title="编辑常用模块">✏️</button></div><div class="home-quick-grid">';
     quick.forEach(function(q) {
         html += '<button class="home-quick-btn" onclick="' + q.act + '"><span class="home-quick-icon">' + q.icon + '</span>' + q.label + '</button>';
     });
@@ -936,6 +927,113 @@ function renderHome() {
 }
 
 // ★ v73: renderHome 核心逻辑抽成独立函数，便于整体 try-catch 保护
+
+// ========== 可编辑快捷入口 ==========
+// 所有可用模块目录
+var ALL_QUICK_MODULES = [
+    { id: 'susuan-practice', icon: '🔢', label: '速算练习', act: "switchModule('susuan');switchSusuanTab('practice');setTimeout(startPractice,250);" },
+    { id: 'susuan-multimethod', icon: '📚', label: '多解法', act: "switchModule('susuan');switchSusuanTab('multimethod');" },
+    { id: 'morning', icon: '🌅', label: '晨读', act: "switchModule('morning');" },
+    { id: 'favbox', icon: '📌', label: '收藏夹', act: "switchModule('favbox');" },
+    { id: 'mock', icon: '📊', label: '模考成绩', act: "switchModule('mock');" },
+    { id: 'idioms', icon: '🀄', label: '高频成语', act: "switchModule('idioms');" },
+    { id: 'interview', icon: '🎤', label: '面试短句', act: "switchModule('interview');" },
+    { id: 'shizheng', icon: '🗞️', label: '时政热点', act: "switchModule('shizheng');" },
+    { id: 'shenlun', icon: '✍️', label: '申论', act: "switchModule('shenlun');" },
+    { id: 'changshi', icon: '📖', label: '常识', act: "switchModule('changshi');" },
+    { id: 'qiushi', icon: '💡', label: '每日一题', act: "switchModule('qiushi');" },
+    { id: 'logic', icon: '🧩', label: '逻辑判断', act: "switchModule('logic');" },
+    { id: 'gold', icon: '💰', label: '金币账本', act: "switchModule('gold');" },
+    { id: 'plan', icon: '📋', label: '学习计划', act: "switchModule('plan');" },
+    { id: 'renwu', icon: '👤', label: '人物积累', act: "switchModule('renwu');" },
+    { id: 'reload', icon: '🔄', label: '强制刷新', act: "location.reload(true)" }
+];
+// 默认显示的模块ID列表
+var DEFAULT_QUICK_IDS = ['susuan-practice','morning','favbox','mock','idioms','interview','shizheng','reload'];
+
+function getUserQuickEntries() {
+    try {
+        var saved = JSON.parse(localStorage.getItem('gk_quick_entries') || 'null');
+        if (Array.isArray(saved) && saved.length > 0) {
+            // 根据 ID 从全目录中查找
+            return saved.map(function(id) {
+                return ALL_QUICK_MODULES.find(function(m){ return m.id === id; });
+            }).filter(Boolean);
+        }
+    } catch(e) {}
+    // 默认：返回前8个
+    return ALL_QUICK_MODULES.filter(function(m) { return DEFAULT_QUICK_IDS.indexOf(m.id) >= 0; });
+}
+
+function saveUserQuickEntries(ids) {
+    try { localStorage.setItem('gk_quick_entries', JSON.stringify(ids)); } catch(e) {}
+}
+
+// 打开快捷入口编辑弹窗
+function openQuickEntryEditor() {
+    var currentIds = [];
+    try { currentIds = JSON.parse(localStorage.getItem('gk_quick_entries') || 'null') || []; } catch(e) { currentIds = DEFAULT_QUICK_IDS.slice(); }
+
+    var html = '<div class="modal-overlay" id="quickEditOverlay" onclick="closeQuickEntryEditor(event)" style="z-index:200001;display:flex;align-items:center;justify-content:center;position:fixed;inset:0;background:rgba(0,0,0,.5);">';
+    html += '<div class="modal-box" style="background:#fff;border-radius:16px;width:92%;max-width:400px;max-height:80vh;overflow-y:auto;padding:20px;position:relative;" onclick="event.stopPropagation()">';
+
+    html += '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">✏️ 编辑常用快捷入口</div>';
+    html += '<div style="font-size:12px;color:#888;margin-bottom:14px;">勾选你想在首页显示的模块（拖动排序暂不支持，按顺序显示）</div>';
+
+    html += '<div style="display:flex;flex-direction:column;gap:6px;">';
+    ALL_QUICK_MODULES.forEach(function(m, idx) {
+        var checked = currentIds.indexOf(m.id) >= 0 ? 'checked' : '';
+        html += '<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;transition:background .2s;' + (checked ? 'background:#fff0f6;' : '') + '" onmouseover="this.style.background=\'#f8f8f8\'" onmouseout="this.style.background=\'' + (checked ? '#fff0f6' : 'transparent') + '\'">';
+        html += '<input type="checkbox" value="' + m.id + '" ' + checked + ' onchange="toggleQuickEditItem(this)" data-label-el="qel' + idx + '" style="accent-color:#E75480;width:18px;height:18px;flex-shrink:0;">';
+        html += '<span style="font-size:22px;">' + m.icon + '</span>';
+        html += '<span id="qel' + idx + '" style="font-size:14px;font-weight:' + (checked ? '600' : '400') + ';color:' + (checked ? '#E75480' : '#333') + ';">' + m.label + '</span>';
+        html += '</label>';
+    });
+    html += '</div>';
+
+    html += '<div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">';
+    html += '<button onclick="resetQuickEntries()" style="padding:8px 18px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;">恢复默认</button>';
+    html += '<button onclick="confirmQuickEntries()" style="padding:8px 24px;border-radius:10px;border:none;background:linear-gradient(135deg,#FFB6C1,#E75480);color:#fff;cursor:pointer;font-size:13px;font-weight:600;">保存</button>';
+    html += '</div>';
+
+    html += '</div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function toggleQuickEditItem(cb) {
+    var labelEl = document.getElementById(cb.getAttribute('data-label-el'));
+    if (labelEl) {
+        labelEl.style.fontWeight = cb.checked ? '600' : '400';
+        labelEl.style.color = cb.checked ? '#E75480' : '#333';
+    }
+    cb.closest('label').style.background = cb.checked ? '#fff0f6' : 'transparent';
+}
+
+function closeQuickEntryEditor(ev) {
+    if (ev && ev.target !== ev.currentTarget) return;
+    var el = document.getElementById('quickEditOverlay');
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+}
+
+function confirmQuickEntries() {
+    var cbs = document.querySelectorAll('#quickEditOverlay input[type="checkbox"]:checked');
+    var ids = Array.prototype.map.call(cbs, function(cb){ return cb.value; });
+    saveUserQuickEntries(ids);
+    closeQuickEntryEditor();
+    // 刷新首页
+    try { _renderHomeCore(document.getElementById('homeStats')); } catch(e) { renderHome(); }
+    showToast('✅ 常用入口已更新');
+}
+
+function resetQuickEntries() {
+    var cbs = document.querySelectorAll('#quickEditOverlay input[type="checkbox"]');
+    cbs.forEach(function(cb) {
+        var shouldBeDefault = DEFAULT_QUICK_IDS.indexOf(cb.value) >= 0;
+        cb.checked = shouldBeDefault;
+        toggleQuickEditItem(cb);
+    });
+}
+
 function _renderHomeCore(statsEl) {
     // ★ v28: 连续天数从 history 动态计算
     const sd = _getStreakData();
@@ -975,19 +1073,15 @@ function _renderHomeCore(statsEl) {
     });
     html += '</div>';
 
-    // ★ 驾驶舱：常用模块快捷入口（一键直达高频场景）
-    const quickEntries = [
-        { icon: '🔢', label: '速算练习', act: "switchModule('susuan');switchSusuanTab('practice');setTimeout(startPractice,250);" },
-        { icon: '📚', label: '多解法', act: "switchModule('susuan');switchSusuanTab('multimethod');" },
-        { icon: '🌅', label: '晨读', act: "switchModule('morning');" },
-        { icon: '📌', label: '收藏夹', act: "switchModule('favbox');" },
-        { icon: '📊', label: '模考成绩', act: "switchModule('mock');" },
-        { icon: '🀄', label: '高频成语', act: "switchModule('idioms');" },
-        { icon: '🎤', label: '面试短句', act: "switchModule('interview');" },
-        { icon: '🗞️', label: '时政热点', act: "switchModule('shizheng');" }
-    ];
-    html += '<div class="home-quick"><div class="home-quick-title">🚀 快捷入口</div><div class="home-quick-grid">';
-    quickEntries.forEach(q => {
+    // ★ 驾驶舱：常用模块快捷入口（可自编辑）
+    var quickEntries = getUserQuickEntries();
+    html += '<div class="home-quick">';
+    html += '<div class="home-quick-title-row">';
+    html += '<span class="home-quick-title">🚀 快捷入口</span>';
+    html += '<button class="home-quick-edit-btn" onclick="openQuickEntryEditor()" title="编辑常用模块">✏️</button>';
+    html += '</div>';
+    html += '<div class="home-quick-grid">';
+    quickEntries.forEach(function(q) {
         html += '<button class="home-quick-btn" onclick="' + q.act + '"><span class="home-quick-icon">' + q.icon + '</span>' + q.label + '</button>';
     });
     html += '</div></div>';
@@ -1208,6 +1302,12 @@ function validateStreakHistory(raw) {
     return raw;
 }
 
+// ★ 热力图年份切换
+function setHeatmapGridYear(year) {
+    window._heatmapGridYear = year;
+    renderStreakHeatmap();
+}
+
 function renderStreakHeatmap() {
     var el = document.getElementById('streakHeatmap');
     if (!el) return;
@@ -1310,20 +1410,54 @@ function renderStreakHeatmap() {
     el.innerHTML = html;
 }
 
-// ★ 全年格子热力图（GitHub 风格）
+// ★ 格子热力图（GitHub 风格）—— 默认近半年，可切换查看历史年份
+// 全局状态：当前查看的年份（null=近半年模式）
+if (typeof window._heatmapGridYear === 'undefined') window._heatmapGridYear = null; // null=近半年, number=某年全年
+
 function renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT) {
     var html = '';
-    // 近 6 个月（约 26 周）
+
+    // 年份选择器 + 标题
+    var currentYear = now.getFullYear();
+    var viewYear = window._heatmapGridYear; // null = 近半年
+    var viewLabel = viewYear ? viewYear + '年' : '近半年';
+    html += '<div class="yhm-year-nav">';
+    html += '<button class="hm-tab' + (!viewYear ? ' active' : '') + '" onclick="setHeatmapGridYear(null)">近半年</button>';
+    // 历史年份按钮：从今年往前推（有打卡数据的年份）
+    var yearsWithData = [];
+    Object.keys(checked).forEach(function(k) {
+        if (k && k.length >= 4) { var y = parseInt(k.substring(0,4)); if (y && y < currentYear && !yearsWithData.includes(y)) yearsWithData.push(y); }
+    });
+    yearsWithData.sort(function(a,b){return b-a;});
+    // 确保至少显示最近3年供选择
+    for (var yi = 1; yi <= 3; yi++) { var y = currentYear - yi; if (!yearsWithData.includes(y)) yearsWithData.push(y); }
+    yearsWithData.sort(function(a,b){return b-a;}).slice(0,5).forEach(function(y){
+        html += '<button class="hm-tab' + (viewYear === y ? ' active' : '') + '" onclick="setHeatmapGridYear(' + y + ')">' + y + '年</button>';
+    });
+    html += '</div>';
+
+    // 计算日期范围
     var weeks = [];
-    var startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - 180); // 往前推6个月
+    var startDate, endDate;
+
+    if (viewYear) {
+        // 查看某一年全年
+        startDate = new Date(viewYear, 0, 1);
+        endDate = new Date(viewYear, 11, 31);
+    } else {
+        // 近半年（约26周）
+        startDate = new Date(now);
+        startDate.setDate(startDate.getDate() - 180);
+        endDate = new Date(now);
+    }
     startDate.setHours(0,0,0,0);
+    endDate.setHours(23,59,59,999);
     // 对齐到周日
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
     var cur = new Date(startDate);
     var weekIdx = 0;
-    while (cur <= now || weekIdx === 0) {
+    while (cur <= endDate || weekIdx === 0) {
         if (!weeks[weekIdx]) weeks[weekIdx] = [];
         var dk = fmtYMD(cur);
         var isFuture = cur > now;
@@ -1332,8 +1466,7 @@ function renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT) {
         weeks[weekIdx].push({ d: dk, done: done, isToday: isToday, isFuture: isFuture, date: new Date(cur) });
         if (cur.getDay() === 6) weekIdx++;
         cur.setDate(cur.getDate() + 1);
-        // 安全上限
-        if (weekIdx > 60) break;
+        if (weekIdx > 62) break;
     }
 
     // 星期头
