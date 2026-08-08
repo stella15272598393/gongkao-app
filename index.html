@@ -7,18 +7,28 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v78 内联版本号 -->
-    <meta name="app-version" content="2026-08-08-v78">
+    <!-- ★ v79 内联版本号 -->
+    <meta name="app-version" content="2026-08-08-v79">
     <title>🪷 莲莲工作台</title>
-    <!-- ★ v77: 启动自清理 —— 拆除旧的 Service Worker 并清空缓存，
-         确保用户设备上的"旧坏缓存版本"被强制清除，下次加载一定拉取最新代码。
+    <!-- ★ v79: 启动自清理(增强) —— 拆除旧 Service Worker + 清空缓存，
+         并拆掉旧SW后自动硬刷新一次，确保本次就拉到最新代码(不再卡旧版)。
          每次加载都执行，彻底杜绝卡在旧版本。 -->
     <script>
       (function () {
         try {
           if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function (regs) {
-              (regs || []).forEach(function (r) { try { r.unregister(); } catch (e) {} });
+              var list = regs || [];
+              if (list.length) {
+                list.forEach(function (r) { try { r.unregister(); } catch (e) {} });
+                // 刚拆掉旧SW，立刻硬刷新一次拉最新页面(避免仍停在旧缓存首页)
+                try {
+                  if (!sessionStorage.getItem('__sw_cleared_once__')) {
+                    sessionStorage.setItem('__sw_cleared_once__', '1');
+                    location.reload(true);
+                  }
+                } catch (e) { location.reload(true); }
+              }
             });
           }
         } catch (e) {}
@@ -34,7 +44,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=76">
+    <link rel="stylesheet" href="./css/style.css?v=79">
 </head>
 <body>
     <!-- 顶部状态栏 -->
@@ -883,10 +893,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=78"></script>
-    <script src="./js/data-modules.js?v=78"></script>
-    <script src="./js/app.js?v=78"></script>
-    <script src="./js/loader.js?v=78"></script>
+    <script src="./js/data.js?v=79"></script>
+    <script src="./js/data-modules.js?v=79"></script>
+    <script src="./js/app.js?v=79"></script>
+    <script src="./js/loader.js?v=79"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
