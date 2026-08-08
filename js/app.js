@@ -424,13 +424,17 @@ function showWelcomeScreen() {
     for (const ch of todayKey) seed = (seed * 31 + ch.charCodeAt(0)) % 100000;
     const quote = QUOTES[seed % QUOTES.length];
 
+    // 问候语（可自定义，localStorage 存 gk_welcome_greeting，默认「嗨 小公务员」）
+    let greeting = '嗨，小公务员';
+    try { const cg = localStorage.getItem('gk_welcome_greeting'); if (cg) greeting = cg; } catch(e){}
+
     const w = document.createElement('div');
     w.id = 'welcomeScreen';
     w.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#FFF0F5,#FFD6E6);' +
         'display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease;padding:24px;text-align:center;';
     w.innerHTML =
         '<div style="margin-top:16px;font-size:14px;color:#C2185B;letter-spacing:1px;">' + dateStr + '</div>' +
-        '<div style="margin-top:10px;font-size:25px;font-weight:800;color:#E75480;letter-spacing:2px;">嗨，小公务员</div>' +
+        '<div style="margin-top:10px;font-size:25px;font-weight:800;color:#E75480;letter-spacing:2px;">' + greeting + '</div>' +
         '<div style="margin-top:12px;font-size:15px;color:#AD1457;max-width:290px;line-height:1.6;">' + quote + '</div>' +
         '<button id="welcomeStartBtn" style="margin-top:26px;border:none;background:linear-gradient(135deg,#FF8FB1,#FF6FA5);' +
         'color:#fff;font-size:16px;font-weight:700;padding:12px 34px;border-radius:26px;cursor:pointer;' +
@@ -746,6 +750,7 @@ function renderHome() {
         { icon: '🌅', label: '晨读文章', val: (typeof MORNING_DB !== 'undefined' ? MORNING_DB.length : 0) },
         { icon: '✍️', label: '申论范文', val: (typeof ESSAYS_DB !== 'undefined' ? ESSAYS_DB.length : 0) },
         { icon: '💡', label: '金句', val: (typeof QUOTES_DB !== 'undefined' ? QUOTES_DB.filter(q => !q.excludeFromDaily).length : 0) },
+        { icon: '💡', label: '常识积累', val: (typeof CHANGSHI_DB !== 'undefined' ? CHANGSHI_DB.length : 0), mod: 'changshi' },
         { icon: '📌', label: '我的收藏', val: (typeof favBox !== 'undefined' ? favBox.length : 0) }
     ];
 
@@ -872,7 +877,7 @@ function renderStreakHeatmap() {
 }
 
 function statModule(label) {
-    const map = { '时政热点': 'shizheng', '求是文章': 'qiushi', '人物素材': 'renwu', '晨读文章': 'morning', '申论范文': 'shenlun', '金句': 'shenlun', '我的收藏': 'favbox' };
+    const map = { '时政热点': 'shizheng', '求是文章': 'qiushi', '人物素材': 'renwu', '晨读文章': 'morning', '申论范文': 'shenlun', '金句': 'shenlun', '常识积累': 'changshi', '我的收藏': 'favbox' };
     return map[label] || 'shizheng';
 }
 
