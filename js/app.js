@@ -433,6 +433,8 @@ function showWelcomeScreen() {
     w.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#FFF0F5,#FFD6E6);' +
         'display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease;padding:24px;text-align:center;';
     w.innerHTML =
+        '<img src="./icons/icon-coin-512.png?v=' + APP_VERSION + '" width="118" height="118" alt="logo" ' +
+        'style="border-radius:26px;box-shadow:0 8px 26px rgba(231,84,128,.28);">' +
         '<div style="margin-top:16px;font-size:14px;color:#C2185B;letter-spacing:1px;">' + dateStr + '</div>' +
         '<div style="margin-top:10px;font-size:25px;font-weight:800;color:#E75480;letter-spacing:2px;">' + greeting + '</div>' +
         '<div style="margin-top:12px;font-size:15px;color:#AD1457;max-width:290px;line-height:1.6;">' + quote + '</div>' +
