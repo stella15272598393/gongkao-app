@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v69';
+const APP_VERSION = '2026-08-08-v70';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -516,6 +516,7 @@ function showWelcomeScreen() {
 
     const dismiss = () => {
         try { localStorage.setItem('welcomeShownDate', todayKey); } catch (e) {}
+        w.style.pointerEvents = 'none';  // 立即禁用交互，不等动画结束
         w.style.opacity = '0';
         setTimeout(() => { if (w.parentNode) w.parentNode.removeChild(w); }, 400);
     };
@@ -604,38 +605,43 @@ function startDateTimeClock() {
 
 // ========== 模块切换 ==========
 function switchModule(moduleName) {
-    currentModule = moduleName;
+    try {
+        currentModule = moduleName;
 
-    // 更新导航栏
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.module === moduleName);
-    });
+        // 更新导航栏（含侧边栏 + 底部Tab）
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.module === moduleName);
+        });
 
-    // 更新内容面板
-    document.querySelectorAll('.module-panel').forEach(panel => {
-        panel.classList.toggle('active', panel.id === `panel-${moduleName}`);
-    });
+        // 更新内容面板
+        document.querySelectorAll('.module-panel').forEach(panel => {
+            panel.classList.toggle('active', panel.id === `panel-${moduleName}`);
+        });
 
-    // 移动端自动收起侧边栏
-    if (window.innerWidth <= 768) {
-        document.getElementById('sidebar').classList.add('collapsed');
-        document.body.classList.add('sidebar-collapsed');
-        var ov = document.getElementById('sidebarOverlay');
-        if (ov) ov.classList.remove('show');
+        // 移动端自动收起侧边栏
+        if (window.innerWidth <= 768) {
+            const sb = document.getElementById('sidebar');
+            if (sb) sb.classList.add('collapsed');
+            document.body.classList.add('sidebar-collapsed');
+            var ov = document.getElementById('sidebarOverlay');
+            if (ov) ov.classList.remove('show');
+        }
+
+        // 各模块进入时刷新
+        if (moduleName === 'favbox') renderFavBox();
+        if (moduleName === 'settings') { renderThemeConfig(); renderDataStats(); renderCloudConfig(); }
+        if (moduleName === 'home') { renderHome(); }
+        if (moduleName === 'gold') { renderGoldLedger(); }
+        if (moduleName === 'plan') { loadPlanItems(); renderPlanStats(); }
+        if (moduleName === 'changshi') { renderChangshi(); }
+
+        // 防御：确保欢迎屏不阻挡交互（残留的 welcomeScreen 强制移除）
+        var ws = document.getElementById('welcomeScreen');
+        if (ws) { ws.style.pointerEvents = 'none'; try { ws.remove(); } catch(e){} }
+    } catch(e) {
+        console.error('[switchModule] 切换模块失败:', moduleName, e);
+        if (typeof showToast === 'function') showToast('⚠️ 页面切换异常，请刷新重试');
     }
-
-    // 进入收藏夹时刷新列表
-    if (moduleName === 'favbox') renderFavBox();
-    // 进入数据备份页时刷新统计与云同步配置
-    if (moduleName === 'settings') { renderThemeConfig(); renderDataStats(); renderCloudConfig(); }
-    // 进入工作台时刷新数据（打卡改为手动，不自动触发）
-    if (moduleName === 'home') { renderHome(); }
-    // 进入金币台账时刷新（计划任务/打卡/流水/统计）
-    if (moduleName === 'gold') { renderGoldLedger(); }
-    // 进入每日计划时刷新表格（跨天/金币变动同步）
-    if (moduleName === 'plan') { loadPlanItems(); renderPlanStats(); }
-    // 进入常识积累时刷新（打卡栏/统计/分类/随机列表）
-    if (moduleName === 'changshi') { renderChangshi(); }
 }
 
 // ========== 收藏夹页面 ==========
@@ -1057,6 +1063,34 @@ function drawTrendChart(ctx, W, H, labels, values, color, metric) {
 /* ★ v62 月历热力图 —— 按月查看打卡历史，支持翻月（番茄ToDo风格） */
 let heatmapViewYear, heatmapViewMonth; // 当前查看的年/月
 
+// 校验并清洗打卡记录（去重、移除未来日期、排序）
+function validateStreakHistory(raw) {
+    if (!raw) return raw;
+    var hist = raw.history;
+    if (!Array.isArray(hist)) return raw;
+    var today = bjToday();
+    var cleaned = [];
+    var seen = {};
+    var changed = false;
+    for (var i = 0; i < hist.length; i++) {
+        var d = String(hist[i]).slice(0, 10);
+        // 跳过空值、非日期格式、未来日期
+        if (!d || !/^\d{4}-\d{2}-\d{2}$/.test(d) || d > today) { changed = true; continue; }
+        // 去重
+        if (seen[d]) { changed = true; continue; }
+        seen[d] = true;
+        cleaned.push(d);
+    }
+    // 排序
+    cleaned.sort();
+    if (changed) {
+        raw.history = cleaned;
+        try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
+        if (typeof showToast === 'function') showToast('🔧 已自动清理异常打卡数据');
+    }
+    return raw;
+}
+
 function renderStreakHeatmap() {
     var el = document.getElementById('streakHeatmap');
     if (!el) return;
@@ -1064,6 +1098,7 @@ function renderStreakHeatmap() {
     // ====== 读取数据 ======
     var raw = {};
     try { raw = JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch(e){}
+    raw = validateStreakHistory(raw);  // ★ 自动校验清洗
     var hist = (raw && raw.history) || [];
     if (!Array.isArray(hist)) hist = [];
 
@@ -1129,6 +1164,7 @@ function renderStreakHeatmap() {
     html += '<div class="hm-title-row">';
     html += '<span class="hm-title">📅 打卡热力图</span>';
     html += '<span class="hm-stats">连续 <b>' + streak + '</b> 天 · 累计 <b>' + totalDays + '</b> 天</span>';
+    html += '<button class="hm-toggle" style="font-size:11px;padding:1px 6px;border-radius:8px;" onclick="showStreakDates()" title="查看所有打卡日期">🔍 ' + hist.length + '条</button>';
     html += '</div>';
     html += '<div class="hm-toolbar">';
     // 视图切换
@@ -1279,6 +1315,62 @@ function renderMonthHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD) {
     html += '</div>';
 
     return html;
+}
+
+// 查看所有打卡日期（弹窗展示，可单条删除错误的记录）
+function showStreakDates() {
+    var raw = {};
+    try { raw = JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch(e){}
+    var hist = (raw && raw.history) || [];
+    if (!Array.isArray(hist) || hist.length === 0) {
+        if (typeof showToast === 'function') showToast('📭 暂无打卡记录');
+        return;
+    }
+    // 去重排序显示
+    var uniq = [...new Set(hist)].sort().reverse(); // 最新的在前
+    var listHtml = uniq.map(function(d, i) {
+        return '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-bottom:1px solid ' + cssVar('--border-color','#eee') + ';border-radius:6px;margin-bottom:4px;background:' + cssVar('--card-bg','#fff') + ';">' +
+            '<span style="font-size:13px;color:' + cssVar('--text-primary','#333') + ';">📅 ' + d + (i === 0 ? ' <b style="color:' + cssVar('--accent','#E75480') + ';font-size:11px;">今天</b>' : '') + '</span>' +
+            '<button onclick="removeStreakDate(\'' + d + '\')" style="border:none;background:rgba(231,64,128,.1);color:#E75480;font-size:11px;padding:2px 8px;border-radius:10px;cursor:pointer;">✕ 删除</button>' +
+            '</div>';
+    }).join('');
+
+    var html = '<div style="max-height:320px;overflow-y:auto;padding:8px;">' + listHtml + '</div>' +
+        '<div style="text-align:center;margin-top:8px;">' +
+        '<button onclick="closeStreakDateModal()" style="border:none;background:' + cssVar('--accent','#E75480') + ';color:#fff;font-size:13px;padding:6px 20px;border-radius:14px;cursor:pointer;">关闭</button>' +
+        '</div>';
+
+    // 复用 appModalOverlay
+    var overlay = document.getElementById('appModalOverlay');
+    var box = document.getElementById('appModalBox');
+    if (overlay && box) {
+        document.getElementById('appModalTitle').textContent = '📋 打卡记录（' + uniq.length + '天）';
+        document.getElementById('appModalBody').innerHTML = html;
+        document.getElementById('appModalActions').style.display = 'none';
+        overlay.style.display = 'flex';
+    } else {
+        // fallback: 直接 toast 显示最近几条
+        if (typeof showToast === 'function') showToast('打卡日期: ' + uniq.slice(0, 5).join(', ') + (uniq.length > 5 ? ' 等' + uniq.length + '天' : ''));
+    }
+}
+function removeStreakDate(dateStr) {
+    var raw = {};
+    try { raw = JSON.parse(localStorage.getItem('gk_streak') || '{}'); } catch(e){ return; }
+    if (!Array.isArray(raw.history)) return;
+    var idx = raw.history.indexOf(dateStr);
+    if (idx >= 0) {
+        raw.history.splice(idx, 1);
+        try { localStorage.setItem('gk_streak', JSON.stringify(raw)); } catch(e){}
+        renderStreakHeatmap();
+        renderHome();
+        refreshThemeDependent();
+        showStreakDates();  // 刷新弹窗
+        if (typeof showToast === 'function') showToast('🗑️ 已删除 ' + dateStr);
+    }
+}
+function closeStreakDateModal() {
+    var ov = document.getElementById('appModalOverlay');
+    if (ov) ov.style.display = 'none';
 }
 
 // 切换热力图视图模式
