@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v68';
+const APP_VERSION = '2026-08-08-v69';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -292,6 +292,13 @@ function toggleDark(on) {
     const tg = document.getElementById('darkToggle');
     if (tg) tg.checked = !!on;
     refreshThemeDependent();
+}
+// 顶部栏 🎨 快捷切换主题（循环 pink → bluechick）
+function cycleTheme() {
+    var current = localStorage.getItem(THEME_KEY) || 'pink';
+    var next = current === 'pink' ? 'bluechick' : 'pink';
+    setTheme(next);
+    showToast('🎨 已切换为「' + (next === 'pink' ? '粉色 HelloKitty' : '蓝色小鸡·黄绿') + '」');
 }
 function refreshThemeDependent() {
     try { if (currentModule === 'home') { renderStreakHeatmap(); renderGrowthTrend(); } } catch (e) {}
@@ -1081,6 +1088,140 @@ function renderStreakHeatmap() {
     var checked = {};
     for (var hi = 0; hi < hist.length; hi++) checked[hist[hi]] = true;
 
+    var C_ON  = cssVar('--accent', '#E75480');
+    var C_OFF = cssVar('--border-color', '#f0e6ea');
+    var C_TODAY = cssVar('--primary-dark', '#FF6FA5');
+    var C_FUT = cssVar('--bg-gray', '#fafafa');
+    var WD = ['日','一','二','三','四','五','六'];
+
+    // ====== 视图模式：year(全年格子) / month(月历) ======
+    if (typeof window.heatmapViewMode === 'undefined') window.heatmapViewMode = 'year';
+    if (typeof window.heatmapExpanded === 'undefined') window.heatmapExpanded = true;
+
+    var now = getBJNow();
+    now.setHours(0,0,0,0);
+
+    // 统计
+    var totalDays = 0, streak = 0;
+    var dTmp = new Date(now);
+    while (dTmp >= hist[0] || hist.length > 0) {  // simplified
+        var dk = fmtYMD(dTmp);
+        if (checked[dk]) { streak++; if (dTmp <= now) totalDays++; }
+        else { streak = 0; }
+        dTmp.setDate(dTmp.getDate() - 1);
+        if (streak > 365) break;
+    }
+    // 更准确的连续天数
+    streak = _calcStreak(hist);
+
+    // ---- 折叠/展开状态记忆 ----
+    var isMobile = window.innerWidth <= 768;
+    // 移动端默认折叠，桌面端默认展开
+    if (typeof window._heatmapAutoCollapse === 'undefined') {
+        window._heatmapAutoCollapse = true;
+        if (isMobile) window.heatmapExpanded = false;
+    }
+
+    var html = '';
+
+    // ====== 标题栏（始终显示）：标题 + 统计 + 切换按钮 + 折叠 ======
+    html += '<div class="hm-header">';
+    html += '<div class="hm-title-row">';
+    html += '<span class="hm-title">📅 打卡热力图</span>';
+    html += '<span class="hm-stats">连续 <b>' + streak + '</b> 天 · 累计 <b>' + totalDays + '</b> 天</span>';
+    html += '</div>';
+    html += '<div class="hm-toolbar">';
+    // 视图切换
+    html += '<div class="hm-view-tabs">';
+    html += '<button class="hm-tab' + (window.heatmapViewMode==='year'?' active':'') + '" onclick="switchHeatmapView(\'year\')">全年</button>';
+    html += '<button class="hm-tab' + (window.heatmapViewMode==='month'?' active':'') + '" onclick="switchHeatmapView(\'month\')">月历</button>';
+    html += '</div>';
+    // 折叠按钮
+    html += '<button class="hm-toggle" onclick="toggleHeatmapExpand()" title="' + (window.heatmapExpanded?'折叠':'展开') + '">' +
+        (window.heatmapExpanded ? '▲ 收起' : '▼ 展开') + '</button>';
+    html += '</div>'; // toolbar
+    html += '</div>'; // header
+
+    // ====== 内容区（可折叠）======
+    html += '<div class="hm-body' + (window.heatmapExpanded ? '' : ' collapsed') + '" id="hmBody">';
+
+    if (window.heatmapViewMode === 'year') {
+        html += renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT);
+    } else {
+        // 月历视图（原有逻辑）
+        html += renderMonthHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD);
+    }
+
+    html += '</div>'; // hm-body
+
+    el.innerHTML = html;
+}
+
+// ★ 全年格子热力图（GitHub 风格）
+function renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT) {
+    var html = '';
+    // 近 6 个月（约 26 周）
+    var weeks = [];
+    var startDate = new Date(now);
+    startDate.setDate(startDate.getDate() - 180); // 往前推6个月
+    startDate.setHours(0,0,0,0);
+    // 对齐到周日
+    startDate.setDate(startDate.getDate() - startDate.getDay());
+
+    var cur = new Date(startDate);
+    var weekIdx = 0;
+    while (cur <= now || weekIdx === 0) {
+        if (!weeks[weekIdx]) weeks[weekIdx] = [];
+        var dk = fmtYMD(cur);
+        var isFuture = cur > now;
+        var isToday = dk === fmtYMD(now);
+        var done = !!checked[dk] && !isFuture;
+        weeks[weekIdx].push({ d: dk, done: done, isToday: isToday, isFuture: isFuture, date: new Date(cur) });
+        if (cur.getDay() === 6) weekIdx++;
+        cur.setDate(cur.getDate() + 1);
+        // 安全上限
+        if (weekIdx > 60) break;
+    }
+
+    // 星期头
+    html += '<div class="yhm-grid">';
+    html += '<div class="yhm-weekdays">';
+    var WD = ['日','一','二','三','四','五','六'];
+    for (var wi = 0; wi < 7; wi++) {
+        html += '<span class="yhm-wd">' + WD[wi] + '</span>';
+    }
+    html += '</div>';
+
+    // 周行
+    for (var w = 0; w < weeks.length; w++) {
+        html += '<div class="yhm-week">';
+        for (var d = 0; d < weeks[w].length; d++) {
+            var cell = weeks[w][d];
+            var cls = 'yhm-cell';
+            var bg = C_OFF;
+            var title = cell.d + (cell.done ? ' ✅' : (cell.isFuture ? ' · 未到' : ' · 未打卡'));
+            if (cell.isFuture) { bg = C_FUT; cls += ' fut'; }
+            else if (cell.isToday) { bg = C_TODAY; cls += ' today'; }
+            else if (cell.done) { bg = C_ON; cls += ' on'; }
+            html += '<div class="' + cls + '" style="background:' + bg + ';" title="' + title + '"></div>';
+        }
+        html += '</div>';
+    }
+    html += '</div>'; // yhm-grid
+
+    // 图例
+    html += '<div class="yhm-legend">';
+    html += '<span class="yhm-leg-item"><span class="yhm-dot" style="background:' + C_FUT + ';"></span>未到</span>';
+    html += '<span class="yhm-leg-item"><span class="yhm-dot" style="background:' + C_OFF + ';"></span>未打卡</span>';
+    html += '<span class="yhm-leg-item"><span class="yhm-dot" style="background:' + C_ON + ';"></span>已打卡</span>';
+    html += '<span class="yhm-leg-item"><span class="yhm-dot" style="background:' + C_TODAY + ';border:1px solid ' + cssVar('--accent','#E75480') + ';"></span>今天</span>';
+    html += '</div>';
+
+    return html;
+}
+
+// ★ 月历热力图（原有逻辑提取为独立函数）
+function renderMonthHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD) {
     // 初始化为当前月（仅首次）
     if (heatmapViewYear === undefined) {
         var n = getBJNow();
@@ -1088,79 +1229,69 @@ function renderStreakHeatmap() {
         heatmapViewMonth = n.getMonth(); // 0-based
     }
 
-    var C_ON  = cssVar('--accent', '#E75480');
-    var C_OFF = cssVar('--border-color', '#f0e6ea');
-    var C_TODAY = cssVar('--primary-dark', '#FF6FA5');
-    var C_FUT = cssVar('--bg-gray', '#fafafa');
-    var WD = ['日','一','二','三','四','五','六'];
-
-    // 计算当月信息
     var firstDay = new Date(heatmapViewYear, heatmapViewMonth, 1);
     var lastDay = new Date(heatmapViewYear, heatmapViewMonth + 1, 0);
-    var startDow = firstDay.getDay(); // 0=周日
+    var startDow = firstDay.getDay();
     var daysInMonth = lastDay.getDate();
-    var now = getBJNow();
-    now.setHours(0,0,0,0);
     var isCurrentMonth = (heatmapViewYear === now.getFullYear() && heatmapViewMonth === now.getMonth());
 
-    // 统计当月打卡
     var monthPinkCnt = 0;
     for (var di = 1; di <= daysInMonth; di++) {
         var dk = fmtYMD(new Date(heatmapViewYear, heatmapViewMonth, di));
         if (checked[dk] && new Date(heatmapViewYear, heatmapViewMonth, di) <= now) monthPinkCnt++;
     }
 
-    // 标题栏：月份切换 + 年月名
     var monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
     var html = '<div class="cal-header">';
     html += '<button class="cal-nav-btn" onclick="heatmapShiftMonth(-1)" title="上个月">◀</button>';
     html += '<span class="cal-title">' + heatmapViewYear + '年 ' + monthNames[heatmapViewMonth] + '</span>';
     html += '<button class="cal-nav-btn" onclick="heatmapShiftMonth(1)" title="下个月">▶</button>';
-    // 快捷回到今天
-    if (!isCurrentMonth) {
-        html += '<button class="cal-today-btn" onclick="heatmapGoToday()">今</button>';
-    }
+    if (!isCurrentMonth) html += '<button class="cal-today-btn" onclick="heatmapGoToday()">今</button>';
     html += '</div>';
 
-    // 星期头
     html += '<div class="cal-weekdays">';
     for (var wi = 0; wi < 7; wi++) {
         html += '<div class="cal-wd' + (wi === 0 || wi === 6 ? ' weekend' : '') + '">' + WD[wi] + '</div>';
     }
     html += '</div>';
 
-    // 日期网格
     html += '<div class="cal-days">';
-    // 空白填充
-    for (var ei = 0; ei < startDow; ei++) {
-        html += '<div class="cal-day empty"></div>';
-    }
+    for (var ei = 0; ei < startDow; ei++) html += '<div class="cal-day empty"></div>';
     for (var di = 1; di <= daysInMonth; di++) {
         var dDate = new Date(heatmapViewYear, heatmapViewMonth, di);
         var dk = fmtYMD(dDate);
         var isFuture = dDate > now;
         var isTod = isCurrentMonth && di === now.getDate();
         var done = !!checked[dk];
-        if (done && !isFuture) monthPinkCnt++; // already counted but keep logic
-
         var cls = 'cal-day';
         if (isFuture) cls += ' future';
         else if (isTod) cls += ' today';
         else if (done) cls += ' done';
-
         var bg = isFuture ? C_FUT : (isTod ? C_TODAY : (done ? C_ON : C_OFF));
         html += '<div class="' + cls + '" style="background:' + bg + ';" title="' + dk + (done ? ' ✅' : (isFuture ? ' · 未到' : ' · 未打卡')) + '">' + di + '</div>';
     }
     html += '</div>';
 
-    // 图例 + 统计
     html += '<div class="cal-footer">';
     html += '<span class="cal-legend"><span class="cal-dot" style="background:' + C_OFF + ';"></span>未打卡</span>';
     html += '<span class="cal-legend"><span class="cal-dot" style="background:' + C_ON + ';"></span>已打卡</span>';
     html += '<span class="cal-count">本月打卡 <b>' + monthPinkCnt + '</b> / ' + daysInMonth + ' 天</span>';
     html += '</div>';
 
-    el.innerHTML = html;
+    return html;
+}
+
+// 切换热力图视图模式
+function switchHeatmapView(mode) {
+    window.heatmapViewMode = mode;
+    renderStreakHeatmap();
+}
+// 折叠/展开热力图
+function toggleHeatmapExpand() {
+    window.heatmapExpanded = !window.heatmapExpanded;
+    var body = document.getElementById('hmBody');
+    if (body) body.classList.toggle('collapsed', !window.heatmapExpanded);
+    renderStreakHeatmap(); // 刷新按钮文字
 }
 
 function heatmapShiftMonth(delta) {

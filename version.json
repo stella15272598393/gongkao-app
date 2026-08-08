@@ -1,1 +1,1 @@
-{"version": "2026-08-08-v68", "date": "2026-08-08", "changelog": "v68: 修复移动端右侧空白(内容区未铺满): switchModule补body.sidebar-collapsed + CSS移动端强制margin-left:0"}
+{"version": "2026-08-08-v69", "date": "2026-08-08", "changelog": "v69: 全年打卡热力图(GitHub风格格子/可折叠+月历切换) + 顶部栏🎨主题快捷按钮 + bluechick配色修正为淡蓝+小鸡黄+淡绿"}
