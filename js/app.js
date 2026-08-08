@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v84';
+const APP_VERSION = '2026-08-08-v85';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -318,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // v37：启动时检测数据数量骤降 + 备份提醒
     try { checkBackupReminder(); } catch (e) {}
     switchModule('home');
+    renderBottomTab();
     initShizheng();
     initShenlun();
     initQiushi();
@@ -950,6 +951,120 @@ var ALL_QUICK_MODULES = [
 ];
 // 默认显示的模块ID列表
 var DEFAULT_QUICK_IDS = ['susuan-practice','morning','favbox','mock','idioms','interview','shizheng','reload'];
+
+// ================= 底部固定导航栏（可自定义中间项） =================
+// 候选模块（纯模块，点击即 switchModule）。不含「刷新」等组合动作。
+var BOTTOM_TAB_CANDIDATES = [
+    { mod: 'morning',   icon: '🌅', label: '晨读' },
+    { mod: 'favbox',    icon: '📌', label: '收藏' },
+    { mod: 'mock',      icon: '📊', label: '模考' },
+    { mod: 'idioms',    icon: '🀄', label: '成语' },
+    { mod: 'interview', icon: '🎤', label: '面试' },
+    { mod: 'shizheng',  icon: '🗞️', label: '时政' },
+    { mod: 'shenlun',   icon: '✍️', label: '申论' },
+    { mod: 'qiushi',    icon: '💡', label: '每日一题' },
+    { mod: 'changshi',  icon: '📖', label: '常识' },
+    { mod: 'susuan',    icon: '🧮', label: '速算' },
+    { mod: 'logic',     icon: '🧩', label: '逻辑' },
+    { mod: 'gold',      icon: '💰', label: '金币' },
+    { mod: 'plan',      icon: '📋', label: '计划' },
+    { mod: 'renwu',     icon: '👤', label: '人物' }
+];
+// 中间 3 个默认位：常识 / 收藏 / 计划（与原版一致）
+var DEFAULT_BOTTOM_TABS = ['changshi', 'favbox', 'plan'];
+
+function getBottomTabs() {
+    try {
+        var saved = JSON.parse(localStorage.getItem('gk_bottom_tabs') || 'null');
+        if (Array.isArray(saved) && saved.length > 0) return saved;
+    } catch (e) {}
+    return DEFAULT_BOTTOM_TABS.slice();
+}
+
+// 动态渲染底部导航栏：首页（固定）+ 自定义中间项 + 更多（固定）
+function renderBottomTab() {
+    var tab = document.getElementById('bottomTab');
+    if (!tab) return;
+    var ids = getBottomTabs();
+    var html = '';
+    html += '<button class="nav-item bottom-tab-item" data-module="home" onclick="switchModule(\'home\')"><span class="bt-ico">🎀</span><span>首页</span></button>';
+    ids.forEach(function (id) {
+        var m = BOTTOM_TAB_CANDIDATES.find(function (x) { return x.mod === id; });
+        if (!m) return;
+        html += '<button class="nav-item bottom-tab-item" data-module="' + id + '" onclick="switchModule(\'' + id + '\')"><span class="bt-ico">' + m.icon + '</span><span>' + m.label + '</span></button>';
+    });
+    html += '<button class="bottom-tab-item bottom-more" onclick="toggleSidebar()"><span class="bt-ico">☰</span><span>更多</span></button>';
+    tab.innerHTML = html;
+    // 同步高亮（currentModule 可能尚未初始化，默认 home）
+    try {
+        var cur = (typeof currentModule !== 'undefined' && currentModule) ? currentModule : 'home';
+        document.querySelectorAll('.bottom-tab-item[data-module]').forEach(function (item) {
+            item.classList.toggle('active', item.dataset.module === cur);
+        });
+    } catch (e) {}
+}
+
+function openBottomTabEditor() {
+    // 防止旧弹窗残留导致多个 overlay 叠加（空保存分支会提前 return 不关弹窗）
+    var old = document.getElementById('bottomTabEditOverlay');
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var currentIds = getBottomTabs();
+    var html = '<div class="modal-overlay" id="bottomTabEditOverlay" onclick="closeBottomTabEditor(event)" style="z-index:200002;display:flex;align-items:center;justify-content:center;position:fixed;inset:0;background:rgba(0,0,0,.5);">';
+    html += '<div class="modal-box" style="background:#fff;border-radius:16px;width:92%;max-width:400px;max-height:80vh;overflow-y:auto;padding:20px;position:relative;" onclick="event.stopPropagation()">';
+    html += '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">⚙️ 自定义底部导航栏</div>';
+    html += '<div style="font-size:12px;color:#888;margin-bottom:14px;">“首页”和“更多”固定不变，中间的位置勾选你常用的模块（最多 4 个）</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:6px;">';
+    BOTTOM_TAB_CANDIDATES.forEach(function (m, idx) {
+        var checked = currentIds.indexOf(m.mod) >= 0 ? 'checked' : '';
+        html += '<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;transition:background .2s;' + (checked ? 'background:#fff0f6;' : '') + '" onmouseover="this.style.background=\'#f8f8f8\'" onmouseout="this.style.background=\'' + (checked ? '#fff0f6' : 'transparent') + '\'">';
+        html += '<input type="checkbox" value="' + m.mod + '" ' + checked + ' onchange="toggleBottomTabEditItem(this)" data-label-el="btel' + idx + '" style="accent-color:#E75480;width:18px;height:18px;flex-shrink:0;">';
+        html += '<span style="font-size:22px;">' + m.icon + '</span>';
+        html += '<span id="btel' + idx + '" style="font-size:14px;font-weight:' + (checked ? '600' : '400') + ';color:' + (checked ? '#E75480' : '#333') + ';">' + m.label + '</span>';
+        html += '</label>';
+    });
+    html += '</div>';
+    html += '<div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">';
+    html += '<button onclick="resetBottomTabs()" style="padding:8px 18px;border-radius:10px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;">恢复默认</button>';
+    html += '<button onclick="confirmBottomTabs()" style="padding:8px 24px;border-radius:10px;border:none;background:linear-gradient(135deg,#FFB6C1,#E75480);color:#fff;cursor:pointer;font-size:13px;font-weight:600;">保存</button>';
+    html += '</div>';
+    html += '</div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function toggleBottomTabEditItem(cb) {
+    var labelEl = document.getElementById(cb.getAttribute('data-label-el'));
+    if (labelEl) {
+        labelEl.style.fontWeight = cb.checked ? '600' : '400';
+        labelEl.style.color = cb.checked ? '#E75480' : '#333';
+    }
+    cb.closest('label').style.background = cb.checked ? '#fff0f6' : 'transparent';
+}
+
+function closeBottomTabEditor(ev) {
+    if (ev && ev.target !== ev.currentTarget) return;
+    var el = document.getElementById('bottomTabEditOverlay');
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+}
+
+function confirmBottomTabs() {
+    var cbs = document.querySelectorAll('#bottomTabEditOverlay input[type="checkbox"]:checked');
+    var ids = Array.prototype.map.call(cbs, function (cb) { return cb.value; });
+    if (ids.length === 0) { showToast('⚠️ 至少选择 1 个模块'); return; }
+    if (ids.length > 4) { showToast('⚠️ 最多选择 4 个模块'); return; }
+    try { localStorage.setItem('gk_bottom_tabs', JSON.stringify(ids)); } catch (e) {}
+    closeBottomTabEditor();
+    renderBottomTab();
+    showToast('✅ 底部栏已更新');
+}
+
+function resetBottomTabs() {
+    var cbs = document.querySelectorAll('#bottomTabEditOverlay input[type="checkbox"]');
+    cbs.forEach(function (cb) {
+        var shouldBeDefault = DEFAULT_BOTTOM_TABS.indexOf(cb.value) >= 0;
+        cb.checked = shouldBeDefault;
+        toggleBottomTabEditItem(cb);
+    });
+}
 
 function getUserQuickEntries() {
     try {
