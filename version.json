@@ -1,1 +1,1 @@
-{"version": "2026-08-08-v67", "date": "2026-08-08", "changelog": "v67: 欢迎页按规格重做(问候语固定「嗨小公务员」可自定义+金句真随机作副标题) + 趋势图打卡指标改柱状图(弃用散点)"}
+{"version": "2026-08-08-v68", "date": "2026-08-08", "changelog": "v68: 修复移动端右侧空白(内容区未铺满): switchModule补body.sidebar-collapsed + CSS移动端强制margin-left:0"}

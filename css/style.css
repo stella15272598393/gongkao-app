@@ -1731,7 +1731,12 @@ input[type="range"]::-webkit-slider-thumb {
 @media (max-width: 768px) {
     .sidebar-toggle { display: block; }
     .sidebar { /* 手机端默认展开，可手动收起 */ }
-    /* 主内容区在侧边栏收起时撑满 */
+    /* 手机端内容区始终铺满（保险：即使 body 没加 sidebar-collapsed） */
+    .content-area {
+        margin-left: 0 !important;
+        max-width: 100% !important;
+        padding: 12px;
+    }
 }
 /* 超小屏：确保汉堡按钮可见 */
 @media (max-width: 480px) {
