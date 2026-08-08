@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v81';
+const APP_VERSION = '2026-08-08-v82';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -264,55 +264,15 @@ function checkBackupReminder() {
 }
 
 // ========== 初始化 ==========
-// ========== 主题 / 暗色模式 ==========
-const THEME_KEY = 'gk_theme';
-const DARK_KEY  = 'gk_dark';
 function cssVar(name, fallback) {
     try { const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v || fallback; } catch (e) { return fallback; }
 }
-// ★ v80: 从 v75 删除中恢复主题系统（pink / bluechick / 暗色）
-function applyThemeState() {
-    try {
-        const t = localStorage.getItem(THEME_KEY) || 'pink';
-        const d = localStorage.getItem(DARK_KEY) === '1';
-        const root = document.documentElement;
-        root.setAttribute('data-theme', t);
-        if (d) root.setAttribute('data-dark', '1'); else root.removeAttribute('data-dark');
-    } catch (e) {}
-}
-function setTheme(t) {
-    try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
-    applyThemeState();
-    const sel = document.getElementById('themeSelect');
-    if (sel) sel.value = t;
-    refreshThemeDependent();
-}
-function toggleDark(on) {
-    try { localStorage.setItem(DARK_KEY, on ? '1' : '0'); } catch (e) {}
-    applyThemeState();
-    const tg = document.getElementById('darkToggle');
-    if (tg) tg.checked = !!on;
-    refreshThemeDependent();
-}
-// 顶部栏 🎨 快捷切换主题（循环 pink → bluechick）
-function cycleTheme() {
-    var current = localStorage.getItem(THEME_KEY) || 'pink';
-    var next = current === 'pink' ? 'bluechick' : 'pink';
-    setTheme(next);
-    showToast('🎨 已切换为「' + (next === 'pink' ? '粉色 HelloKitty' : '蓝色小鸡·黄绿') + '」');
-}
-// 设置页：回显主题/暗色选择
-function renderThemeConfig() {
-    const sel = document.getElementById('themeSelect');
-    if (sel) { try { sel.value = localStorage.getItem(THEME_KEY) || 'pink'; } catch (e) {} }
-    const tg = document.getElementById('darkToggle');
-    if (tg) { try { tg.checked = localStorage.getItem(DARK_KEY) === '1'; } catch (e) {} }
-}
+// ★ v82: 主题系统已彻底移除（用户要求"删干净"）。保留图表重绘钩子以兼容原调用点。
 function refreshThemeDependent() {
     try { if (currentModule === 'home') { renderStreakHeatmap(); renderGrowthTrend(); } } catch (e) {}
     try { if (currentModule === 'mock') renderChart(); } catch (e) {}
 }
-applyThemeState();
+function renderThemeConfig() { /* v82: 主题已移除，保留空实现避免调用点报错 */ }
 
 // 通用空状态插画 + 引导
 function renderEmptyState(container, opt) {
@@ -2062,7 +2022,6 @@ function applyBackupData(parsed) {
         localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
         n++;
     }
-    try { applyThemeState(); } catch (e) {}
     return n;
 }
 function exportAllData() {

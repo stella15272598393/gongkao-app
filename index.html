@@ -7,10 +7,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v81 内联版本号 -->
-    <meta name="app-version" content="2026-08-08-v81">
+    <!-- ★ v82 内联版本号 -->
+    <meta name="app-version" content="2026-08-08-v82">
     <title>🪷 莲莲工作台</title>
-    <!-- ★ v81: 启动自清理(终极防遮挡) —— 拆除旧 SW + 清缓存 + 强制清除所有遮挡层，
+    <!-- ★ v82: 启动自清理(终极防遮挡) —— 拆除旧 SW + 清缓存 + 强制清除所有遮挡层，
          确保页面一加载就能点击，不再被任何模态/遮罩卡死。 -->
     <script>
       (function () {
@@ -82,7 +82,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=81">
+    <link rel="stylesheet" href="./css/style.css?v=82">
 </head>
 <body>
     <!-- 顶部状态栏 -->
@@ -105,8 +105,6 @@
         <div class="top-bar-right">
             <span class="datetime" id="datetimeDisplay"></span>
             <span class="app-version" id="appVersionLabel" title="当前代码版本"></span>
-            <!-- ★ v80: 恢复主题快捷切换按钮 -->
-            <button class="theme-quick-btn" id="themeQuickBtn" onclick="cycleTheme()" title="切换主题配色">🎨</button>
             <div class="search-box">
                 <input type="text" id="globalSearch" placeholder="全局搜索..." />
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -802,32 +800,9 @@
             <section class="module-panel" id="panel-settings">
                 <div class="module-header">
                     <h2>⚙️ 设置</h2>
-                    <p class="module-desc">外观与数据备份</p>
-                </div>
-                <!-- ★ v80: 从 v75 删除中恢复的主题配色卡 -->
-                <div class="settings-card">
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <div class="settings-title">🎨 主题配色</div>
-                            <div class="settings-sub">选择你喜欢的风格（粉色 HelloKitty / 蓝色小鸡·黄绿）</div>
-                        </div>
-                        <select id="themeSelect" class="modal-input" style="width:auto;min-width:150px;font-size:13px;padding:6px 10px;" onchange="setTheme(this.value)">
-                            <option value="pink">🌸 粉色 HelloKitty</option>
-                            <option value="bluechick">🐤 蓝色小鸡·黄绿</option>
-                        </select>
-                    </div>
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <div class="settings-title">🌙 暗色护眼模式</div>
-                            <div class="settings-sub">夜间低亮度，减少刺眼（可与主题叠加）</div>
-                        </div>
-                        <label class="switch-wrap">
-                            <input type="checkbox" id="darkToggle" onchange="toggleDark(this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="settings-card">
+                <p class="module-desc">外观与数据备份</p>
+            </div>
+            <div class="settings-card">
                     <div class="settings-row">
                         <div class="settings-info">
                             <div class="settings-title">📤 导出全部学习数据</div>
@@ -956,10 +931,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=81"></script>
-    <script src="./js/data-modules.js?v=81"></script>
-    <script src="./js/app.js?v=81"></script>
-    <script src="./js/loader.js?v=81"></script>
+    <script src="./js/data.js?v=82"></script>
+    <script src="./js/data-modules.js?v=82"></script>
+    <script src="./js/app.js?v=82"></script>
+    <script src="./js/loader.js?v=82"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
