@@ -1,1 +1,1 @@
-{"version": "2026-08-08-v73", "date": "2026-08-08", "changelog": "v73: 修复手机端homeStats空白(renderHome主体整体try-catch+异常降级提示) + JS强制隐藏移动端侧边栏(防SW缓存旧CSS) + 刷新按钮兜底", "author": "莲莲工作台"}
+{"version": "2026-08-08-v74", "date": "2026-08-08", "changelog": "v74: 修复整页无响应(启动时强制清理所有残留遮挡层+欢迎屏3秒自动消失) + homeStats降级内容可交互(显示打卡+刷新按钮) + CSS/JS/HTML全量cache-bust(v=74) + 内联版本meta标签", "author": "莲莲工作台"}

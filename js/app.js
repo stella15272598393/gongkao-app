@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v73';
+const APP_VERSION = '2026-08-08-v74';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -333,6 +333,20 @@ function renderEmptyState(container, opt) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ★ v74: 强制清理所有可能残留的全屏遮挡层（欢迎屏/update弹窗等），防止整页无响应
+    try {
+        document.querySelectorAll('[id="welcomeScreen"],[id="updateBanner"],[id="backupReminder"]').forEach(function(el) {
+            if (el && el.parentNode) el.parentNode.removeChild(el);
+        });
+        // 兜底：干掉任何 z-index 极高的 fixed 全屏元素（防异常创建的幽灵遮挡）
+        document.querySelectorAll('*').forEach(function(el) {
+            var s = getComputedStyle(el);
+            if (s.position === 'fixed' && parseInt(s.zIndex) > 9000 && el.id !== 'topBar') {
+                el.style.display = 'none';
+            }
+        });
+    } catch(e) { console.warn('[v74] overlay cleanup:', e); }
+
     // ★ v73: 移动端强制隐藏侧边栏（JS 兜底，防止旧版 SW 缓存 CSS 导致侧边栏可见）
     if (window.innerWidth <= 768) {
         const sb = document.getElementById('sidebar');
@@ -522,8 +536,8 @@ function showWelcomeScreen() {
     };
     const btn = document.getElementById('welcomeStartBtn');
     if (btn) btn.onclick = dismiss;
-    // 兜底：10秒后自动消失，避免卡住（通常用户会直接点按钮进入）
-    setTimeout(() => { if (document.getElementById('welcomeScreen') === w) dismiss(); }, 10000);
+    // 兜底：3秒后自动消失，避免卡住挡住操作（v74 从10s缩短到3s）
+    setTimeout(() => { if (document.getElementById('welcomeScreen') === w) dismiss(); }, 3000);
 }
 
 // ========== 版本自检（v52+：防止手机端静默卡在旧版本）==========
@@ -840,16 +854,26 @@ function renderHome() {
     const statsEl = document.getElementById('homeStats');
     if (!statsEl) return;
 
-    // ★ v73: 整体 try-catch —— 任何异常不导致 homeStats 空白（v72 只包了子渲染器，漏了主体）
+    // ★ v73/v74: 整体 try-catch —— 任何异常不导致 homeStats 空白（v72 只包了子渲染器，漏了主体）
     try {
         _renderHomeCore(statsEl);
     } catch (e) {
         console.error('[renderHome] 主体异常，降级显示:', e);
-        statsEl.innerHTML = '<div style="padding:20px;text-align:center;color:#E75480;">' +
-            '<div style="font-size:36px;margin-bottom:8px;">🪷</div>' +
-            '<div style="font-size:18px;font-weight:700;">莲莲工作台</div>' +
-            '<div style="font-size:12px;color:#888;margin-top:4px;">部分内容加载异常，请尝试刷新页面</div>' +
-            '<button onclick="location.reload()" style="margin-top:12px;padding:8px 20px;border:none;background:linear-gradient(135deg,#FF8FB1,#FF6FA5);color:#fff;border-radius:16px;cursor:pointer;font-size:13px;">🔄 刷新页面</button></div>';
+        // v74: 降级内容也要可交互 —— 显示基本打卡 + 刷新按钮
+        var fallbackStreak = 0;
+        try { var _sd = _getStreakData(); fallbackStreak = _calcStreak((_sd && _sd.history) || []); } catch(_) {}
+        var todayStr = '';
+        try { todayStr = getTodayStr(); } catch(_) {}
+        var doneToday = false;
+        try { doneToday = (((_getStreakData() && _getStreakData().history) || []).indexOf(todayStr) >= 0); } catch(_) {}
+
+        statsEl.innerHTML = '<div style="padding:24px 16px;text-align:center;">' +
+            '<div class="home-streak" style="margin-bottom:12px;"><div class="home-streak-num" style="font-size:42px;font-weight:800;color:#E75480;">' + fallbackStreak + '</div><div class="home-streak-label" style="color:#888;font-size:13px;">🔥 连续打卡天数</div></div>' +
+            (doneToday
+                ? '<div style="color:#4CAF50;font-size:14px;margin:8px 0;">✅ 今日已打卡</div>'
+                : '<button onclick="manualCheckin()" style="margin:8px 0;padding:10px 28px;border:none;background:linear-gradient(135deg,#FF8FB1,#FF6FA5);color:#fff;border-radius:20px;cursor:pointer;font-size:15px;font-weight:700;">📍 点击打卡</button>') +
+            '<div style="font-size:12px;color:#aaa;margin-top:14px;">⚠️ 部分模块加载异常</div>' +
+            '<button onclick="location.reload(true)" style="margin-top:8px;padding:7px 18px;border:none;background:#f0f0f0;color:#555;border-radius:12px;cursor:pointer;font-size:12px;">🔄 刷新重试</button></div>';
     }
 
     // 每个子模块独立 try-catch：任何一个崩溃不影响其他模块渲染（v72 防白屏）
