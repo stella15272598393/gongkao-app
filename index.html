@@ -682,6 +682,24 @@
                     </div>
                     <div class="settings-row">
                         <div class="settings-info">
+                            <div class="settings-title">📦 导出单个模块数据</div>
+                            <div class="settings-sub">选择一个模块单独导出，生成独立 JSON 文件</div>
+                        </div>
+                        <select id="exportModuleSelect" class="modal-input" style="width:auto;min-width:140px;font-size:13px;padding:6px 10px;">
+                            <option value="">— 选择模块 —</option>
+                            <option value="favbox">📌 我的收藏</option>
+                            <option value="streak">🔥 打卡记录</option>
+                            <option value="gold">🪙 金币台账</option>
+                            <option value="todos">✅ 每日待办</option>
+                            <option value="changshi_fav">⭐ 常识收藏</option>
+                            <option value="changshi_notes">📝 常识笔记</option>
+                            <option value="susuan_errors">🧮 速算错题</option>
+                            <option value="quote_checkins">💬 金句打卡</option>
+                        </select>
+                        <button class="btn-outline btn-sm" onclick="exportSingleModule()">导出选中</button>
+                    </div>
+                    <div class="settings-row">
+                        <div class="settings-info">
                             <div class="settings-title">📥 导入学习数据</div>
                             <div class="settings-sub">选择之前导出的 JSON 恢复（覆盖同名记录）</div>
                         </div>

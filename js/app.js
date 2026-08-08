@@ -799,7 +799,9 @@ function renderHome() {
     renderTodos();
 }
 
-/* ★ v30 热力图 —— 最新日期在左侧（GitHub 风格），修复"粉色格子在屏幕外不可见"问题 */
+/* ★ v62 月历热力图 —— 按月查看打卡历史，支持翻月（番茄ToDo风格） */
+let heatmapViewYear, heatmapViewMonth; // 当前查看的年/月
+
 function renderStreakHeatmap() {
     var el = document.getElementById('streakHeatmap');
     if (!el) return;
@@ -812,8 +814,6 @@ function renderStreakHeatmap() {
 
     // 旧格式迁移
     if (hist.length === 0 && raw && typeof raw.count === 'number' && raw.count > 0 && raw.last) {
-        // v34：'YYYY-MM-DD' 被 new Date() 当成 UTC 零点解析，非东八区设备会整体错一天，
-        //      补 'T00:00:00' 强制按本地墙上时间解析，保证读回来就是原字符串那一天
         var rb = [], rd = new Date(String(raw.last).slice(0, 10) + 'T00:00:00');
         for (var ri = 0; ri < Math.min(raw.count, 999); ri++) {
             rb.unshift(fmtYMD(rd));
@@ -833,49 +833,100 @@ function renderStreakHeatmap() {
     var checked = {};
     for (var hi = 0; hi < hist.length; hi++) checked[hist[hi]] = true;
 
-    // ====== 渲染（最新在左）======
+    // 初始化为当前月（仅首次）
+    if (heatmapViewYear === undefined) {
+        var n = getBJNow();
+        heatmapViewYear = n.getFullYear();
+        heatmapViewMonth = n.getMonth(); // 0-based
+    }
+
     var C_ON  = '#E75480';
-    var C_OFF = '#e8e8e8';
-    var C_FUT = '#f5f5f5';
-    var weeks = 26;
-    // v34：以北京时间的「今天零点」为基准，保证格子日期与打卡写入的键完全对齐
-    var now = getBJNow(); now.setHours(0,0,0,0);
+    var C_OFF = '#f0e6ea';
+    var C_TODAY = '#FF6FA5';
+    var C_FUT = '#fafafa';
+    var WD = ['日','一','二','三','四','五','六'];
 
-    // ★ 关键改动：从今天往回推，最新的一周在最左边
+    // 计算当月信息
+    var firstDay = new Date(heatmapViewYear, heatmapViewMonth, 1);
+    var lastDay = new Date(heatmapViewYear, heatmapViewMonth + 1, 0);
+    var startDow = firstDay.getDay(); // 0=周日
+    var daysInMonth = lastDay.getDate();
+    var now = getBJNow();
+    now.setHours(0,0,0,0);
+    var isCurrentMonth = (heatmapViewYear === now.getFullYear() && heatmapViewMonth === now.getMonth());
 
-    // 计算本周日（作为网格的右边界基准）
-    var endOfWeek = new Date(now);
-    endOfWeek.setDate(now.getDate() + (6 - now.getDay())); // 本周六
+    // 统计当月打卡
+    var monthPinkCnt = 0;
+    for (var di = 1; di <= daysInMonth; di++) {
+        var dk = fmtYMD(new Date(heatmapViewYear, heatmapViewMonth, di));
+        if (checked[dk] && new Date(heatmapViewYear, heatmapViewMonth, di) <= now) monthPinkCnt++;
+    }
 
-    var html = '<div class="heatmap-title">📅 打卡热力图（近半年）</div><div class="heatmap-grid">';
-    var pinkCnt = 0;
-
-    // 从最新的周开始，往前遍历（w=0 是最近一周，在最左边）
-    for (var w = 0; w < weeks; w++) {
-        html += '<div class="heatmap-week">';
-        // 每周从周日到周六
-        for (var d = 6; d >= 0; d--) {
-            var cellDate = new Date(endOfWeek);
-            cellDate.setDate(endOfWeek.getDate() - (w * 7 + (6 - d)));
-            var k = fmtYMD(cellDate);
-            var fut = cellDate > now;
-            var done = !!checked[k];
-            if (done && !fut) pinkCnt++;
-            var bg = fut ? C_FUT : (done ? C_ON : C_OFF);
-            html += '<div class="heat-cell" style="background:'+bg+';" title="'+k+(done?' ✅':(fut?' · 未到':' · 未打卡'))+'"></div>';
-        }
-        html += '</div>';
+    // 标题栏：月份切换 + 年月名
+    var monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    var html = '<div class="cal-header">';
+    html += '<button class="cal-nav-btn" onclick="heatmapShiftMonth(-1)" title="上个月">◀</button>';
+    html += '<span class="cal-title">' + heatmapViewYear + '年 ' + monthNames[heatmapViewMonth] + '</span>';
+    html += '<button class="cal-nav-btn" onclick="heatmapShiftMonth(1)" title="下个月">▶</button>';
+    // 快捷回到今天
+    if (!isCurrentMonth) {
+        html += '<button class="cal-today-btn" onclick="heatmapGoToday()">今</button>';
     }
     html += '</div>';
 
-    // 图例
-    html += '<div class="heatmap-legend"><span>未打卡</span>'+
-        '<div class="heat-cell" style="background:'+C_OFF+';"></div>'+
-        '<div class="heat-cell" style="background:'+C_ON+';"></div>'+
-        '<span>已打卡</span>'+
-        '<span class="heat-count">累计 '+pinkCnt+' 天</span></div>';
+    // 星期头
+    html += '<div class="cal-weekdays">';
+    for (var wi = 0; wi < 7; wi++) {
+        html += '<div class="cal-wd' + (wi === 0 || wi === 6 ? ' weekend' : '') + '">' + WD[wi] + '</div>';
+    }
+    html += '</div>';
+
+    // 日期网格
+    html += '<div class="cal-days">';
+    // 空白填充
+    for (var ei = 0; ei < startDow; ei++) {
+        html += '<div class="cal-day empty"></div>';
+    }
+    for (var di = 1; di <= daysInMonth; di++) {
+        var dDate = new Date(heatmapViewYear, heatmapViewMonth, di);
+        var dk = fmtYMD(dDate);
+        var isFuture = dDate > now;
+        var isTod = isCurrentMonth && di === now.getDate();
+        var done = !!checked[dk];
+        if (done && !isFuture) monthPinkCnt++; // already counted but keep logic
+
+        var cls = 'cal-day';
+        if (isFuture) cls += ' future';
+        else if (isTod) cls += ' today';
+        else if (done) cls += ' done';
+
+        var bg = isFuture ? C_FUT : (isTod ? C_TODAY : (done ? C_ON : C_OFF));
+        html += '<div class="' + cls + '" style="background:' + bg + ';" title="' + dk + (done ? ' ✅' : (isFuture ? ' · 未到' : ' · 未打卡')) + '">' + di + '</div>';
+    }
+    html += '</div>';
+
+    // 图例 + 统计
+    html += '<div class="cal-footer">';
+    html += '<span class="cal-legend"><span class="cal-dot" style="background:' + C_OFF + ';"></span>未打卡</span>';
+    html += '<span class="cal-legend"><span class="cal-dot" style="background:' + C_ON + ';"></span>已打卡</span>';
+    html += '<span class="cal-count">本月打卡 <b>' + monthPinkCnt + '</b> / ' + daysInMonth + ' 天</span>';
+    html += '</div>';
 
     el.innerHTML = html;
+}
+
+function heatmapShiftMonth(delta) {
+    heatmapViewMonth += delta;
+    if (heatmapViewMonth > 11) { heatmapViewMonth = 0; heatmapViewYear++; }
+    if (heatmapViewMonth < 0) { heatmapViewMonth = 11; heatmapViewYear--; }
+    renderStreakHeatmap();
+}
+
+function heatmapGoToday() {
+    var n = getBJNow();
+    heatmapViewYear = n.getFullYear();
+    heatmapViewMonth = n.getMonth();
+    renderStreakHeatmap();
 }
 
 function statModule(label) {
@@ -1398,6 +1449,60 @@ function exportAllData() {
     setTimeout(() => URL.revokeObjectURL(url), 1500);
     if (typeof showToast === 'function') showToast('已导出 ' + Object.keys(payload.data).length + ' 项学习数据 ✅');
     else alert('已导出 ' + Object.keys(payload.data).length + ' 项学习数据 ✅\n（含收藏/成语错词/打卡/待办/速算错题/模考记录等）');
+}
+
+/* ★ v62 导出单个模块 */
+function exportSingleModule() {
+    const sel = document.getElementById('exportModuleSelect');
+    if (!sel || !sel.value) { showToast('请先选择要导出的模块'); return; }
+    const key = sel.value;
+    const names = {
+        favbox: '我的收藏', streak: '打卡记录', gold: '金币台账',
+        todos: '每日待办', changshi_fav: '常识收藏', changshi_notes: '常识笔记',
+        susuan_errors: '速算错题', quote_checkins: '金句打卡'
+    };
+    const label = names[key] || key;
+    let data = null;
+
+    try {
+        switch (key) {
+            case 'favbox':
+                data = JSON.parse(localStorage.getItem('favBox') || '[]'); break;
+            case 'streak':
+                data = JSON.parse(localStorage.getItem('gk_streak') || '{}'); break;
+            case 'gold': {
+                data = {
+                    checkins: JSON.parse(localStorage.getItem('gk_gold_checkins') || '[]'),
+                    ledger: JSON.parse(localStorage.getItem('gk_gold_ledger') || '[]'),
+                    taskDone: JSON.parse(localStorage.getItem('gk_gold_taskDone') || '{}'),
+                    override: JSON.parse(localStorage.getItem('gk_gold_override') || '{}')
+                }; break;
+            }
+            case 'todos':
+                data = JSON.parse(localStorage.getItem('gk_todos') || '[]'); break;
+            case 'changshi_fav':
+                data = JSON.parse(localStorage.getItem('gk_changshi_fav') || '[]'); break;
+            case 'changshi_notes':
+                data = JSON.parse(localStorage.getItem('gk_changshi_notes') || '{}'); break;
+            case 'susuan_errors':
+                data = JSON.parse(localStorage.getItem('susuanErrors') || '[]'); break;
+            case 'quote_checkins':
+                data = JSON.parse(localStorage.getItem('quoteCheckins') || '{}'); break;
+        }
+    } catch(e) { data = null; }
+
+    if (data === null || data === undefined) {
+        showToast('导出失败：读取数据出错'); return;
+    }
+    const payload = { module: key, label: label, exportedAt: new Date().toISOString(), data: data };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '莲莲工作台_' + label + '_' + bjToday() + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    showToast('已导出「' + label + '」✅');
 }
 function importAllData(input) {
     const file = input.files && input.files[0];

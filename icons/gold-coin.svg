@@ -1,28 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
-    <radialGradient id="cg" cx="38%" cy="30%" r="78%">
-      <stop offset="0%" stop-color="#FFF7CE"/>
-      <stop offset="42%" stop-color="#FFD24D"/>
-      <stop offset="78%" stop-color="#F5B301"/>
-      <stop offset="100%" stop-color="#D98E00"/>
+    <radialGradient id="g" cx="38%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFF176"/>
+      <stop offset="40%" stop-color="#FFD54F"/>
+      <stop offset="75%" stop-color="#FFB300"/>
+      <stop offset="100%" stop-color="#E6A000"/>
     </radialGradient>
+    <linearGradient id="rim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE066"/>
+      <stop offset="50%" stop-color="#C68400"/>
+      <stop offset="100%" stop-color="#996800"/>
+    </linearGradient>
   </defs>
-  <circle cx="50" cy="50" r="47" fill="url(#cg)" stroke="#C8860D" stroke-width="3.5"/>
-  <circle cx="50" cy="50" r="40" fill="none" stroke="#FFE9A8" stroke-width="2.2" opacity="0.75"/>
-  <ellipse cx="37" cy="30" rx="17" ry="10" fill="#FFFFFF" opacity="0.5"/>
-  <!-- ￥ 符号（矢量描边，免字体依赖） -->
-  <g stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" fill="none" opacity="0.85">
-    <line x1="50" y1="20" x2="50" y2="46"/>
-    <line x1="50" y1="46" x2="29" y2="70"/>
-    <line x1="50" y1="46" x2="71" y2="70"/>
-    <line x1="33" y1="57" x2="67" y2="57"/>
-    <line x1="37" y1="69" x2="63" y2="69"/>
+  <!-- 外圈边缘 -->
+  <circle cx="50" cy="50" r="47" fill="url(#rim)"/>
+  <!-- 金币面 -->
+  <circle cx="50" cy="50" r="42" fill="url(#g)"/>
+  <!-- 高光 -->
+  <ellipse cx="36" cy="32" rx="14" ry="9" fill="#fff" opacity="0.5"/>
+  <!-- 极简 ¥：只用3根粗线 -->
+  <g stroke="#8B5E00" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="50" y1="24" x2="50" y2="56"/>
+    <line x1="34" y1="36" x2="66" y2="36"/>
+    <line x1="38" y1="48" x2="62" y2="48"/>
   </g>
-  <g stroke="#7A4E00" stroke-width="6" stroke-linecap="round" fill="none">
-    <line x1="50" y1="20" x2="50" y2="46"/>
-    <line x1="50" y1="46" x2="29" y2="70"/>
-    <line x1="50" y1="46" x2="71" y2="70"/>
-    <line x1="33" y1="57" x2="67" y2="57"/>
-    <line x1="37" y1="69" x2="63" y2="69"/>
+  <!-- ¥ 浅色内描边（增加清晰度但不增加复杂度） -->
+  <g stroke="#FFF8E1" stroke-width="2.5" stroke-linecap="round" opacity="0.5">
+    <line x1="50" y1="25" x2="50" y2="55"/>
+    <line x1="35" y1="36" x2="65" y2="36"/>
+    <line x1="39" y1="48" x2="61" y2="48"/>
   </g>
 </svg>
