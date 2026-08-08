@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v75';
+const APP_VERSION = '2026-08-08-v76';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -301,19 +301,13 @@ function renderEmptyState(container, opt) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ★ v74: 强制清理所有可能残留的全屏遮挡层（欢迎屏/update弹窗等），防止整页无响应
+    // ★ v76: 轻量级清理（只移除已知ID的遮挡层，不再全量扫描DOM）
     try {
-        document.querySelectorAll('[id="welcomeScreen"],[id="updateBanner"],[id="backupReminder"]').forEach(function(el) {
+        ['welcomeScreen','updateBanner','backupReminder'].forEach(function(id) {
+            var el = document.getElementById(id);
             if (el && el.parentNode) el.parentNode.removeChild(el);
         });
-        // 兜底：干掉任何 z-index 极高的 fixed 全屏元素（防异常创建的幽灵遮挡）
-        document.querySelectorAll('*').forEach(function(el) {
-            var s = getComputedStyle(el);
-            if (s.position === 'fixed' && parseInt(s.zIndex) > 9000 && el.id !== 'topBar') {
-                el.style.display = 'none';
-            }
-        });
-    } catch(e) { console.warn('[v74] overlay cleanup:', e); }
+    } catch(e) { console.warn('[init] overlay cleanup:', e); }
 
     // ★ v73: 移动端强制隐藏侧边栏（JS 兜底，防止旧版 SW 缓存 CSS 导致侧边栏可见）
     if (window.innerWidth <= 768) {
@@ -818,15 +812,109 @@ function cancelTodayCheckin() {
     if (typeof showToast === 'function') showToast('🔄 已取消今日打卡');
 }
 
+// ★ v76: 旧版缓存JS兜底 —— 当 _renderHomeCore 不存在时（SW提供了旧版app.js），用此函数填充基本内容
+function fillHomeStatsFallback(statsEl) {
+    var streak = 0, todayStr = '', doneToday = false;
+    try {
+        if (typeof _getStreakData === 'function') {
+            var sd = _getStreakData();
+            var history = (sd && sd.history) || [];
+            if (typeof _calcStreak === 'function') streak = _calcStreak(history);
+            if (typeof getTodayStr === 'function') todayStr = getTodayStr();
+            doneToday = history.indexOf(todayStr) >= 0;
+        }
+    } catch(e) { console.warn('[fallback] streak calc error:', e); }
+
+    // 更新内置的 streak 数字
+    var numEl = document.getElementById('homeStreakNum');
+    if (numEl) numEl.textContent = streak;
+
+    // 更新打卡按钮状态
+    var btn = document.getElementById('homeCheckinBtn');
+    if (btn) {
+        if (doneToday) {
+            btn.textContent = '✅ 今日已打卡';
+            btn.style.background = 'linear-gradient(135deg, #81C784, #4CAF50)';
+            btn.onclick = function() { if (typeof cancelTodayCheckin === 'function') cancelTodayCheckin(); };
+        } else {
+            btn.textContent = '📍 点击打卡';
+            btn.onclick = function() { if (typeof manualCheckin === 'function') manualCheckin(); };
+        }
+    }
+
+    // 隐藏 loading 提示
+    var tip = document.getElementById('homeLoadingTip');
+    if (tip) tip.style.display = 'none';
+
+    // 添加统计卡片（静态，因为旧版JS可能没有全局数据变量）
+    var cards = [
+        { icon: '📰', label: '时政热点', val: typeof SHIZHENG_NEWS !== 'undefined' ? SHIZHENG_NEWS.length : '?' },
+        { icon: '📖', label: '求是文章', val: typeof QIUSHI_ARTICLES !== 'undefined' ? QIUSHI_ARTICLES.length : '?' },
+        { icon: '⭐', label: '人物素材', val: typeof RENWU_DATABASE !== 'undefined' ? RENWU_DATABASE.length : '?' },
+        { icon: '🌅', label: '晨读文章', val: typeof MORNING_DB !== 'undefined' ? MORNING_DB.length : '?' },
+        { icon: '✍️', label: '申论范文', val: typeof ESSAYS_DB !== 'undefined' ? ESSAYS_DB.length : '?' },
+        { icon: '💡', label: '金句', val: typeof QUOTES_DB !== 'undefined' ? QUOTES_DB.length : '?' },
+        { icon: '💡', label: '常识积累', val: typeof CHANGSHI_DB !== 'undefined' ? CHANGSHI_DB.length : '?' },
+        { icon: '📌', label: '我的收藏', val: typeof favBox !== 'undefined' ? favBox.length : '?' }
+    ];
+    var html = '<div class="home-stat-grid">';
+    cards.forEach(function(c) {
+        html += '<div class="home-stat-card" onclick="switchModule(\'' +
+            ({'时政热点':'shizheng','求是文章':'qiushi','人物素材':'renwu','晨读文章':'morning','申论范文':'shenlun','金句':'shenlun','常识积累':'changshi','我的收藏':'favbox'}[c.label] || 'shizheng') + '\')">' +
+            '<div class="home-stat-icon">' + c.icon + '</div>' +
+            '<div class="home-stat-val">' + c.val + '</div>' +
+            '<div class="home-stat-label">' + c.label + '</div></div>';
+    });
+    html += '</div>';
+
+    // 快捷入口
+    var quick = [
+        { icon: '🔢', label: '速算练习', act: "switchModule('susuan')" },
+        { icon: '🌅', label: '晨读', act: "switchModule('morning')" },
+        { icon: '📌', label: '收藏夹', act: "switchModule('favbox')" },
+        { icon: '📊', label: '模考成绩', act: "switchModule('mock')" },
+        { icon: '🀄', label: '高频成语', act: "switchModule('idioms')" },
+        { icon: '🎤', label: '面试短句', act: "switchModule('interview')" },
+        { icon: '🗞️', label: '时政热点', act: "switchModule('shizheng')" },
+        { icon: '🔄', label: '强制刷新', act: "location.reload(true)" }
+    ];
+    html += '<div class="home-quick"><div class="home-quick-title">🚀 快捷入口</div><div class="home-quick-grid">';
+    quick.forEach(function(q) {
+        html += '<button class="home-quick-btn" onclick="' + q.act + '"><span class="home-quick-icon">' + q.icon + '</span>' + q.label + '</button>';
+    });
+    html += '</div></div>';
+
+    // 追加到 statsEl（保留已有的 streak 和 checkin 按钮）
+    var existingGrid = statsEl.querySelector('.home-stat-grid');
+    if (!existingGrid) {
+        // 在 loading 提示前插入
+        var tipEl = document.getElementById('homeLoadingTip');
+        if (tipEl) tipEl.insertAdjacentHTML('beforebegin', html);
+        else statsEl.insertAdjacentHTML('beforeend', html);
+    }
+}
+
 function renderHome() {
     const statsEl = document.getElementById('homeStats');
-    if (!statsEl) return;
+    if (!statsEl) { console.warn('[renderHome] homeStats element not found'); return; }
+    console.log('[renderHome] start, APP_VERSION=', typeof APP_VERSION !== 'undefined' ? APP_VERSION : 'unknown');
 
     // ★ v73/v74: 整体 try-catch —— 任何异常不导致 homeStats 空白（v72 只包了子渲染器，漏了主体）
+    // ★ v76: 兼容旧版缓存JS —— 检查 _renderHomeCore 是否存在
     try {
-        _renderHomeCore(statsEl);
+        if (typeof _renderHomeCore === 'function') {
+            _renderHomeCore(statsEl);
+        } else {
+            console.warn('[renderHome] _renderHomeCore 不存在！可能运行在旧版缓存JS上');
+            // 用内联的简单渲染填充基本内容
+            fillHomeStatsFallback(statsEl);
+        }
+        console.log('[renderHome] render success');
+        // v76: 隐藏 HTML 默认的 loading 提示
+        var tip = document.getElementById('homeLoadingTip');
+        if (tip) tip.style.display = 'none';
     } catch (e) {
-        console.error('[renderHome] 主体异常，降级显示:', e);
+        console.error('[renderHome] 主体异常，降级显示:', e.message || e, e.stack);
         // v74: 降级内容也要可交互 —— 显示基本打卡 + 刷新按钮
         var fallbackStreak = 0;
         try { var _sd = _getStreakData(); fallbackStreak = _calcStreak((_sd && _sd.history) || []); } catch(_) {}

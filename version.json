@@ -1,1 +1,1 @@
-{"version": "2026-08-08-v75", "date": "2026-08-08", "changelog": "v75: 彻底删除主题系统(bluechick暗色🎨按钮全移除,统一粉色默认样式) + SW缓存名v15→v16强制失效 + 全量cache-bust(v=75)。用户反馈主题引入后开始故障", "author": "莲莲工作台"}
+{"version": "2026-08-08-v76", "changelog": ["v76: 彻底修复homeStats空白问题", "- index.html内置默认打卡内容(纯HTML兜底，JS失败也能显示)", "- 删除v74的昂贵querySelectorAll('*')DOM全量扫描（导致'一直缓冲'）", "- renderHome兼容旧版缓存JS(检查_renderHomeCore是否存在)", "- 新增fillHomeStatsFallback兜底函数", "- SW缓存名v16→v17强制清旧缓存", "- 全量cache-bust(v=76)"], "date": "2026-08-08"}

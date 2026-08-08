@@ -7,13 +7,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v75 内联版本号：用于检测缓存是否过期 -->
-    <meta name="app-version" content="2026-08-08-v75">
+    <!-- ★ v76 内联版本号：用于检测缓存是否过期 -->
+    <meta name="app-version" content="2026-08-08-v76">
     <title>🪷 莲莲工作台</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=75">
+    <link rel="stylesheet" href="./css/style.css?v=76">
 </head>
 <body>
     <!-- 顶部状态栏 -->
@@ -137,8 +137,15 @@
                     <h2>🪷 莲莲工作台</h2>
                     <p class="module-desc">坚持每日打卡，积累申论素材，祝你早日上岸！</p>
                 </div>
-                <!-- 打卡与数据概览 -->
-                <div class="home-stats" id="homeStats"></div>
+                <!-- 打卡与数据概览（v76: 内置默认内容，JS加载失败时也能看到基本界面） -->
+                <div class="home-stats" id="homeStats">
+                    <div class="home-streak">
+                        <div class="home-streak-num" id="homeStreakNum">--</div>
+                        <div class="home-streak-label">🔥 连续打卡天数</div>
+                    </div>
+                    <button class="home-checkin-btn" id="homeCheckinBtn" onclick="manualCheckin()">📍 点击打卡</button>
+                    <div style="text-align:center;font-size:12px;color:#aaa;margin-top:8px;" id="homeLoadingTip">正在加载数据...</div>
+                </div>
                 <!-- 打卡热力图 -->
                 <div class="home-heatmap" id="streakHeatmap"></div>
                 <!-- 成长趋势 -->
@@ -822,8 +829,8 @@
 
     <script src="./js/data.js?v=34"></script>
     <script src="./js/data-modules.js?v=34"></script>
-    <script src="./js/app.js?v=75"></script>
-    <script src="./js/loader.js?v=75"></script>
+    <script src="./js/app.js?v=76"></script>
+    <script src="./js/loader.js?v=76"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
