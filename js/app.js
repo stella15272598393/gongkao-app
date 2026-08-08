@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v58';
+const APP_VERSION = '2026-08-08-v61';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -394,17 +394,14 @@ function forceUpdate() {
     }
 }
 
-// ========== 进入APP欢迎页（每日一次：日期星期 + 问候 + 当日随机金句 + 开始按钮）==========
+// ========== 进入APP欢迎页（每次进入都展示：日期星期 + 问候 + 当日随机金句 + 开始按钮）==========
 function showWelcomeScreen() {
     if (document.getElementById('welcomeScreen')) return;
-    // ★ 每天只展示一次：用 localStorage 记录最近展示日期（北京时间）
+    // 每次进入都展示（不限制一天一次）
+
     const bjNow = new Date(Date.now() + (new Date().getTimezoneOffset() + 480) * 60000);
     const p2 = x => String(x).padStart(2, '0');
     const todayKey = bjNow.getFullYear() + '-' + p2(bjNow.getMonth() + 1) + '-' + p2(bjNow.getDate());
-    try {
-        if (localStorage.getItem('welcomeShownDate') === todayKey) return; // 今天已展示过 → 不弹
-    } catch (e) {}
-
     const wd = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][bjNow.getDay()];
     const dateStr = bjNow.getFullYear() + '年' + (bjNow.getMonth() + 1) + '月' + bjNow.getDate() + '日 ' + wd;
 
@@ -432,8 +429,6 @@ function showWelcomeScreen() {
     w.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(160deg,#FFF0F5,#FFD6E6);' +
         'display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease;padding:24px;text-align:center;';
     w.innerHTML =
-        '<img src="./icons/icon-512.png?v=' + APP_VERSION + '" width="118" height="118" alt="logo" ' +
-        'style="border-radius:26px;box-shadow:0 8px 26px rgba(231,84,128,.28);">' +
         '<div style="margin-top:16px;font-size:14px;color:#C2185B;letter-spacing:1px;">' + dateStr + '</div>' +
         '<div style="margin-top:10px;font-size:25px;font-weight:800;color:#E75480;letter-spacing:2px;">嗨，小公务员</div>' +
         '<div style="margin-top:12px;font-size:15px;color:#AD1457;max-width:290px;line-height:1.6;">' + quote + '</div>' +
