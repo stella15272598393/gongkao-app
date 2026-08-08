@@ -139,6 +139,18 @@
                 <div class="home-stats" id="homeStats"></div>
                 <!-- 打卡热力图 -->
                 <div class="home-heatmap" id="streakHeatmap"></div>
+                <!-- 成长趋势 -->
+                <div class="home-trend" id="homeTrend">
+                    <div class="home-trend-head">
+                        <span class="home-trend-title">📈 成长趋势</span>
+                        <div class="home-trend-tabs" id="trendTabs">
+                            <button class="trend-tab active" data-metric="gold" onclick="switchTrendMetric('gold')">金币</button>
+                            <button class="trend-tab" data-metric="checkin" onclick="switchTrendMetric('checkin')">打卡</button>
+                            <button class="trend-tab" data-metric="study" onclick="switchTrendMetric('study')">学习时长</button>
+                        </div>
+                    </div>
+                    <div class="home-trend-body"><canvas id="trendChart"></canvas></div>
+                </div>
                 <!-- 今日待办 -->
                 <div class="home-todo">
                     <div class="home-todo-head">
@@ -404,6 +416,11 @@
                         </div>
                         <div class="chart-container" id="chartContainer">
                             <canvas id="mainChart"></canvas>
+                        </div>
+                        <div class="score-trend-box">
+                            <div class="score-trend-title">🏆 模考总分趋势</div>
+                            <div class="score-trend-body"><canvas id="scoreTrendChart"></canvas></div>
+                            <div class="score-trend-cap" id="scoreTrendCap"></div>
                         </div>
                     </div>
                     <div class="mock-panel" id="mock-analysis">
@@ -827,6 +844,15 @@
     <script src="./js/data-modules.js?v=34"></script>
     <script src="./js/app.js?v=60"></script>
     <script src="./js/loader.js?v=60"></script>
+
+    <!-- 移动端底部 Tab 栏 -->
+    <nav class="bottom-tab" id="bottomTab">
+        <button class="nav-item bottom-tab-item" data-module="home" onclick="switchModule('home')"><span class="bt-ico">🎀</span><span>首页</span></button>
+        <button class="nav-item bottom-tab-item" data-module="changshi" onclick="switchModule('changshi')"><span class="bt-ico">💡</span><span>常识</span></button>
+        <button class="nav-item bottom-tab-item" data-module="favbox" onclick="switchModule('favbox')"><span class="bt-ico">📌</span><span>收藏</span></button>
+        <button class="nav-item bottom-tab-item" data-module="plan" onclick="switchModule('plan')"><span class="bt-ico">📅</span><span>计划</span></button>
+        <button class="bottom-tab-item bottom-more" onclick="toggleSidebar()"><span class="bt-ico">☰</span><span>更多</span></button>
+    </nav>
 
     <!-- 金币获取特效浮层 -->
     <div id="goldFxLayer" style="position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;"></div>

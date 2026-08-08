@@ -34,3 +34,7 @@ scripts/__pycache__/
 
 # 临时渲染脚本(不入库)
 scripts/_render_icons.js
+
+# 误提交产物（一次性调试/生成残留）
+icons/test_write.txt
+icons/Mobile_app_icon__*.png

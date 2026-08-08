@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v64';
+const APP_VERSION = '2026-08-08-v65';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -294,7 +294,7 @@ function toggleDark(on) {
     refreshThemeDependent();
 }
 function refreshThemeDependent() {
-    try { if (currentModule === 'home') renderStreakHeatmap(); } catch (e) {}
+    try { if (currentModule === 'home') { renderStreakHeatmap(); renderGrowthTrend(); } } catch (e) {}
     try { if (currentModule === 'mock') renderChart(); } catch (e) {}
 }
 applyThemeState();
@@ -639,11 +639,14 @@ function renderFavBox() {
         list = favBox.filter(f => f.module === currentFavFilter);
     }
     if (favBox.length === 0) {
-        container.innerHTML = '<div style="text-align:center;color:#999;padding:64px 20px;">📌 还没有收藏<br/><span style="font-size:12px;">点赞 👍 或收藏 ❤️ 任意文章后，会自动收进这里，下次打开也能看～</span></div>';
+        renderEmptyState(container, {
+            icon: '📌', title: '还没有收藏', hint: '点赞 👍 或收藏 ❤️ 任意文章后，会自动收进这里，下次打开也能看～',
+            actions: [{ label: '去首页看看', onclick: "switchModule('home')" }]
+        });
         return;
     }
     if (list.length === 0) {
-        container.innerHTML = '<div style="text-align:center;color:#999;padding:48px 20px;">该分类下暂无收藏</div>';
+        renderEmptyState(container, { icon: '🔍', title: '该分类下暂无收藏', hint: '换个分类，或去其他模块收藏一些好内容吧～' });
         return;
     }
     const moduleNames = { shizheng: '时政热点', shenlun: '申论范文', qiushi: '求是网文章', renwu: '人物素材', quote: '金句', morning: '今日晨读', changshi: '常识积累' };
@@ -859,7 +862,108 @@ function renderHome() {
     statsEl.innerHTML = html;
 
     renderStreakHeatmap();
+    renderGrowthTrend();
     renderTodos();
+}
+
+/* ★ v64 首页成长趋势：金币 / 打卡 / 学习时长，近 30 天 */
+let currentTrendMetric = 'gold';
+function buildTrendData(metric) {
+    const days = 30;
+    const labels = [], values = [];
+    const todayKey = bjToday();
+    const sd = _getStreakData();
+    const streakSet = new Set(((sd && sd.history) || []));
+    const mock = JSON.parse(localStorage.getItem('mockRecords') || '[]');
+    for (let i = days - 1; i >= 0; i--) {
+        const dk = bjDayKey(-i);
+        labels.push(dk.slice(5)); // MM-DD
+        let v = 0;
+        if (metric === 'gold') v = dayTotal(dk);
+        else if (metric === 'checkin') v = streakSet.has(dk) ? 1 : 0;
+        else if (metric === 'study') {
+            v = mock.filter(r => (r.date || '').slice(0, 10) === dk).reduce((s, r) => s + (parseInt(r.time) || 0), 0);
+        }
+        values.push(v);
+    }
+    return { labels, values };
+}
+function switchTrendMetric(m) {
+    currentTrendMetric = m;
+    document.querySelectorAll('.trend-tab').forEach(b => b.classList.toggle('active', b.dataset.metric === m));
+    renderGrowthTrend();
+}
+function renderGrowthTrend() {
+    const canvas = document.getElementById('trendChart');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const cssW = canvas.parentElement.offsetWidth || 320;
+    const cssH = 220;
+    canvas.width = cssW * dpr; canvas.height = cssH * dpr;
+    canvas.style.height = cssH + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    const metric = currentTrendMetric;
+    const { labels, values } = buildTrendData(metric);
+    const colorMap = { gold: cssVar('--accent', '#E75480'), checkin: cssVar('--primary', '#FFB6C1'), study: cssVar('--accent-strong', '#7CB342') };
+    const color = colorMap[metric] || colorMap.gold;
+    drawTrendChart(ctx, cssW, cssH, labels, values, color, metric === 'checkin');
+
+    const total = values.reduce((a, b) => a + b, 0);
+    const unit = metric === 'gold' ? ' 🪙' : (metric === 'study' ? ' 分钟' : ' 天');
+    const titleMap = { gold: '近30天累计金币', checkin: '近30天打卡', study: '近30天学习时长' };
+    let cap = document.getElementById('trendCaption');
+    if (!cap) {
+        cap = document.createElement('div');
+        cap.id = 'trendCaption';
+        cap.style.cssText = 'text-align:center;font-size:12px;color:' + cssVar('--text-light', '#999') + ';margin-top:6px;';
+        canvas.parentElement.appendChild(cap);
+    }
+    cap.textContent = titleMap[metric] + '：' + (metric === 'checkin' ? values.filter(v => v > 0).length + ' 天' : total + unit);
+}
+/* 通用折线趋势图（含面积填充、网格、高分屏适配） */
+function drawTrendChart(ctx, W, H, labels, values, color, step) {
+    const pad = { top: 16, right: 14, bottom: 26, left: 34 };
+    const w = W - pad.left - pad.right, h = H - pad.top - pad.bottom;
+    const maxV = Math.max(1, ...values);
+    // 网格 + Y 轴
+    ctx.strokeStyle = cssVar('--border-color', '#eee');
+    ctx.fillStyle = cssVar('--text-light', '#999');
+    ctx.font = '10px sans-serif';
+    ctx.lineWidth = 1;
+    const steps = 4;
+    for (let i = 0; i <= steps; i++) {
+        const y = pad.top + h - (h * i / steps);
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + w, y); ctx.stroke();
+        ctx.textAlign = 'right';
+        ctx.fillText(String(Math.round(maxV * i / steps)), pad.left - 5, y + 3);
+    }
+    // X 轴标签（每 5 天）
+    ctx.textAlign = 'center';
+    labels.forEach((lb, i) => {
+        if (i % 5 === 0 || i === labels.length - 1) ctx.fillText(lb, pad.left + (w * i / (labels.length - 1)), pad.top + h + 16);
+    });
+    if (values.every(v => v === 0)) {
+        ctx.fillStyle = cssVar('--text-light', '#999');
+        ctx.textAlign = 'center';
+        ctx.fillText('暂无数据，先去打卡 / 录入吧～', pad.left + w / 2, pad.top + h / 2);
+        return;
+    }
+    const pts = values.map((v, i) => ({ x: pad.left + (w * i / (values.length - 1)), y: pad.top + h - (h * v / maxV) }));
+    // 面积填充
+    ctx.save(); ctx.globalAlpha = 0.18; ctx.fillStyle = color;
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pad.top + h);
+    pts.forEach(p => ctx.lineTo(p.x, p.y)); ctx.lineTo(pts[pts.length - 1].x, pad.top + h); ctx.closePath(); ctx.fill();
+    ctx.restore();
+    // 折线
+    ctx.strokeStyle = color; ctx.lineWidth = 2.4; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    pts.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.stroke();
+    // 数据点
+    pts.forEach(p => { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2); ctx.fill(); });
 }
 
 /* ★ v62 月历热力图 —— 按月查看打卡历史，支持翻月（番茄ToDo风格） */
@@ -3302,7 +3406,10 @@ function renderRecentRecords() {
     const records = all.slice(0, 50);
 
     if (records.length === 0) {
-        container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">暂无记录，开始录入吧！📝</p>';
+        renderEmptyState(container, {
+            icon: '📝', title: '还没有模考记录', hint: '录入一次模考成绩或刷题练习，就能看到进步曲线啦～',
+            actions: [{ label: '去录入', onclick: "switchMockTab('record')" }]
+        });
         return;
     }
 
@@ -3409,6 +3516,7 @@ function renderChart() {
         ctx.font = '14px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('暂无数据，请先录入模考记录', canvas.width/2, canvas.height/2);
+        renderScoreTrend();
         return;
     }
 
@@ -3419,6 +3527,34 @@ function renderChart() {
     } else if (currentChartType === 'pie') {
         renderPieChart(ctx, canvas, records);
     }
+    renderScoreTrend();
+}
+
+/* v64 模考总分趋势（取 module==='模考成绩' 的记录，按日期排序画折线） */
+function renderScoreTrend() {
+    const canvas = document.getElementById('scoreTrendChart');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const cssW = canvas.parentElement.offsetWidth || 320, cssH = 200;
+    canvas.width = cssW * dpr; canvas.height = cssH * dpr; canvas.style.height = cssH + 'px';
+    const ctx = canvas.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, cssW, cssH);
+    const all = JSON.parse(localStorage.getItem('mockRecords') || '[]')
+        .filter(r => r.module === '模考成绩' && r.score != null)
+        .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    const cap = document.getElementById('scoreTrendCap');
+    if (all.length === 0) {
+        ctx.fillStyle = cssVar('--text-light', '#999'); ctx.textAlign = 'center';
+        ctx.font = '13px sans-serif';
+        ctx.fillText('还没有模考总成绩记录～ 在「录入」选「模考成绩」填行测/申论即可', cssW / 2, cssH / 2);
+        if (cap) cap.textContent = '';
+        return;
+    }
+    const labels = all.map(r => (r.date || '').slice(5, 10));
+    const values = all.map(r => parseFloat(r.score) || 0);
+    const color = cssVar('--accent', '#E75480');
+    drawTrendChart(ctx, cssW, cssH, labels, values, color, false);
+    const best = Math.max(...values), last = values[values.length - 1];
+    if (cap) cap.textContent = '共 ' + all.length + ' 次 · 最近 ' + last + ' 分 · 最高 ' + best + ' 分 · ' + (last >= best ? '🎉 创新高' : '距最高还差 ' + (best - last).toFixed(1) + ' 分');
 }
 
 function renderLineChart(ctx, canvas, records) {
@@ -4727,13 +4863,39 @@ function setModuleDefault(moduleKey, val) {
     const inp = document.getElementById('ca-' + moduleKey);
     if (inp) inp.value = n;
 }
-/* v60 获取金币特效：弹跳硬币 + +N 飘字 + 闪光 */
+/* v60 获取金币特效：弹跳硬币 + +N 飘字 + 闪光 + 音效 */
+let _audioCtx = null;
+function playDing() {
+    try {
+        if (!_audioCtx) {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            _audioCtx = new AC();
+        }
+        if (_audioCtx.state === 'suspended') _audioCtx.resume();
+        var t = _audioCtx.currentTime;
+        [988, 1480].forEach(function (freq, i) {
+            var o = _audioCtx.createOscillator();
+            var g = _audioCtx.createGain();
+            o.type = 'sine';
+            o.frequency.value = freq;
+            var s = t + i * 0.05;
+            g.gain.setValueAtTime(0.0001, s);
+            g.gain.exponentialRampToValueAtTime(0.16, s + 0.01);
+            g.gain.exponentialRampToValueAtTime(0.0001, s + 0.3);
+            o.connect(g); g.connect(_audioCtx.destination);
+            o.start(s); o.stop(s + 0.32);
+        });
+    } catch (e) {}
+}
 function playGoldEffect(amount, anchor) {
     var layer = document.getElementById('goldFxLayer');
     if (!layer) return;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var rect = (anchor && anchor.getBoundingClientRect) ? anchor.getBoundingClientRect() : { left: innerWidth/2, top: innerHeight/2, width:0, height:0 };
     var cx = rect.left + rect.width / 2;
     var cy = rect.top + rect.height / 2;
+    playDing();
     // 闪光
     var flash = document.createElement('div');
     flash.className = 'gold-fx-flash';
@@ -4742,16 +4904,16 @@ function playGoldEffect(amount, anchor) {
     // 硬币
     var coin = document.createElement('img');
     coin.src = 'icons/gold-coin.svg';
-    coin.className = 'gold-fx-coin';
+    coin.className = 'gold-fx-coin' + (reduce ? ' no-anim' : '');
     coin.style.left = (cx - 28) + 'px'; coin.style.top = (cy - 28) + 'px';
     layer.appendChild(coin);
     // +N 飘字
     var txt = document.createElement('div');
-    txt.className = 'gold-fx-text';
+    txt.className = 'gold-fx-text' + (reduce ? ' no-anim' : '');
     txt.textContent = '+' + amount + ' 🪙';
     txt.style.left = cx + 'px'; txt.style.top = cy + 'px';
     layer.appendChild(txt);
-    setTimeout(function() { flash.remove(); coin.remove(); txt.remove(); }, 1400);
+    setTimeout(function() { flash.remove(); coin.remove(); txt.remove(); }, reduce ? 600 : 1500);
 }
 
 function doCheckIn(moduleKey) {
@@ -4794,6 +4956,7 @@ function renderChangshi() {
     renderChangshiStats();
     renderChangshiCatTabs();
     renderChangshiList();
+    initChangshiPTR();
 }
 
 function renderChangshiStats() {
@@ -4841,24 +5004,76 @@ function csShuffle(a) {
     return a;
 }
 
-function renderChangshiList() {
+let changshiLazyShown = 30;
+function csSkeletons(n) {
+    let h = '';
+    for (let i = 0; i < n; i++) h += '<div class="cs-card skel"><div class="skel-line" style="width:30%"></div><div class="skel-line" style="width:92%"></div><div class="skel-line" style="width:68%"></div></div>';
+    return h;
+}
+function renderChangshiList(showSkeleton) {
     const wrap = document.getElementById('changshiList');
     if (!wrap) return;
     const pool = csPool();
     if (pool.length === 0) {
-        if (changshiCurrentCat === 'fav') wrap.innerHTML = '<div class="cs-empty">还没有收藏的常识~ 浏览时点 ☆ 即可收藏 ⭐</div>';
+        if (changshiCurrentCat === 'fav') wrap.innerHTML = '<div class="cs-empty">还没有收藏的常识~ 浏览点时 ☆ 即可收藏 ⭐</div>';
         else if (changshiCurrentCat === 'note') wrap.innerHTML = '<div class="cs-empty">还没有自己的笔记，用下方输入框记一条吧 📝</div>';
         else wrap.innerHTML = '<div class="cs-empty">该分类暂无内容</div>';
         return;
     }
-    // 全部 / 具体分类：随机展示 5-8 条；收藏 / 笔记：全部展示
+    if (showSkeleton !== false) {
+        wrap.innerHTML = csSkeletons(6);
+        setTimeout(paintChangshiList, 180);
+        return;
+    }
+    paintChangshiList();
+}
+function paintChangshiList() {
+    const wrap = document.getElementById('changshiList');
+    if (!wrap) return;
+    const pool = csPool();
     const isRandom = changshiCurrentCat === 'all' || ['shizheng', 'falv', 'lishi', 'dili', 'keji'].includes(changshiCurrentCat);
-    const list = isRandom ? csShuffle(pool).slice(0, Math.max(5, Math.min(8, pool.length))) : pool;
     const isNote = changshiCurrentCat === 'note';
-    wrap.innerHTML = list.map(it => changshiCard(it, isNote)).join('');
+    const list = isRandom ? csShuffle(pool).slice(0, Math.max(5, Math.min(8, pool.length))) : pool;
     const info = document.getElementById('changshiInfo');
     if (info) info.textContent = isRandom ? `随机 ${list.length} 条常识小点` : `共 ${list.length} 条`;
+    if (!isRandom && list.length > 30) {
+        changshiLazyShown = 30;
+        wrap.innerHTML = list.slice(0, changshiLazyShown).map(it => changshiCard(it, isNote)).join('')
+            + `<button class="cs-loadmore" id="csLoadMore" onclick="changshiLoadMore()">加载更多（剩余 ${list.length - changshiLazyShown} 条）</button>`;
+    } else {
+        wrap.innerHTML = list.map(it => changshiCard(it, isNote)).join('');
+    }
 }
+function changshiLoadMore() {
+    const wrap = document.getElementById('changshiList');
+    if (!wrap) return;
+    const pool = csPool();
+    const isNote = changshiCurrentCat === 'note';
+    changshiLazyShown = Math.min(pool.length, changshiLazyShown + 30);
+    let html = pool.slice(0, changshiLazyShown).map(it => changshiCard(it, isNote)).join('');
+    if (changshiLazyShown < pool.length) html += `<button class="cs-loadmore" id="csLoadMore" onclick="changshiLoadMore()">加载更多（剩余 ${pool.length - changshiLazyShown} 条）</button>`;
+    wrap.innerHTML = html;
+}
+function initChangshiPTR() {
+    const el = document.getElementById('changshiList');
+    if (!el || el.dataset.ptr) return;
+    el.dataset.ptr = '1';
+    let startY = 0, pulling = false;
+    const rnd = () => changshiCurrentCat === 'all' || ['shizheng', 'falv', 'lishi', 'dili', 'keji'].includes(changshiCurrentCat);
+    el.addEventListener('touchstart', e => { if (el.scrollTop <= 0) { startY = e.touches[0].clientY; pulling = true; } }, { passive: true });
+    el.addEventListener('touchmove', e => {
+        if (!pulling) return;
+        const dy = e.touches[0].clientY - startY;
+        if (dy > 50) el.style.transform = 'translateY(' + Math.min(dy * 0.4, 36) + 'px)';
+    }, { passive: true });
+    el.addEventListener('touchend', e => {
+        if (!pulling) return; pulling = false;
+        const dy = e.changedTouches[0].clientY - startY;
+        el.style.transform = '';
+        if (dy > 60 && rnd()) { changshiNewBatch(); showToast('已刷新 ✨'); }
+    });
+}
+
 
 function changshiCard(it, isNote) {
     if (isNote) {
@@ -4894,7 +5109,7 @@ function toggleChangshiFav(id) {
     // 侧边栏「我的收藏」角标实时更新
     const navFav = document.querySelector('.nav-item[data-module="favbox"]');
     if (navFav) navFav.dataset.count = String(favBox.length);
-    if (changshiCurrentCat === 'fav') { renderChangshiList(); }
+    if (changshiCurrentCat === 'fav') { renderChangshiList(false); }
     else {
         const btn = document.querySelector(`.cs-fav-btn[onclick="toggleChangshiFav(${id})"]`);
         if (btn) { const f = changshiFav.includes(id); btn.classList.toggle('faved', f); btn.textContent = f ? '⭐' : '☆'; }
