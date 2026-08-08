@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v72';
+const APP_VERSION = '2026-08-08-v73';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -333,6 +333,15 @@ function renderEmptyState(container, opt) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ★ v73: 移动端强制隐藏侧边栏（JS 兜底，防止旧版 SW 缓存 CSS 导致侧边栏可见）
+    if (window.innerWidth <= 768) {
+        const sb = document.getElementById('sidebar');
+        if (sb) { sb.classList.add('collapsed'); sb.style.transform = 'translateX(-100%)'; sb.style.opacity = '0'; sb.style.pointerEvents = 'none'; }
+        document.body.classList.add('sidebar-collapsed');
+        var ov = document.getElementById('sidebarOverlay');
+        if (ov) ov.classList.remove('show');
+    }
+
     initCountdown();
     startDateTimeClock();
     initGlobalSearch();
@@ -831,6 +840,26 @@ function renderHome() {
     const statsEl = document.getElementById('homeStats');
     if (!statsEl) return;
 
+    // ★ v73: 整体 try-catch —— 任何异常不导致 homeStats 空白（v72 只包了子渲染器，漏了主体）
+    try {
+        _renderHomeCore(statsEl);
+    } catch (e) {
+        console.error('[renderHome] 主体异常，降级显示:', e);
+        statsEl.innerHTML = '<div style="padding:20px;text-align:center;color:#E75480;">' +
+            '<div style="font-size:36px;margin-bottom:8px;">🪷</div>' +
+            '<div style="font-size:18px;font-weight:700;">莲莲工作台</div>' +
+            '<div style="font-size:12px;color:#888;margin-top:4px;">部分内容加载异常，请尝试刷新页面</div>' +
+            '<button onclick="location.reload()" style="margin-top:12px;padding:8px 20px;border:none;background:linear-gradient(135deg,#FF8FB1,#FF6FA5);color:#fff;border-radius:16px;cursor:pointer;font-size:13px;">🔄 刷新页面</button></div>';
+    }
+
+    // 每个子模块独立 try-catch：任何一个崩溃不影响其他模块渲染（v72 防白屏）
+    try { renderStreakHeatmap(); } catch (e) { console.error('[renderHome] heatmap error:', e); }
+    try { renderGrowthTrend(); } catch (e) { console.error('[renderHome] trend error:', e); }
+    try { renderTodos(); } catch (e) { console.error('[renderHome] todos error:', e); }
+}
+
+// ★ v73: renderHome 核心逻辑抽成独立函数，便于整体 try-catch 保护
+function _renderHomeCore(statsEl) {
     // ★ v28: 连续天数从 history 动态计算
     const sd = _getStreakData();
     const history = (sd && sd.history) || [];
@@ -887,11 +916,6 @@ function renderHome() {
     html += '</div></div>';
 
     statsEl.innerHTML = html;
-
-    // 每个子模块独立 try-catch：任何一个崩溃不影响其他模块渲染（v72 防白屏）
-    try { renderStreakHeatmap(); } catch (e) { console.error('[renderHome] heatmap error:', e); }
-    try { renderGrowthTrend(); } catch (e) { console.error('[renderHome] trend error:', e); }
-    try { renderTodos(); } catch (e) { console.error('[renderHome] todos error:', e); }
 }
 
 /* ★ v64 首页成长趋势：金币 / 打卡 / 学习时长，近 30 天 */

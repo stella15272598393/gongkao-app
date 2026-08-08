@@ -1,1 +1,1 @@
-{"version": "2026-08-08-v72", "date": "2026-08-08", "changelog": "v72: 修复手机端白屏(渲染函数独立try-catch防连锁崩溃) + Canvas降级展示 + 移动端侧边栏默认隐藏(修复右侧空白) + drawTrendChart防御性校验", "author": "莲莲工作台"}
+{"version": "2026-08-08-v73", "date": "2026-08-08", "changelog": "v73: 修复手机端homeStats空白(renderHome主体整体try-catch+异常降级提示) + JS强制隐藏移动端侧边栏(防SW缓存旧CSS) + 刷新按钮兜底", "author": "莲莲工作台"}
