@@ -1109,6 +1109,24 @@ body.sidebar-collapsed .content-area {
     width: 100px; accent-color: #4A90D9;
     cursor: pointer;
 }
+/* 手机端任务表格优化：隐藏次要列、缩小间距 */
+@media (max-width: 600px) {
+    .plan-table th,
+    .plan-table td {
+        padding: 7px 6px;
+        font-size: 12px;
+    }
+    .plan-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    /* 隐藏"任务分类"列（手机上内容列已够用） */
+    .plan-table tr > *:nth-child(2) { display: none; }
+    /* 进度条缩窄 */
+    .plan-progress-slider { width: 60px; }
+    /* 操作按钮缩小 */
+    .plan-table td:last-child button { font-size: 11px; padding: 3px 8px; }
+}
 .plan-history-stats {
     margin-top: 20px;
     background: var(--bg-gray);
