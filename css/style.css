@@ -2652,3 +2652,27 @@ input:focus, select:focus, textarea:focus {
     .content-area { margin-left: 0 !important; padding-bottom: 70px; }
     .main-container { padding-bottom: 70px; }
 }
+
+/* ========== 版本更新横幅（发现新版本 立即更新）========== */
+.update-banner {
+    position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 960; /* 高于底部 Tab(950)，但不挡内容 */
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: #fff; font-size: 13px; box-shadow: 0 6px 22px rgba(0,0,0,.28);
+    animation: ubPop .35s ease;
+}
+@keyframes ubPop { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.update-banner .ub-ico { font-size: 18px; flex: 0 0 auto; }
+.update-banner .ub-text { flex: 1; line-height: 1.4; min-width: 0; }
+.update-banner .ub-text b { font-weight: 800; text-decoration: underline; }
+.update-banner .ub-btn {
+    flex: 0 0 auto; border: none; background: #fff; color: var(--accent-strong);
+    border-radius: 20px; padding: 7px 16px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+.update-banner .ub-btn:active { transform: scale(.96); }
+.update-banner .ub-close { flex: 0 0 auto; cursor: pointer; opacity: .9; font-size: 16px; margin-left: 2px; }
+@media (max-width: 768px) {
+    .update-banner { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); } /* 抬到底部 Tab 之上 */
+}

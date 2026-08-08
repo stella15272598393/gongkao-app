@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v70';
+const APP_VERSION = '2026-08-08-v71';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -352,6 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
     bindFavFilters();
     registerSW();
     checkVersion();
+    // 周期性 + 切回前台时复查版本（最多每 60 秒），保证手机端尽早发现新版本并弹出更新横幅
+    setInterval(checkVersion, 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) checkVersion(); });
     showWelcomeScreen();
     checkDailyReset();
     // 新增模块初始化
@@ -389,7 +392,8 @@ function registerSW() {
     }).then(reg => {
         if (window.__DEBUG__) console.log('PWA SW registered:', reg.scope, 'url=', swUrl, 'version=', APP_VERSION);
 
-        // ★ 关键：新 SW 安装完成后立即激活，不让它进入 waiting 状态
+        // ★ 关键：新 SW 安装完成后立即激活（skipWaiting），但【不】自动刷新页面，
+        //    改由"发现新版本 立即更新"横幅让用户主动更新，避免手机端静默刷新卡顿/白屏。
         function activateNew(sw) {
             if (sw) sw.postMessage({ type: 'SKIP_WAITING' });
         }
@@ -402,39 +406,26 @@ function registerSW() {
                 installing.onstatechange = () => {
                     if (window.__DEBUG__) console.log('SW state:', installing.state);
                     if (installing.state === 'installed') {
-                        // 有活跃 controller 说明是更新（非首次安装）→ 立即激活
+                        // 有活跃 controller 说明是更新（非首次安装）→ 立即激活并提示用户
                         if (navigator.serviceWorker.controller) {
                             installing.postMessage({ type: 'SKIP_WAITING' });
-                            // ★ 延迟刷新页面，让新 SW 接管后重新加载最新资源
-                            setTimeout(() => {
-                                if (!navigator.serviceWorker.controller || navigator.serviceWorker.controller.state === 'activated') {
-                                    if (window.__DEBUG__) console.log('v25: SW 已更新，建议用户刷新');
-                                }
-                            }, 1000);
+                            // 拉取最新版本号并弹出"立即更新"横幅（不再强制刷新）
+                            checkVersion();
                         }
                     }
                 };
             }
         };
 
-        // 监听 controllerchange —— 新 SW 接管后自动刷新页面获取最新资源
-        let refreshing = false;
+        // 新 SW 接管页面：仅重新检查版本并（如有更新）提示用户，不再自动刷新
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!refreshing) {
-                refreshing = true;
-                if (window.__DEBUG__) console.log('v25: 新 SW 已接管，刷新页面获取最新资源');
-                window.location.reload();
-            }
+            checkVersion();
         });
 
-        // v51：SW 通知强制刷新（防止旧 SW 缓存导致手机端卡在旧版本，sessionStorage 防循环）
+        // v51：SW 通知有新版本 → 弹出"立即更新"横幅（不再强制刷新，交给用户决定）
         navigator.serviceWorker.addEventListener('message', event => {
             if (event.data && event.data.type === 'FORCE_RELOAD') {
-                const key = '__reloaded_' + APP_VERSION;
-                if (!sessionStorage.getItem(key)) {
-                    sessionStorage.setItem(key, '1');
-                    window.location.reload();
-                }
+                checkVersion();
             }
         });
 
@@ -526,37 +517,40 @@ function showWelcomeScreen() {
     setTimeout(() => { if (document.getElementById('welcomeScreen') === w) dismiss(); }, 10000);
 }
 
-// ========== 版本自检（v52：防止手机端静默卡在旧版本）==========
-// 打开任意旧版本时，向服务端查询最新版本号（带时间戳绕过 SW 缓存），
-// 若与服务端不一致则弹出"发现新版本"横幅，点"立即刷新"即可拉取最新。
-function checkVersion() {
-    fetch('./version.json?t=' + Date.now(), { cache: 'no-store' })
+// ========== 版本自检（v52+：防止手机端静默卡在旧版本）==========
+// 向服务端查询最新版本号（version.json 已设为 SW 网络直连，绝不被缓存），
+// 若与服务端不一致则在底部弹出"发现新版本 立即更新"横幅，点"立即更新"即可干净拉取最新。
+let _remoteVersion = null;
+const _dismissedVersions = {};
+function fetchRemoteVersion() {
+    return fetch('./version.json?t=' + Date.now(), { cache: 'no-store' })
         .then(r => (r && r.ok ? r.json() : null))
-        .then(data => {
-            if (data && data.version && String(data.version) !== String(APP_VERSION)) {
-                const key = '__reloaded_' + data.version;
-                if (!sessionStorage.getItem(key)) {
-                    sessionStorage.setItem(key, '1');
-                    showUpdateBanner(data.version);
-                }
-            }
-        })
-        .catch(() => {});
+        .then(d => { if (d && d.version) { _remoteVersion = String(d.version); return d; } return null; })
+        .catch(() => null);
+}
+function checkVersion() {
+    fetchRemoteVersion().then(data => {
+        if (data && data.version && String(data.version) !== String(APP_VERSION)) {
+            showUpdateBanner(data.version);
+        }
+    });
 }
 function showUpdateBanner(newVer) {
-    if (document.getElementById('updateBanner')) return;
+    if (document.getElementById('updateBanner')) return;          // 已有横幅，不重复
+    if (_dismissedVersions[newVer]) return;                        // 该版本已被用户关闭，不再打扰
     const b = document.createElement('div');
     b.id = 'updateBanner';
-    b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:#fff0f5;border:1px solid #FFB6C1;border-radius:12px;padding:12px 14px;box-shadow:0 4px 16px rgba(231,84,128,.3);display:flex;align-items:center;gap:10px;font-size:13px;color:#c2185b;';
-    b.innerHTML = '<span style="font-size:18px;">🔄</span><span style="flex:1;">发现新版本 <b>' + newVer + '</b>（当前 v' + APP_VERSION + '），建议刷新获取最新内容。</span>';
+    b.className = 'update-banner';
+    b.innerHTML = '<span class="ub-ico">🔔</span>' +
+        '<span class="ub-text">发现新版本 <b>v' + newVer + '</b>（当前 v' + APP_VERSION + '），点击立即更新获取最新功能</span>';
     const btn = document.createElement('button');
-    btn.textContent = '立即刷新';
-    btn.style.cssText = 'border:none;background:#FF6FA5;color:#fff;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;';
+    btn.className = 'ub-btn';
+    btn.textContent = '立即更新';
     btn.onclick = function () { forceUpdate(); };
     const close = document.createElement('span');
+    close.className = 'ub-close';
     close.textContent = '✕';
-    close.style.cssText = 'cursor:pointer;color:#bbb;font-size:16px;';
-    close.onclick = function () { b.remove(); };
+    close.onclick = function () { _dismissedVersions[newVer] = true; b.remove(); };
     b.appendChild(btn); b.appendChild(close);
     document.body.appendChild(b);
 }

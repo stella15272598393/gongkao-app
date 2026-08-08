@@ -88,6 +88,16 @@ self.addEventListener('fetch', event => {
         return;
     }
 
+    // ★ 版本号文件(version.json)与 SW 脚本(sw.js)：Network Only —— 绝不被缓存，
+    //   必须始终返回服务端最新值，否则手机端会一直读到旧版本号、永远检测不到更新。
+    const _u = new URL(event.request.url);
+    if (_u.pathname.endsWith('version.json') || _u.pathname.endsWith('sw.js')) {
+        event.respondWith(fetch(event.request).catch(() =>
+            caches.match(event.request).then(c => c || new Response('{}', { status: 503, headers: { 'Content-Type': 'application/json' } }))
+        ));
+        return;
+    }
+
     const isCore = event.request.mode === 'navigate' || isCoreAsset(event.request.url);
 
     if (isCore) {
