@@ -1,1 +1,1 @@
-{"version": "2026-08-08-v63", "date": "2026-08-08", "changelog": "v63: 金币图标重设计为带铣边的3D质感金币（gold-coin.svg）"}
+{"version": "2026-08-08-v64", "date": "2026-08-08", "changelog": "v64: Q版可爱金币 + 主题系统(蓝色小鸡黄绿/暗色护眼) + 修复saveMockRecords递归与switchModule类名Bug"}

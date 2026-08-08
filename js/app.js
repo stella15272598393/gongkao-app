@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v63';
+const APP_VERSION = '2026-08-08-v64';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -214,7 +214,7 @@ function monitorDrop(key, label) {
     if (cur > 0) localStorage.setItem('__base_' + key, String(cur));
 }
 function saveMockRecords(records) {
-    try { saveMockRecords(records); } catch (e) {}
+    try { localStorage.setItem('mockRecords', JSON.stringify(records)); } catch (e) {}
     monitorDrop('mockRecords', '模考记录');
 }
 function touchBackup() { try { localStorage.setItem('lastBackupAt', new Date().toISOString()); localStorage.removeItem('backupDismissUntil'); } catch (e) {} }
@@ -264,6 +264,67 @@ function checkBackupReminder() {
 }
 
 // ========== 初始化 ==========
+// ========== 主题 / 暗色模式 ==========
+const THEME_KEY = 'gk_theme';
+const DARK_KEY  = 'gk_dark';
+function cssVar(name, fallback) {
+    try { const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v || fallback; } catch (e) { return fallback; }
+}
+function applyThemeState() {
+    try {
+        const t = localStorage.getItem(THEME_KEY) || 'pink';
+        const d = localStorage.getItem(DARK_KEY) === '1';
+        const root = document.documentElement;
+        root.setAttribute('data-theme', t);
+        if (d) root.setAttribute('data-dark', '1'); else root.removeAttribute('data-dark');
+    } catch (e) {}
+}
+function setTheme(t) {
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+    applyThemeState();
+    const sel = document.getElementById('themeSelect');
+    if (sel) sel.value = t;
+    refreshThemeDependent();
+}
+function toggleDark(on) {
+    try { localStorage.setItem(DARK_KEY, on ? '1' : '0'); } catch (e) {}
+    applyThemeState();
+    const tg = document.getElementById('darkToggle');
+    if (tg) tg.checked = !!on;
+    refreshThemeDependent();
+}
+function refreshThemeDependent() {
+    try { if (currentModule === 'home') renderStreakHeatmap(); } catch (e) {}
+    try { if (currentModule === 'mock') renderChart(); } catch (e) {}
+}
+applyThemeState();
+
+// 设置页：回显主题/暗色选择
+function renderThemeConfig() {
+    const sel = document.getElementById('themeSelect');
+    if (sel) { try { sel.value = localStorage.getItem(THEME_KEY) || 'pink'; } catch (e) {} }
+    const tg = document.getElementById('darkToggle');
+    if (tg) { try { tg.checked = localStorage.getItem(DARK_KEY) === '1'; } catch (e) {} }
+}
+
+// 通用空状态插画 + 引导
+function renderEmptyState(container, opt) {
+    if (!container) return;
+    opt = opt || {};
+    const icon = opt.icon || '📭';
+    const title = opt.title || '这里还空空如也';
+    const hint = opt.hint || '';
+    const actions = (opt.actions || []).map(a =>
+        '<button class="btn-pink btn-sm" onclick="' + a.onclick + '">' + a.label + '</button>'
+    ).join('');
+    container.innerHTML = '<div class="empty-state">' +
+        '<div class="es-icon">' + icon + '</div>' +
+        '<div class="es-title">' + title + '</div>' +
+        (hint ? '<div class="es-hint">' + hint + '</div>' : '') +
+        (actions ? '<div class="es-actions">' + actions + '</div>' : '') +
+        '</div>';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initCountdown();
     startDateTimeClock();
@@ -547,13 +608,15 @@ function switchModule(moduleName) {
 
     // 移动端自动收起侧边栏
     if (window.innerWidth <= 768) {
-        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebar').classList.add('collapsed');
+        var ov = document.getElementById('sidebarOverlay');
+        if (ov) ov.classList.remove('show');
     }
 
     // 进入收藏夹时刷新列表
     if (moduleName === 'favbox') renderFavBox();
     // 进入数据备份页时刷新统计与云同步配置
-    if (moduleName === 'settings') { renderDataStats(); renderCloudConfig(); }
+    if (moduleName === 'settings') { renderThemeConfig(); renderDataStats(); renderCloudConfig(); }
     // 进入工作台时刷新数据（打卡改为手动，不自动触发）
     if (moduleName === 'home') { renderHome(); }
     // 进入金币台账时刷新（计划任务/打卡/流水/统计）
@@ -840,10 +903,10 @@ function renderStreakHeatmap() {
         heatmapViewMonth = n.getMonth(); // 0-based
     }
 
-    var C_ON  = '#E75480';
-    var C_OFF = '#f0e6ea';
-    var C_TODAY = '#FF6FA5';
-    var C_FUT = '#fafafa';
+    var C_ON  = cssVar('--accent', '#E75480');
+    var C_OFF = cssVar('--border-color', '#f0e6ea');
+    var C_TODAY = cssVar('--primary-dark', '#FF6FA5');
+    var C_FUT = cssVar('--bg-gray', '#fafafa');
     var WD = ['日','一','二','三','四','五','六'];
 
     // 计算当月信息
@@ -1436,6 +1499,7 @@ function applyBackupData(parsed) {
         localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
         n++;
     }
+    try { applyThemeState(); } catch (e) {}
     return n;
 }
 function exportAllData() {
@@ -3341,7 +3405,7 @@ function renderChart() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (records.length === 0) {
-        ctx.fillStyle = '#999';
+        ctx.fillStyle = cssVar('--text-light', '#999');
         ctx.font = '14px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('暂无数据，请先录入模考记录', canvas.width/2, canvas.height/2);
@@ -3366,7 +3430,7 @@ function renderLineChart(ctx, canvas, records) {
     const recent = records.slice(0, 15).reverse();
 
     // 坐标轴
-    ctx.strokeStyle = '#ddd';
+    ctx.strokeStyle = cssVar('--border-color', '#ddd');
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(padding.left, padding.top);
@@ -3375,14 +3439,14 @@ function renderLineChart(ctx, canvas, records) {
     ctx.stroke();
 
     // Y轴标签
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = cssVar('--text-secondary', '#666');
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'right';
     for (let i = 0; i <= 5; i++) {
         const y = padding.top + h - (h * i / 5);
         const val = i * 20;
         ctx.fillText(`${val}%`, padding.left - 8, y + 4);
-        ctx.beginPath(); ctx.strokeStyle = '#f0f0f0';
+        ctx.beginPath(); ctx.strokeStyle = cssVar('--border-color', '#f0f0f0');
         ctx.moveTo(padding.left, y); ctx.lineTo(padding.left + w, y); ctx.stroke();
     }
 
@@ -3396,19 +3460,20 @@ function renderLineChart(ctx, canvas, records) {
     }));
 
     // 渐变填充
-    const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + h);
-    gradient.addColorStop(0, 'rgba(255,182,193,0.3)');
-    gradient.addColorStop(1, 'rgba(255,182,193,0.02)');
-    ctx.fillStyle = gradient;
+    const lineColor = cssVar('--accent', '#E75480');
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.fillStyle = lineColor;
     ctx.beginPath();
     ctx.moveTo(points[0].x, padding.top + h);
     points.forEach(p => ctx.lineTo(p.x, p.y));
     ctx.lineTo(points[points.length-1].x, padding.top + h);
     ctx.closePath();
     ctx.fill();
+    ctx.restore();
 
     // 线条
-    ctx.strokeStyle = '#FFB6C1';
+    ctx.strokeStyle = lineColor;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     points.forEach((p, i) => { if (i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y); });
@@ -3416,14 +3481,14 @@ function renderLineChart(ctx, canvas, records) {
 
     // 数据点
     points.forEach(p => {
-        ctx.fillStyle = '#FFB6C1';
+        ctx.fillStyle = lineColor;
         ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fill();
         ctx.fillStyle = '#fff';
         ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2); ctx.fill();
     });
 
     // X轴标签
-    ctx.fillStyle = '#999';
+    ctx.fillStyle = cssVar('--text-light', '#999');
     ctx.font = '10px sans-serif';
     ctx.textAlign = 'center';
     points.forEach(p => {
@@ -3431,7 +3496,7 @@ function renderLineChart(ctx, canvas, records) {
     });
 
     // 标题
-    ctx.fillStyle = '#E891A3';
+    ctx.fillStyle = cssVar('--accent-strong', '#E891A3');
     ctx.font = 'bold 13px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('各模块正确率变化趋势', canvas.width/2, 22);
@@ -3464,7 +3529,7 @@ function renderBarChart(ctx, canvas, records) {
     const gap = (w / modules.length) * 0.4;
 
     // 标题
-    ctx.fillStyle = '#E891A3';
+    ctx.fillStyle = cssVar('--accent-strong', '#E891A3');
     ctx.font = 'bold 13px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('近7天各模块刷题量对比', canvas.width/2, 22);
@@ -3476,19 +3541,19 @@ function renderBarChart(ctx, canvas, records) {
 
         // 柱子渐变
         const grad = ctx.createLinearGradient(x, y, x, padding.top + h);
-        grad.addColorStop(0, '#FFB6C1');
-        grad.addColorStop(1, '#FFD1DC');
+        grad.addColorStop(0, cssVar('--accent', '#FFB6C1'));
+        grad.addColorStop(1, cssVar('--accent-strong', '#FFD1DC'));
         ctx.fillStyle = grad;
         roundRect(ctx, x, y, barWidth, bh, 4);
 
         // 数值
-        ctx.fillStyle = '#333';
+        ctx.fillStyle = cssVar('--text-primary', '#333');
         ctx.font = 'bold 12px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(moduleData[mod].total.toString(), x + barWidth/2, y - 6);
 
         // X轴标签
-        ctx.fillStyle = '#666';
+        ctx.fillStyle = cssVar('--text-secondary', '#666');
         ctx.font = '10px sans-serif';
         const shortName = mod.replace(/推理|关系|判断/g, '');
         ctx.save();
@@ -3519,14 +3584,14 @@ function renderPieChart(ctx, canvas, records) {
 
     const total = Object.values(reasons).reduce((a,b) => a+b, 0);
     if (total === 0) {
-        ctx.fillStyle = '#999';
+        ctx.fillStyle = cssVar('--text-light', '#999');
         ctx.font = '14px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('暂无足够的错因数据', cx, cy);
         return;
     }
 
-    const colors = ['#FFB6C1', '#E891A3', '#FFD1DC', '#4A90D9', '#68C07D'];
+    const colors = [cssVar('--accent', '#FFB6C1'), cssVar('--accent-strong', '#E891A3'), cssVar('--primary', '#FFD1DC'), '#4A90D9', '#68C07D'];
     let startAngle = -Math.PI/2;
 
     const data = Object.entries(reasons).filter(([k,v]) => v > 0);

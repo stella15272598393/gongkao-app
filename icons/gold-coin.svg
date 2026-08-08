@@ -1,44 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
-    <radialGradient id="gk-face" cx="38%" cy="30%" r="80%">
+    <radialGradient id="qc-face" cx="40%" cy="32%" r="80%">
       <stop offset="0%" stop-color="#FFF7C8"/>
-      <stop offset="30%" stop-color="#FFDD6E"/>
-      <stop offset="66%" stop-color="#F2B50F"/>
+      <stop offset="35%" stop-color="#FFDD6E"/>
+      <stop offset="72%" stop-color="#F2B50F"/>
       <stop offset="100%" stop-color="#D68E00"/>
     </radialGradient>
-    <linearGradient id="gk-rim" x1="10%" y1="6%" x2="90%" y2="94%">
+    <linearGradient id="qc-rim" x1="12%" y1="8%" x2="88%" y2="92%">
       <stop offset="0%" stop-color="#FFEB96"/>
-      <stop offset="50%" stop-color="#D99E12"/>
+      <stop offset="50%" stop-color="#E0A816"/>
       <stop offset="100%" stop-color="#9A6100"/>
     </linearGradient>
-    <linearGradient id="gk-yen" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#9A6206"/>
-      <stop offset="100%" stop-color="#5E3B00"/>
-    </linearGradient>
-    <filter id="gk-shadow" x="-40%" y="-40%" width="180%" height="180%">
-      <feDropShadow dx="0" dy="2.2" stdDeviation="2.2" flood-color="#7a4e00" flood-opacity="0.38"/>
+    <filter id="qc-shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="2.2" stdDeviation="2" flood-color="#7a4e00" flood-opacity="0.35"/>
     </filter>
   </defs>
 
-  <g filter="url(#gk-shadow)">
-    <!-- 外圈（带铣边/齿轮质感） -->
-    <circle cx="50" cy="50" r="47" fill="url(#gk-rim)"/>
-    <circle cx="50" cy="50" r="44.5" fill="none" stroke="#7e5200" stroke-width="2.6"
-            stroke-dasharray="2.1 2.5" opacity="0.55"/>
-    <!-- 内面 -->
-    <circle cx="50" cy="50" r="40" fill="url(#gk-face)"/>
-    <!-- 内圈装饰双环 -->
-    <circle cx="50" cy="50" r="34" fill="none" stroke="#C98E0E" stroke-width="1.6" opacity="0.6"/>
-    <circle cx="50" cy="50" r="31" fill="none" stroke="#FFF1B8" stroke-width="0.9" opacity="0.5"/>
-    <!-- ¥ 符号（竖线 + 横杠 + 两条腿） -->
-    <g stroke="url(#gk-yen)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
-      <path d="M50 27 L50 59"/>
-      <path d="M34 41 L66 41"/>
-      <path d="M50 41 L35 61"/>
-      <path d="M50 41 L65 61"/>
-    </g>
-    <!-- 顶部高光（立体感） -->
-    <ellipse cx="38" cy="33" rx="15" ry="9" fill="#ffffff" opacity="0.42" transform="rotate(-28 38 33)"/>
-    <path d="M22 48 A30 30 0 0 1 48 19" fill="none" stroke="#ffffff" stroke-width="2.4" opacity="0.3" stroke-linecap="round"/>
+  <g filter="url(#qc-shadow)">
+    <!-- 外圈 -->
+    <circle cx="50" cy="50" r="47" fill="url(#qc-rim)"/>
+    <circle cx="50" cy="50" r="44.5" fill="none" stroke="#7e5200" stroke-width="2.4" stroke-dasharray="2 2.4" opacity="0.5"/>
+    <!-- 胖嘟嘟的脸（内面） -->
+    <circle cx="50" cy="51" r="39.5" fill="url(#qc-face)"/>
+    <!-- 顶部高光 -->
+    <ellipse cx="38" cy="33" rx="15" ry="9" fill="#ffffff" opacity="0.45" transform="rotate(-28 38 33)"/>
+    <!-- 眼睛 -->
+    <ellipse cx="40" cy="47" rx="4.6" ry="6" fill="#5b3b00"/>
+    <ellipse cx="60" cy="47" rx="4.6" ry="6" fill="#5b3b00"/>
+    <circle cx="41.6" cy="44.6" r="1.7" fill="#fff"/>
+    <circle cx="61.6" cy="44.6" r="1.7" fill="#fff"/>
+    <!-- 腮红 -->
+    <ellipse cx="32" cy="55" rx="5.2" ry="3.4" fill="#FF8FA3" opacity="0.7"/>
+    <ellipse cx="68" cy="55" rx="5.2" ry="3.4" fill="#FF8FA3" opacity="0.7"/>
+    <!-- 微笑 -->
+    <path d="M41 56 Q50 65 59 56" fill="none" stroke="#5b3b00" stroke-width="3" stroke-linecap="round"/>
+    <!-- 小闪光 -->
+    <path d="M72 26 l2.4 5.2 5.2 2.4 -5.2 2.4 -2.4 5.2 -2.4 -5.2 -5.2 -2.4 5.2 -2.4 z" fill="#fff" opacity="0.9"/>
   </g>
 </svg>
