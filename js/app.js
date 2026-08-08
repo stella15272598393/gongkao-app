@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v80';
+const APP_VERSION = '2026-08-08-v81';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -333,9 +333,9 @@ function renderEmptyState(container, opt) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ★ v76: 轻量级清理（只移除已知ID的遮挡层，不再全量扫描DOM）
+    // ★ v81: 轻量级清理（覆盖所有已知遮挡层，含 dailyPushOverlay）
     try {
-        ['welcomeScreen','updateBanner','backupReminder'].forEach(function(id) {
+        ['welcomeScreen','updateBanner','backupReminder','dailyPushOverlay'].forEach(function(id) {
             var el = document.getElementById(id);
             if (el && el.parentNode) el.parentNode.removeChild(el);
         });

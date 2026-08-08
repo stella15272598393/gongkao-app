@@ -7,21 +7,47 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v80 内联版本号 -->
-    <meta name="app-version" content="2026-08-08-v80">
+    <!-- ★ v81 内联版本号 -->
+    <meta name="app-version" content="2026-08-08-v81">
     <title>🪷 莲莲工作台</title>
-    <!-- ★ v79: 启动自清理(增强) —— 拆除旧 Service Worker + 清空缓存，
-         并拆掉旧SW后自动硬刷新一次，确保本次就拉到最新代码(不再卡旧版)。
-         每次加载都执行，彻底杜绝卡在旧版本。 -->
+    <!-- ★ v81: 启动自清理(终极防遮挡) —— 拆除旧 SW + 清缓存 + 强制清除所有遮挡层，
+         确保页面一加载就能点击，不再被任何模态/遮罩卡死。 -->
     <script>
       (function () {
+        // 工具函数：强制移除或隐藏一个元素（不管它在哪、什么状态）
+        function killOverlay(id) {
+          try {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.style.display = 'none';
+            el.style.visibility = 'hidden';
+            el.style.pointerEvents = 'none';
+            el.style.zIndex = '-1';
+            if (el.parentNode) el.parentNode.removeChild(el);
+          } catch(e){}
+        }
+        // 第一波：立即清除（HTML 解析阶段就执行，比任何外部 JS 都早）
+        ['welcomeScreen','updateBanner','backupReminder','dailyPushOverlay','sidebarOverlay','appModalOverlay'].forEach(killOverlay);
+        // 第二波：2秒后再清一次（干掉 scheduleDailyPush 在 1.5s 后弹出的推送遮罩）
+        setTimeout(function(){
+          ['welcomeScreen','dailyPushOverlay','sidebarOverlay'].forEach(killOverlay);
+          // 兜底：把所有 z-index > 9000 的 fixed 元素全部禁用交互（topBar 除外）
+          document.querySelectorAll('*').forEach(function(el){
+            try{
+              var s = getComputedStyle(el);
+              if(s.position==='fixed' && parseInt(s.zIndex||0)>9000 && el.id!=='topBar'){
+                el.style.pointerEvents='none';
+              }
+            }catch(e){}
+          });
+        }, 2000);
+        // SW 清理
         try {
           if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function (regs) {
               var list = regs || [];
               if (list.length) {
                 list.forEach(function (r) { try { r.unregister(); } catch (e) {} });
-                // 刚拆掉旧SW，立刻硬刷新一次拉最新页面(避免仍停在旧缓存首页)
                 try {
                   if (!sessionStorage.getItem('__sw_cleared_once__')) {
                     sessionStorage.setItem('__sw_cleared_once__', '1');
@@ -39,12 +65,24 @@
             });
           }
         } catch (e) {}
+        // 紧急出口：连续快速点 5 次页面任意位置 → 强制清除所有遮挡（用户最后手段）
+        (function(){
+          var _c=0,_t=0;
+          document.addEventListener('click',function(e){
+            var now=Date.now();
+            if(now-_t<400){_c++;if(_c>=5){
+              ['welcomeScreen','dailyPushOverlay','sidebarOverlay','appModalOverlay','updateBanner','backupReminder'].forEach(killOverlay);
+              alert('🔧 已强制清除所有遮挡层，请重试点击');
+              _c=0;
+            }}else{_c=1}_t=now;
+          });
+        })();
       })();
     </script>
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=80">
+    <link rel="stylesheet" href="./css/style.css?v=81">
 </head>
 <body>
     <!-- 顶部状态栏 -->
@@ -918,10 +956,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=80"></script>
-    <script src="./js/data-modules.js?v=80"></script>
-    <script src="./js/app.js?v=80"></script>
-    <script src="./js/loader.js?v=80"></script>
+    <script src="./js/data.js?v=81"></script>
+    <script src="./js/data-modules.js?v=81"></script>
+    <script src="./js/app.js?v=81"></script>
+    <script src="./js/loader.js?v=81"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
