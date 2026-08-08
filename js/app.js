@@ -4601,6 +4601,8 @@ const CHANGSHI_CATS = [
     { key: 'lishi', name: '历史' },
     { key: 'dili', name: '地理' },
     { key: 'keji', name: '科技' },
+    { key: 'wenhua', name: '文化文学' },
+    { key: 'jingji', name: '经济' },
     { key: 'fav', name: '我的收藏' },
     { key: 'note', name: '我的笔记' }
 ];
