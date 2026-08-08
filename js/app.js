@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v65';
+const APP_VERSION = '2026-08-08-v66';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -466,27 +466,70 @@ function showWelcomeScreen() {
     const wd = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][bjNow.getDay()];
     const dateStr = bjNow.getFullYear() + '年' + (bjNow.getMonth() + 1) + '月' + bjNow.getDate() + '日 ' + wd;
 
-    // 每日夸赞金句（按日期稳定随机，同一天不变）
-    const QUOTES = [
-        '今天的你，比昨天又进步了一点点 ✨',
-        '认真努力的人，运气都不会太差',
-        '离上岸又近了一天，超棒的！',
-        '你的坚持，正在悄悄开花结果',
-        '慢慢来，比较快，你已经做得很好',
-        '相信你自己，你就是那个天选公务员',
-        '每天进步 1%，一年后就是 37 倍的你',
-        '你认真的样子，真的很好看',
-        '所有的从容，都是厚积薄发',
-        '今天的努力，是明天上岸的运气',
-        '别慌，你比想象中更厉害',
-        '保持热爱，奔赴山海，你一定行'
-    ];
-    let seed = 0;
-    for (const ch of todayKey) seed = (seed * 31 + ch.charCodeAt(0)) % 100000;
-    const quote = QUOTES[seed % QUOTES.length];
+    // 每日夸赞金句（按时段分池 + 日期稳定随机：同一天同一时段不变，不同时段换句）
+    const hour = bjNow.getHours();
+    let period = 'morning';   // 5-11
+    if (hour >= 11 && hour < 14) period = 'noon';
+    else if (hour >= 14 && hour < 19) period = 'afternoon';
+    else if (hour >= 19 || hour < 5) period = 'evening';
 
-    // 问候语（可自定义，localStorage 存 gk_welcome_greeting，默认「嗨 小公务员」）
-    let greeting = '嗨，小公务员';
+    const QUOTE_POOLS = {
+        morning: [
+            '早安！今天的你，比昨天又进步了一点点 ✨',
+            '清晨的第一缕阳光，照在努力的你身上，真好看',
+            '新的一天，新的起点，离上岸又近了一步！',
+            '早起的人儿有公考运，今天也要加油呀 ☀️',
+            '早晨的时光最珍贵，你已经赢在起跑线了',
+            '美好的一天从现在开始，相信自己 💪',
+            '每一个清晨都是礼物，你正在拆开它',
+            '太阳升起的时候，你的梦想也在发光'
+        ],
+        noon: [
+            '中午好！忙完上午，给自己点个赞 🌟',
+            '午后小憩一下，下午继续冲！',
+            '一半的一天已经过去，你做得很好',
+            '午饭吃饱了吗？吃饱了才有力气刷题 😋',
+            '正午阳光正好，正如奋斗中的你',
+            '上午的积累是下午爆发的基础',
+            '休息片刻，为下半场蓄力吧',
+            '中午不打烊，考公人永不停歇'
+        ],
+        afternoon: [
+            '下午好！黄金时段，专注当下 ⏰',
+            '下午的每一分钟都在为上岸加分',
+            '坚持到现在，你真的很了不起',
+            '傍晚前的最后冲刺，再坚持一下！',
+            '下午茶时间到～喝口水继续学 ☕',
+            '你的努力，正在悄悄开花结果',
+            '别慌，你比想象中更厉害',
+            '慢慢来，比较快，你已经做得很好'
+        ],
+        evening: [
+            '晚上好！今天辛苦了，为自己鼓掌 👏',
+            '夜晚的灯光下，是你最美的样子',
+            '一天的结束，也是明天的开始 🌙',
+            '今晚的复习，是明天考场上的底气',
+            '夜深了还在坚持的你，真的超棒',
+            '所有的从容，都是厚积薄发',
+            '今天的努力，是明天上岸的运气',
+            '保持热爱，奔赴山海，你一定行 🌟'
+        ]
+    };
+    const pool = QUOTE_POOLS[period] || QUOTE_POOLS.morning;
+    // 种子 = 日期 + 时段，保证同一天同时段稳定
+    let seed = 0;
+    const seedStr = todayKey + '_' + period;
+    for (const ch of seedStr) seed = (seed * 31 + ch.charCodeAt(0)) % 100000;
+    const quote = pool[seed % pool.length];
+
+    // 问候语（随时段变化 + 可自定义）
+    const GREETING_DEFAULTS = {
+        morning: '早上好，小公务员 ☀️',
+        noon: '中午好，小公务员 🌤️',
+        afternoon: '下午好，小公务员 ⏰',
+        evening: '晚上好，小公务员 🌙'
+    };
+    let greeting = GREETING_DEFAULTS[period] || GREETING_DEFAULTS.morning;
     try { const cg = localStorage.getItem('gk_welcome_greeting'); if (cg) greeting = cg; } catch(e){}
 
     const w = document.createElement('div');
@@ -801,6 +844,21 @@ function manualCheckin() {
     if (typeof showToast === 'function') showToast('✅ 打卡成功！已记录到热力图 🔥');
 }
 
+// 取消今日打卡（仅允许撤回今天，历史的不让改）
+function cancelTodayCheckin() {
+    const d = _getStreakData();
+    if (!Array.isArray(d.history)) return;
+    const today = getTodayStr();
+    const idx = d.history.indexOf(today);
+    if (idx < 0) { renderHome(); return; }
+    d.history.splice(idx, 1);
+    _saveStreakData(d);
+    renderHome();
+    refreshThemeDependent();  // 刷新趋势图
+    renderStreakHeatmap();     // 刷新热力图
+    if (typeof showToast === 'function') showToast('🔄 已取消今日打卡');
+}
+
 function renderHome() {
     const statsEl = document.getElementById('homeStats');
     if (!statsEl) return;
@@ -828,7 +886,8 @@ function renderHome() {
     const today = getTodayStr();
     const todayDone = history.indexOf(today) >= 0;
     if (todayDone) {
-        html += '<div class="home-checkin done">✅ 今日已打卡</div>';
+        html += '<div class="home-checkin done" style="display:inline-flex;align-items:center;gap:8px;">✅ 今日已打卡' +
+            '<button onclick="cancelTodayCheckin()" style="margin-left:4px;border:none;background:rgba(0,0,0,.08);color:' + cssVar('--text-light','#999') + ';font-size:12px;padding:2px 8px;border-radius:10px;cursor:pointer;" title="撤销今天的打卡记录">撤销</button></div>';
     } else {
         html += '<button class="home-checkin-btn" onclick="manualCheckin()">📍 点击打卡</button>';
     }
@@ -888,6 +947,27 @@ function buildTrendData(metric) {
     }
     return { labels, values };
 }
+
+// 智能Y轴：返回 { max, steps, labels }，避免重复刻度
+function niceAxis(maxVal, isBinary) {
+    if (isBinary) return { max: 1, steps: 1, labels: ['·', '✓'] };  // 二值用语义标签
+    if (maxVal <= 0) return { max: 5, steps: 4, labels: ['0','1','2','3','4','5'] };
+    // 取整到漂亮的步长（1/2/5/10 规则）
+    const roughStep = Math.ceil(maxVal / 4);
+    const mag = Math.pow(10, Math.floor(Math.log10(roughStep)));
+    const norm = roughStep / mag;
+    let niceStep;
+    if (norm <= 1) niceStep = 1;
+    else if (norm <= 2) niceStep = 2;
+    else if (norm <= 5) niceStep = 5;
+    else niceStep = 10;
+    niceStep *= mag;
+    const niceMax = Math.ceil(maxVal / niceStep) * niceStep || niceStep;
+    const stepCount = Math.min(5, Math.max(2, Math.round(niceMax / niceStep)));
+    const axisLabels = [];
+    for (let i = 0; i <= stepCount; i++) axisLabels.push(String(i * niceStep));
+    return { max: niceMax, steps: stepCount, labels: axisLabels };
+}
 function switchTrendMetric(m) {
     currentTrendMetric = m;
     document.querySelectorAll('.trend-tab').forEach(b => b.classList.toggle('active', b.dataset.metric === m));
@@ -898,7 +978,7 @@ function renderGrowthTrend() {
     if (!canvas) return;
     const dpr = window.devicePixelRatio || 1;
     const cssW = canvas.parentElement.offsetWidth || 320;
-    const cssH = 220;
+    const cssH = 230;
     canvas.width = cssW * dpr; canvas.height = cssH * dpr;
     canvas.style.height = cssH + 'px';
     const ctx = canvas.getContext('2d');
@@ -907,13 +987,13 @@ function renderGrowthTrend() {
 
     const metric = currentTrendMetric;
     const { labels, values } = buildTrendData(metric);
-    const colorMap = { gold: cssVar('--accent', '#E75480'), checkin: cssVar('--primary', '#FFB6C1'), study: cssVar('--accent-strong', '#7CB342') };
+    const colorMap = { gold: cssVar('--accent', '#E75480'), checkin: cssVar('--primary', '#FF8FB1'), study: cssVar('--accent-strong', '#7CB342') };
     const color = colorMap[metric] || colorMap.gold;
-    drawTrendChart(ctx, cssW, cssH, labels, values, color, metric === 'checkin');
+    drawTrendChart(ctx, cssW, cssH, labels, values, color, metric);
 
     const total = values.reduce((a, b) => a + b, 0);
-    const unit = metric === 'gold' ? ' 🪙' : (metric === 'study' ? ' 分钟' : ' 天');
-    const titleMap = { gold: '近30天累计金币', checkin: '近30天打卡', study: '近30天学习时长' };
+    const unit = metric === 'gold' ? ' 🪙' : (metric === 'study' ? ' 分钟' : '');
+    const titleMap = { gold: '近30天累计金币', checkin: '近30天已打卡', study: '近30天学习时长' };
     let cap = document.getElementById('trendCaption');
     if (!cap) {
         cap = document.createElement('div');
@@ -921,49 +1001,97 @@ function renderGrowthTrend() {
         cap.style.cssText = 'text-align:center;font-size:12px;color:' + cssVar('--text-light', '#999') + ';margin-top:6px;';
         canvas.parentElement.appendChild(cap);
     }
-    cap.textContent = titleMap[metric] + '：' + (metric === 'checkin' ? values.filter(v => v > 0).length + ' 天' : total + unit);
+    if (metric === 'checkin') {
+        const checkedDays = values.filter(v => v > 0).length;
+        cap.textContent = titleMap[metric] + '：' + checkedDays + ' 天 / 共 30 天';
+    } else {
+        cap.textContent = titleMap[metric] + '：' + total + unit;
+    }
 }
-/* 通用折线趋势图（含面积填充、网格、高分屏适配） */
-function drawTrendChart(ctx, W, H, labels, values, color, step) {
-    const pad = { top: 16, right: 14, bottom: 26, left: 34 };
+/* 通用折线趋势图（v66：智能Y轴 + 打卡语义化 + 渐变填充美化） */
+function drawTrendChart(ctx, W, H, labels, values, color, metric) {
+    const pad = { top: 18, right: 16, bottom: 28, left: 38 };
     const w = W - pad.left - pad.right, h = H - pad.top - pad.bottom;
-    const maxV = Math.max(1, ...values);
+    const isCheckin = metric === 'checkin';
+    const nonZero = values.some(v => v > 0);
+    const axis = niceAxis(Math.max(...values), isCheckin && nonZero);
+
     // 网格 + Y 轴
     ctx.strokeStyle = cssVar('--border-color', '#eee');
     ctx.fillStyle = cssVar('--text-light', '#999');
-    ctx.font = '10px sans-serif';
+    ctx.font = '11px sans-serif';
     ctx.lineWidth = 1;
-    const steps = 4;
-    for (let i = 0; i <= steps; i++) {
-        const y = pad.top + h - (h * i / steps);
+    for (let i = 0; i <= axis.steps; i++) {
+        const y = pad.top + h - (h * i / axis.steps);
         ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + w, y); ctx.stroke();
         ctx.textAlign = 'right';
-        ctx.fillText(String(Math.round(maxV * i / steps)), pad.left - 5, y + 3);
+        ctx.fillText(axis.labels[i] || String(i), pad.left - 6, y + 4);
     }
-    // X 轴标签（每 5 天）
+    // X 轴标签
     ctx.textAlign = 'center';
+    const stepX = Math.max(1, Math.ceil(labels.length / 6));  // 自适应间隔
     labels.forEach((lb, i) => {
-        if (i % 5 === 0 || i === labels.length - 1) ctx.fillText(lb, pad.left + (w * i / (labels.length - 1)), pad.top + h + 16);
+        if (i % stepX === 0 || i === labels.length - 1) ctx.fillText(lb, pad.left + (w * i / Math.max(1, labels.length - 1)), pad.top + h + 17);
     });
-    if (values.every(v => v === 0)) {
-        ctx.fillStyle = cssVar('--text-light', '#999');
+
+    if (!nonZero) {
+        ctx.fillStyle = cssVar('--text-light', '#bbb');
         ctx.textAlign = 'center';
-        ctx.fillText('暂无数据，先去打卡 / 录入吧～', pad.left + w / 2, pad.top + h / 2);
+        ctx.font = '13px sans-serif';
+        ctx.fillText('暂无数据，先去打卡 / 录入吧～ 📝', pad.left + w / 2, pad.top + h / 2);
         return;
     }
-    const pts = values.map((v, i) => ({ x: pad.left + (w * i / (values.length - 1)), y: pad.top + h - (h * v / maxV) }));
-    // 面积填充
+
+    // 数据点坐标
+    const pts = values.map((v, i) => ({
+        x: pad.left + (w * i / Math.max(1, values.length - 1)),
+        y: pad.top + h - (h * v / axis.max)
+    }));
+
+    // ★ 打卡指标：用圆点散布图风格（不用连线，避免全是水平线）
+    if (isCheckin) {
+        const dotR = Math.min(5, w / 60);  // 自适应点大小
+        pts.forEach(p => {
+            const isChecked = p.y < pad.top + h - 1;  // v=1 → y偏上
+            ctx.beginPath();
+            ctx.arc(p.x, isChecked ? p.y : pad.top + h - h * 0.5 / axis.max, dotR, 0, Math.PI * 2);
+            if (isChecked) {
+                ctx.fillStyle = color;
+                ctx.fill();
+                // 小白点高光
+                ctx.beginPath(); ctx.arc(p.x - dotR * 0.3, p.y - dotR * 0.3, dotR * 0.35, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fill();
+            } else {
+                ctx.fillStyle = cssVar('--border-color', '#e0e0e0'); ctx.fill();
+            }
+        });
+        return;
+    }
+
+    // ★ 金币/学习时长：渐变面积填充 + 平滑折线
+    // 面积填充（线性渐变）
+    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + h);
+    grad.addColorStop(0, color.replace(')', ',.22)').replace('rgb', 'rgba').replace('#', 'rgba(').replace(/([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i, (m,r,g,b)=>`${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)}`)); // fallback safe
     ctx.save(); ctx.globalAlpha = 0.18; ctx.fillStyle = color;
     ctx.beginPath(); ctx.moveTo(pts[0].x, pad.top + h);
     pts.forEach(p => ctx.lineTo(p.x, p.y)); ctx.lineTo(pts[pts.length - 1].x, pad.top + h); ctx.closePath(); ctx.fill();
     ctx.restore();
+
     // 折线
-    ctx.strokeStyle = color; ctx.lineWidth = 2.4; ctx.lineJoin = 'round';
+    ctx.strokeStyle = color; ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
     ctx.beginPath();
     pts.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
     ctx.stroke();
-    // 数据点
-    pts.forEach(p => { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, Math.PI * 2); ctx.fill(); });
+
+    // 数据点（仅非零处显示）
+    pts.forEach(p => {
+        if (p.y < pad.top + h - 1) {
+            ctx.fillStyle = color;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3.2, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(p.x, p.y, 1.4, 0, Math.PI * 2); ctx.fill();
+        }
+    });
 }
 
 /* ★ v62 月历热力图 —— 按月查看打卡历史，支持翻月（番茄ToDo风格） */
