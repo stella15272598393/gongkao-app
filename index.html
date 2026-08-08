@@ -7,8 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v77 内联版本号：用于检测缓存是否过期 -->
-    <meta name="app-version" content="2026-08-08-v77">
+    <!-- ★ v78 内联版本号 -->
+    <meta name="app-version" content="2026-08-08-v78">
     <title>🪷 莲莲工作台</title>
     <!-- ★ v77: 启动自清理 —— 拆除旧的 Service Worker 并清空缓存，
          确保用户设备上的"旧坏缓存版本"被强制清除，下次加载一定拉取最新代码。
@@ -158,15 +158,50 @@
                     <h2>🪷 莲莲工作台</h2>
                     <p class="module-desc">坚持每日打卡，积累申论素材，祝你早日上岸！</p>
                 </div>
-                <!-- 打卡与数据概览（v76: 内置默认内容，JS加载失败时也能看到基本界面） -->
+                <!-- 打卡与数据概览（v78: 内联脚本计算倒计时，不依赖外部JS） -->
                 <div class="home-stats" id="homeStats">
                     <div class="home-streak">
                         <div class="home-streak-num" id="homeStreakNum">--</div>
                         <div class="home-streak-label">🔥 连续打卡天数</div>
                     </div>
-                    <button class="home-checkin-btn" id="homeCheckinBtn" onclick="manualCheckin()">📍 点击打卡</button>
+                    <button class="home-checkin-btn" id="homeCheckinBtn" onclick="if(typeof manualCheckin==='function')manualCheckin();else{alert('数据加载中，请稍后再试');}">📍 点击打卡</button>
                     <div style="text-align:center;font-size:12px;color:#aaa;margin-top:8px;" id="homeLoadingTip">正在加载数据...</div>
                 </div>
+                <!-- ★ v78 内联倒计时：不依赖外部JS，HTML解析即执行，解决手机端JS被缓存导致倒计时显示--的问题 -->
+                <script>
+                (function(){
+                    try {
+                        var now = new Date();
+                        var bj = new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+                        var p = function(n){return String(n).padStart(2,'0');};
+                        var today = bj.getFullYear()+'-'+p(bj.getMonth()+1)+'-'+p(bj.getDate());
+                        var guokao = new Date('2026-11-29T00:00:00');
+                        var hubao = new Date('2027-03-20T00:00:00');
+                        var gd = Math.max(0, Math.ceil((guokao - bj) / 86400000));
+                        var hd = Math.max(0, Math.ceil((hubao - bj) / 86400000));
+                        var ge = document.getElementById('guokaoDays'), he = document.getElementById('hubaoDays');
+                        if(ge) ge.textContent = gd;
+                        if(he) he.textContent = hd;
+                        // 从 localStorage 读打卡记录
+                        try {
+                            var sd = JSON.parse(localStorage.getItem('gk_streak') || '{"history":[]}');
+                            var hist = (sd && sd.history) || [];
+                            var streak = 0;
+                            if(hist.length > 0){
+                                var last = null;
+                                for(var i=hist.length-1;i>=0;i--){ if(hist[i] <= today){last = hist[i];break;} }
+                                if(last){ streak = 1; var d = new Date(last); d.setDate(d.getDate()-1); var prev = d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); while(hist.indexOf(prev)>=0){streak++;d.setDate(d.getDate()-1);prev=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());} }
+                            }
+                            var sn = document.getElementById('homeStreakNum');
+                            if(sn) sn.textContent = streak;
+                            var btn = document.getElementById('homeCheckinBtn');
+                            if(btn && hist.indexOf(today)>=0){ btn.textContent='✅ 今日已打卡'; btn.style.background='linear-gradient(135deg,#81C784,#4CAF50)'; }
+                        } catch(e2){}
+                        // 隐藏加载提示
+                        setTimeout(function(){ var t=document.getElementById('homeLoadingTip'); if(t)t.style.display='none'; }, 2000);
+                    } catch(e){}
+                })();
+                </script>
                 <!-- 打卡热力图 -->
                 <div class="home-heatmap" id="streakHeatmap"></div>
                 <!-- 成长趋势 -->
@@ -848,10 +883,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=77"></script>
-    <script src="./js/data-modules.js?v=77"></script>
-    <script src="./js/app.js?v=77"></script>
-    <script src="./js/loader.js?v=77"></script>
+    <script src="./js/data.js?v=78"></script>
+    <script src="./js/data-modules.js?v=78"></script>
+    <script src="./js/app.js?v=78"></script>
+    <script src="./js/loader.js?v=78"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
