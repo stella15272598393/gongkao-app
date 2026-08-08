@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v66';
+const APP_VERSION = '2026-08-08-v67';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -466,70 +466,29 @@ function showWelcomeScreen() {
     const wd = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][bjNow.getDay()];
     const dateStr = bjNow.getFullYear() + '年' + (bjNow.getMonth() + 1) + '月' + bjNow.getDate() + '日 ' + wd;
 
-    // 每日夸赞金句（按时段分池 + 日期稳定随机：同一天同一时段不变，不同时段换句）
-    const hour = bjNow.getHours();
-    let period = 'morning';   // 5-11
-    if (hour >= 11 && hour < 14) period = 'noon';
-    else if (hour >= 14 && hour < 19) period = 'afternoon';
-    else if (hour >= 19 || hour < 5) period = 'evening';
+    // 每日夸赞金句（真随机：每次打开随机抽一条，作为欢迎页副标题）
+    const QUOTES = [
+        '今天的你，比昨天又进步了一点点 ✨',
+        '认真努力的人，运气都不会太差',
+        '离上岸又近了一天，超棒的！',
+        '你的坚持，正在悄悄开花结果',
+        '慢慢来，比较快，你已经做得很好',
+        '相信你自己，你就是那个天选公务员',
+        '每天进步 1%，一年后就是 37 倍的你',
+        '你认真的样子，真的很好看',
+        '所有的从容，都是厚积薄发',
+        '今天的努力，是明天上岸的运气',
+        '别慌，你比想象中更厉害',
+        '保持热爱，奔赴山海，你一定行',
+        '你今天的努力，明天都会记得 🌟',
+        '上岸的路很长，但你每一步都算数',
+        '自律的人，连运气都偏爱',
+        '你比昨天的自己，更靠近梦想一点'
+    ];
+    const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 
-    const QUOTE_POOLS = {
-        morning: [
-            '早安！今天的你，比昨天又进步了一点点 ✨',
-            '清晨的第一缕阳光，照在努力的你身上，真好看',
-            '新的一天，新的起点，离上岸又近了一步！',
-            '早起的人儿有公考运，今天也要加油呀 ☀️',
-            '早晨的时光最珍贵，你已经赢在起跑线了',
-            '美好的一天从现在开始，相信自己 💪',
-            '每一个清晨都是礼物，你正在拆开它',
-            '太阳升起的时候，你的梦想也在发光'
-        ],
-        noon: [
-            '中午好！忙完上午，给自己点个赞 🌟',
-            '午后小憩一下，下午继续冲！',
-            '一半的一天已经过去，你做得很好',
-            '午饭吃饱了吗？吃饱了才有力气刷题 😋',
-            '正午阳光正好，正如奋斗中的你',
-            '上午的积累是下午爆发的基础',
-            '休息片刻，为下半场蓄力吧',
-            '中午不打烊，考公人永不停歇'
-        ],
-        afternoon: [
-            '下午好！黄金时段，专注当下 ⏰',
-            '下午的每一分钟都在为上岸加分',
-            '坚持到现在，你真的很了不起',
-            '傍晚前的最后冲刺，再坚持一下！',
-            '下午茶时间到～喝口水继续学 ☕',
-            '你的努力，正在悄悄开花结果',
-            '别慌，你比想象中更厉害',
-            '慢慢来，比较快，你已经做得很好'
-        ],
-        evening: [
-            '晚上好！今天辛苦了，为自己鼓掌 👏',
-            '夜晚的灯光下，是你最美的样子',
-            '一天的结束，也是明天的开始 🌙',
-            '今晚的复习，是明天考场上的底气',
-            '夜深了还在坚持的你，真的超棒',
-            '所有的从容，都是厚积薄发',
-            '今天的努力，是明天上岸的运气',
-            '保持热爱，奔赴山海，你一定行 🌟'
-        ]
-    };
-    const pool = QUOTE_POOLS[period] || QUOTE_POOLS.morning;
-    // 种子 = 日期 + 时段，保证同一天同时段稳定
-    let seed = 0;
-    const seedStr = todayKey + '_' + period;
-    for (const ch of seedStr) seed = (seed * 31 + ch.charCodeAt(0)) % 100000;
-    const quote = pool[seed % pool.length];
-
-    // 问候语（随时段变化 + 可自定义）
-    const GREETING_DEFAULTS = {
-        morning: '早上好，小公务员 ☀️',
-        noon: '中午好，小公务员 🌤️',
-        afternoon: '下午好，小公务员 ⏰',
-        evening: '晚上好，小公务员 🌙'
-    };
-    let greeting = GREETING_DEFAULTS[period] || GREETING_DEFAULTS.morning;
+    // 问候语（默认「嗨，小公务员」，可自定义 gk_welcome_greeting）
+    let greeting = '嗨，小公务员';
     try { const cg = localStorage.getItem('gk_welcome_greeting'); if (cg) greeting = cg; } catch(e){}
 
     const w = document.createElement('div');
@@ -541,7 +500,8 @@ function showWelcomeScreen() {
         'style="border-radius:26px;box-shadow:0 8px 26px rgba(231,84,128,.28);">' +
         '<div style="margin-top:16px;font-size:14px;color:#C2185B;letter-spacing:1px;">' + dateStr + '</div>' +
         '<div style="margin-top:10px;font-size:25px;font-weight:800;color:#E75480;letter-spacing:2px;">' + greeting + '</div>' +
-        '<div style="margin-top:12px;font-size:15px;color:#AD1457;max-width:290px;line-height:1.6;">' + quote + '</div>' +
+        '<div style="margin-top:10px;padding-top:12px;border-top:1px dashed rgba(231,84,128,.35);width:240px;"></div>' +
+        '<div style="margin-top:12px;font-size:14px;color:#C2185B;max-width:290px;line-height:1.7;font-style:italic;opacity:.92;">“' + quote + '”</div>' +
         '<button id="welcomeStartBtn" style="margin-top:26px;border:none;background:linear-gradient(135deg,#FF8FB1,#FF6FA5);' +
         'color:#fff;font-size:16px;font-weight:700;padding:12px 34px;border-radius:26px;cursor:pointer;' +
         'box-shadow:0 6px 18px rgba(231,84,128,.35);">开始今天 ✨</button>';
@@ -1048,30 +1008,22 @@ function drawTrendChart(ctx, W, H, labels, values, color, metric) {
         y: pad.top + h - (h * v / axis.max)
     }));
 
-    // ★ 打卡指标：用圆点散布图风格（不用连线，避免全是水平线）
+    // ★ 打卡指标：用柱状图（每天一根柱，已打卡=主题色高柱，未打卡=浅灰矮底）
     if (isCheckin) {
-        const dotR = Math.min(5, w / 60);  // 自适应点大小
-        pts.forEach(p => {
-            const isChecked = p.y < pad.top + h - 1;  // v=1 → y偏上
-            ctx.beginPath();
-            ctx.arc(p.x, isChecked ? p.y : pad.top + h - h * 0.5 / axis.max, dotR, 0, Math.PI * 2);
-            if (isChecked) {
-                ctx.fillStyle = color;
-                ctx.fill();
-                // 小白点高光
-                ctx.beginPath(); ctx.arc(p.x - dotR * 0.3, p.y - dotR * 0.3, dotR * 0.35, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fill();
-            } else {
-                ctx.fillStyle = cssVar('--border-color', '#e0e0e0'); ctx.fill();
-            }
+        const n = values.length;
+        const slot = w / n;
+        const bw = Math.max(3, Math.min(11, slot * 0.62));
+        values.forEach((v, i) => {
+            const cx = pad.left + slot * (i + 0.5);
+            const barH = v > 0 ? h * 0.8 : h * 0.05;
+            const by = pad.top + h - barH;
+            ctx.fillStyle = v > 0 ? color : cssVar('--border-color', '#e6e6e6');
+            ctx.fillRect(cx - bw / 2, by, bw, barH);
         });
         return;
     }
 
     // ★ 金币/学习时长：渐变面积填充 + 平滑折线
-    // 面积填充（线性渐变）
-    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + h);
-    grad.addColorStop(0, color.replace(')', ',.22)').replace('rgb', 'rgba').replace('#', 'rgba(').replace(/([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i, (m,r,g,b)=>`${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)}`)); // fallback safe
     ctx.save(); ctx.globalAlpha = 0.18; ctx.fillStyle = color;
     ctx.beginPath(); ctx.moveTo(pts[0].x, pad.top + h);
     pts.forEach(p => ctx.lineTo(p.x, p.y)); ctx.lineTo(pts[pts.length - 1].x, pad.top + h); ctx.closePath(); ctx.fill();
