@@ -7,11 +7,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v82 内联版本号 -->
-    <meta name="app-version" content="2026-08-08-v82">
+    <!-- ★ v83 内联版本号 -->
+    <meta name="app-version" content="2026-08-08-v83">
     <title>🪷 莲莲工作台</title>
-    <!-- ★ v82: 启动自清理(终极防遮挡) —— 拆除旧 SW + 清缓存 + 强制清除所有遮挡层，
-         确保页面一加载就能点击，不再被任何模态/遮罩卡死。 -->
+    <!-- ★ v83: 启动自清理 + Service Worker 离线缓存 -->
     <script>
       (function () {
         // 工具函数：强制移除或隐藏一个元素（不管它在哪、什么状态）
@@ -82,7 +81,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=82">
+    <link rel="stylesheet" href="./css/style.css?v=83">
 </head>
 <body>
     <!-- 顶部状态栏 -->
@@ -931,10 +930,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=82"></script>
-    <script src="./js/data-modules.js?v=82"></script>
-    <script src="./js/app.js?v=82"></script>
-    <script src="./js/loader.js?v=82"></script>
+    <script src="./js/data.js?v=83"></script>
+    <script src="./js/data-modules.js?v=83"></script>
+    <script src="./js/app.js?v=83"></script>
+    <script src="./js/loader.js?v=83"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">

@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v82';
+const APP_VERSION = '2026-08-08-v83';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -327,8 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initMock();
     initMorning();
     bindFavFilters();
-    // ★ v77: 主动停用 Service Worker（避免旧缓存坏版本卡死用户）。
-    //   拆除逻辑见 index.html <head> 的内联清理脚本；此处不再注册新 SW。
+    // ★ v83: 重新启用 Service Worker（离线缓存版）。
+    //   新 SW 策略：静态资源 Cache First（秒开/离线可用），数据文件 Network First（保证新鲜）。
+    //   版本化缓存名（gongkao-v{版本号}），activate 时自动清旧缓存，不会死循环。
+    registerSW();
     checkVersion();
     // 周期性 + 切回前台时复查版本（最多每 60 秒），保证手机端尽早发现新版本并弹出更新横幅
     setInterval(checkVersion, 60000);
