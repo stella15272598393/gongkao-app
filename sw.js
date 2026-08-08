@@ -3,7 +3,7 @@
    支持离线缓存和PWA安装
    ======================================== */
 
-const CACHE_NAME = 'gongzuotai-v17';
+const CACHE_NAME = 'gongzuotai-v18';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -101,14 +101,9 @@ self.addEventListener('fetch', event => {
     const isCore = event.request.mode === 'navigate' || isCoreAsset(event.request.url);
 
     if (isCore) {
-        // 核心代码：Network First —— 保证代码永远是最新的，离线才回落缓存
-        event.respondWith(
-            fetchAndCache(event.request).catch(() =>
-                caches.match(event.request).then(
-                    cached => cached || caches.match('./index.html')
-                )
-            )
-        );
+        // ★ v77: 核心代码【纯网络】——绝不使用缓存，彻底杜绝"旧坏版本卡死用户"。
+        //   网络不可达时直接失败（返回真实错误），而不是回退到可能已损坏的旧缓存。
+        event.respondWith(fetch(event.request));
         return;
     }
 

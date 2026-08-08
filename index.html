@@ -7,9 +7,30 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v76 内联版本号：用于检测缓存是否过期 -->
-    <meta name="app-version" content="2026-08-08-v76">
+    <!-- ★ v77 内联版本号：用于检测缓存是否过期 -->
+    <meta name="app-version" content="2026-08-08-v77">
     <title>🪷 莲莲工作台</title>
+    <!-- ★ v77: 启动自清理 —— 拆除旧的 Service Worker 并清空缓存，
+         确保用户设备上的"旧坏缓存版本"被强制清除，下次加载一定拉取最新代码。
+         每次加载都执行，彻底杜绝卡在旧版本。 -->
+    <script>
+      (function () {
+        try {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              (regs || []).forEach(function (r) { try { r.unregister(); } catch (e) {} });
+            });
+          }
+        } catch (e) {}
+        try {
+          if ('caches' in window) {
+            caches.keys().then(function (ks) {
+              (ks || []).forEach(function (k) { try { caches.delete(k); } catch (e) {} });
+            });
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
@@ -827,10 +848,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=34"></script>
-    <script src="./js/data-modules.js?v=34"></script>
-    <script src="./js/app.js?v=76"></script>
-    <script src="./js/loader.js?v=76"></script>
+    <script src="./js/data.js?v=77"></script>
+    <script src="./js/data-modules.js?v=77"></script>
+    <script src="./js/app.js?v=77"></script>
+    <script src="./js/loader.js?v=77"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">

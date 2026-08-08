@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v76';
+const APP_VERSION = '2026-08-08-v77';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -335,7 +335,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initMock();
     initMorning();
     bindFavFilters();
-    registerSW();
+    // ★ v77: 主动停用 Service Worker（避免旧缓存坏版本卡死用户）。
+    //   拆除逻辑见 index.html <head> 的内联清理脚本；此处不再注册新 SW。
     checkVersion();
     // 周期性 + 切回前台时复查版本（最多每 60 秒），保证手机端尽早发现新版本并弹出更新横幅
     setInterval(checkVersion, 60000);
@@ -498,6 +499,8 @@ function showWelcomeScreen() {
     };
     const btn = document.getElementById('welcomeStartBtn');
     if (btn) btn.onclick = dismiss;
+    // ★ v77: 点屏幕任意处也能关闭欢迎屏，避免遮挡期间无法操作
+    w.onclick = dismiss;
     // 兜底：3秒后自动消失，避免卡住挡住操作（v74 从10s缩短到3s）
     setTimeout(() => { if (document.getElementById('welcomeScreen') === w) dismiss(); }, 3000);
 }
@@ -4909,6 +4912,11 @@ function showDailyPush() {
     if (title) title.textContent = (h < 12 ? '🌅 早安 · ' : '🌙 晚安 · ') + '今日碎片推送';
     switchDailyPushTab('idiom');
     ov.style.display = 'flex';
+    // ★ v77: 防止遮罩永久拦截点击 —— 点背景任意处即关闭（点内容内部不关）
+    ov.onclick = function (e) { if (e.target === ov) closeDailyPush(); };
+    // ★ v77: 自动消失（10秒）——用户没操作时不再永久挡住整个页面
+    clearTimeout(ov._autoTimer);
+    ov._autoTimer = setTimeout(closeDailyPush, 10000);
 }
 function switchDailyPushTab(tab) {
     document.querySelectorAll('.dp-tab').forEach(b => b.classList.toggle('active', b.dataset.dptab === tab));
