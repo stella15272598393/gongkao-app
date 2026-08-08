@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v79';
+const APP_VERSION = '2026-08-08-v80';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -270,12 +270,44 @@ const DARK_KEY  = 'gk_dark';
 function cssVar(name, fallback) {
     try { const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v || fallback; } catch (e) { return fallback; }
 }
-// ★ v75: 主题系统已移除，以下函数保留为安全空操作（避免其他代码引用报错），不再设置 data-theme/data-dark
-function applyThemeState() { /* no-op: 主题已删除，统一使用 :root 粉色默认变量 */ }
-function setTheme(t) { /* no-op */ }
-function toggleDark(on) { /* no-op */ }
-function cycleTheme() { /* no-op: 🎨 按钮已移除 */ }
-function renderThemeConfig() { /* no-op */ }
+// ★ v80: 从 v75 删除中恢复主题系统（pink / bluechick / 暗色）
+function applyThemeState() {
+    try {
+        const t = localStorage.getItem(THEME_KEY) || 'pink';
+        const d = localStorage.getItem(DARK_KEY) === '1';
+        const root = document.documentElement;
+        root.setAttribute('data-theme', t);
+        if (d) root.setAttribute('data-dark', '1'); else root.removeAttribute('data-dark');
+    } catch (e) {}
+}
+function setTheme(t) {
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+    applyThemeState();
+    const sel = document.getElementById('themeSelect');
+    if (sel) sel.value = t;
+    refreshThemeDependent();
+}
+function toggleDark(on) {
+    try { localStorage.setItem(DARK_KEY, on ? '1' : '0'); } catch (e) {}
+    applyThemeState();
+    const tg = document.getElementById('darkToggle');
+    if (tg) tg.checked = !!on;
+    refreshThemeDependent();
+}
+// 顶部栏 🎨 快捷切换主题（循环 pink → bluechick）
+function cycleTheme() {
+    var current = localStorage.getItem(THEME_KEY) || 'pink';
+    var next = current === 'pink' ? 'bluechick' : 'pink';
+    setTheme(next);
+    showToast('🎨 已切换为「' + (next === 'pink' ? '粉色 HelloKitty' : '蓝色小鸡·黄绿') + '」');
+}
+// 设置页：回显主题/暗色选择
+function renderThemeConfig() {
+    const sel = document.getElementById('themeSelect');
+    if (sel) { try { sel.value = localStorage.getItem(THEME_KEY) || 'pink'; } catch (e) {} }
+    const tg = document.getElementById('darkToggle');
+    if (tg) { try { tg.checked = localStorage.getItem(DARK_KEY) === '1'; } catch (e) {} }
+}
 function refreshThemeDependent() {
     try { if (currentModule === 'home') { renderStreakHeatmap(); renderGrowthTrend(); } } catch (e) {}
     try { if (currentModule === 'mock') renderChart(); } catch (e) {}
@@ -312,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ★ v73: 移动端强制隐藏侧边栏（JS 兜底，防止旧版 SW 缓存 CSS 导致侧边栏可见）
     if (window.innerWidth <= 768) {
         const sb = document.getElementById('sidebar');
-        if (sb) { sb.classList.add('collapsed'); sb.style.transform = 'translateX(-100%)'; sb.style.opacity = '0'; sb.style.pointerEvents = 'none'; }
+        if (sb) { sb.classList.add('collapsed'); }  // 仅加 class，隐藏由 CSS 控制（不再用行内样式，避免压过 :not(.collapsed) 显示规则）
         document.body.classList.add('sidebar-collapsed');
         var ov = document.getElementById('sidebarOverlay');
         if (ov) ov.classList.remove('show');

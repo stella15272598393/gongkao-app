@@ -3,7 +3,7 @@
    支持离线缓存和PWA安装
    ======================================== */
 
-const CACHE_NAME = 'gongzuotai-v19';
+const CACHE_NAME = 'gongzuotai-v20';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',

@@ -34,7 +34,68 @@
     --transition: all 0.3s ease;
 }
 
-/* ★ v75: 已删除主题切换系统（bluechick/暗色/🎨按钮），统一使用上方粉色默认变量，避免主题相关故障 */
+/* ★ v80: 恢复主题切换系统（从 v75 删除中还原） */
+/* 主题：蓝色小鸡 · 黄绿系列 */
+:root[data-theme="bluechick"] {
+    --primary: #A8D8EA;
+    --primary-light: #D4F1F9;
+    --primary-dark: #6BB8D6;
+    --accent: #FFE082;
+    --accent-strong: #FFCA28;
+    --border-soft: #C8E6C9;
+    --bg-soft: #F1F8E9;
+    --card-bg: #FFFFFF;
+    --app-bg: #F0FAFE;
+    --sidebar-bg: linear-gradient(180deg, #E0F4FD, #FFFDE7);
+    --topbar-bg: linear-gradient(135deg, #A8D8EA, #FFE082);
+    --nav-active-bg: linear-gradient(135deg, #A8D8EA, #C8E6C9);
+    --btn-bg: linear-gradient(135deg, #A8D8EA, #FFE082);
+    --btn-bg-hover: linear-gradient(135deg, #92D0E8, #FFD54F);
+    --shadow: 0 2px 12px rgba(168, 216, 234, 0.18);
+    --shadow-hover: 0 4px 20px rgba(168, 216, 234, 0.28);
+}
+
+/* 暗色 / 护眼模式 */
+:root[data-dark="1"] {
+    --bg-white: #262633;
+    --bg-gray: #2A2A38;
+    --card-bg: #262633;
+    --app-bg: #15151F;
+    --text-primary: #ECECF1;
+    --text-secondary: #B0B0BE;
+    --text-light: #7C7C8E;
+    --border-color: #34344A;
+    --border-soft: #34344A;
+    --bg-soft: #23232F;
+    --sidebar-bg: linear-gradient(180deg, #1C1C28, #181820);
+    --topbar-bg: linear-gradient(135deg, #2A2A38, #20202C);
+    --nav-active-bg: linear-gradient(135deg, #34344A, #2A2A38);
+    --btn-bg: linear-gradient(135deg, #4FA3C7, #2E7D32);
+    --btn-bg-hover: linear-gradient(135deg, #5FB3D7, #388E3C);
+    --shadow: 0 2px 12px rgba(0,0,0,0.4);
+    --shadow-hover: 0 4px 20px rgba(0,0,0,0.5);
+}
+/* 暗色 + 蓝色小鸡主题叠加 */
+:root[data-dark="1"][data-theme="bluechick"] {
+    --primary: #72C2DE;
+    --primary-light: #1E3A3F;
+    --primary-dark: #A8D8EA;
+    --accent: #FFD54F;
+    --accent-strong: #FFE082;
+    --sidebar-bg: linear-gradient(180deg, #141E24, #0F181D);
+    --topbar-bg: linear-gradient(135deg, #1A3040, #141E24);
+    --nav-active-bg: linear-gradient(135deg, #1E3540, #141E24);
+}
+
+/* 顶部栏 🎨 主题快捷切换按钮 */
+.theme-quick-btn {
+    border: none; background: rgba(255,255,255,.2);
+    color: #fff; font-size: 16px; padding: 3px 8px;
+    border-radius: 8px; cursor: pointer; margin-left: 6px;
+    transition: all .2s; line-height: 1;
+}
+.theme-quick-btn:hover { background: rgba(255,255,255,.35); transform: scale(1.15); }
+.theme-quick-btn:active { transform: scale(.95); }
 
 /* 重置 */
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1722,7 +1783,16 @@ input[type="range"]::-webkit-slider-thumb {
 /* ========== 响应式：侧边栏收起（手机端） ========== */
 @media (max-width: 768px) {
     .sidebar-toggle { display: block; }
-    .sidebar { transform: translateX(-100%); opacity: 0; pointer-events: none; }  /* 手机端默认隐藏，点☰菜单才滑出 */
+    /* ★ v80: 手机端侧边栏改为纯 CSS 抽屉——.collapsed 隐藏，:not(.collapsed) 滑出
+       （之前用 JS 行内样式隐藏，优先级压过 class，导致 ☰ 永远打不开，已修正） */
+    .sidebar {
+        position: fixed; top: 0; left: 0; height: 100%;
+        transform: translateX(-100%); opacity: 0; pointer-events: none;
+        transition: transform .25s ease, opacity .25s ease;
+        z-index: 1001; box-shadow: 2px 0 16px rgba(0,0,0,.18);
+    }
+    .sidebar.collapsed { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+    .sidebar:not(.collapsed) { transform: translateX(0); opacity: 1; pointer-events: auto; }
     /* 手机端内容区始终铺满（保险：即使 body 没加 sidebar-collapsed） */
     .content-area {
         margin-left: 0 !important;
