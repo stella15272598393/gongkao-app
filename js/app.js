@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-08-v71';
+const APP_VERSION = '2026-08-08-v72';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -888,9 +888,10 @@ function renderHome() {
 
     statsEl.innerHTML = html;
 
-    renderStreakHeatmap();
-    renderGrowthTrend();
-    renderTodos();
+    // 每个子模块独立 try-catch：任何一个崩溃不影响其他模块渲染（v72 防白屏）
+    try { renderStreakHeatmap(); } catch (e) { console.error('[renderHome] heatmap error:', e); }
+    try { renderGrowthTrend(); } catch (e) { console.error('[renderHome] trend error:', e); }
+    try { renderTodos(); } catch (e) { console.error('[renderHome] todos error:', e); }
 }
 
 /* ★ v64 首页成长趋势：金币 / 打卡 / 学习时长，近 30 天 */
@@ -944,45 +945,66 @@ function switchTrendMetric(m) {
 function renderGrowthTrend() {
     const canvas = document.getElementById('trendChart');
     if (!canvas) return;
-    const dpr = window.devicePixelRatio || 1;
-    const cssW = canvas.parentElement.offsetWidth || 320;
-    const cssH = 230;
-    canvas.width = cssW * dpr; canvas.height = cssH * dpr;
-    canvas.style.height = cssH + 'px';
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, cssW, cssH);
+    try {
+        const dpr = window.devicePixelRatio || 1;
+        const cssW = canvas.parentElement.offsetWidth || 320;
+        const cssH = 230;
+        canvas.width = cssW * dpr; canvas.height = cssH * dpr;
+        canvas.style.height = cssH + 'px';
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, cssW, cssH);
 
-    const metric = currentTrendMetric;
-    const { labels, values } = buildTrendData(metric);
-    const colorMap = { gold: cssVar('--accent', '#E75480'), checkin: cssVar('--primary', '#FF8FB1'), study: cssVar('--accent-strong', '#7CB342') };
-    const color = colorMap[metric] || colorMap.gold;
-    drawTrendChart(ctx, cssW, cssH, labels, values, color, metric);
+        const metric = currentTrendMetric;
+        const { labels, values } = buildTrendData(metric);
+        const colorMap = { gold: cssVar('--accent', '#E75480'), checkin: cssVar('--primary', '#FF8FB1'), study: cssVar('--accent-strong', '#7CB342') };
+        const color = colorMap[metric] || colorMap.gold;
+        drawTrendChart(ctx, cssW, cssH, labels, values, color, metric);
 
-    const total = values.reduce((a, b) => a + b, 0);
-    const unit = metric === 'gold' ? ' 🪙' : (metric === 'study' ? ' 分钟' : '');
-    const titleMap = { gold: '近30天累计金币', checkin: '近30天已打卡', study: '近30天学习时长' };
-    let cap = document.getElementById('trendCaption');
-    if (!cap) {
-        cap = document.createElement('div');
-        cap.id = 'trendCaption';
-        cap.style.cssText = 'text-align:center;font-size:12px;color:' + cssVar('--text-light', '#999') + ';margin-top:6px;';
-        canvas.parentElement.appendChild(cap);
-    }
-    if (metric === 'checkin') {
-        const checkedDays = values.filter(v => v > 0).length;
-        cap.textContent = titleMap[metric] + '：' + checkedDays + ' 天 / 共 30 天';
-    } else {
-        cap.textContent = titleMap[metric] + '：' + total + unit;
+        const total = values.reduce((a, b) => a + b, 0);
+        const unit = metric === 'gold' ? ' 🪙' : (metric === 'study' ? ' 分钟' : '');
+        const titleMap = { gold: '近30天累计金币', checkin: '近30天已打卡', study: '近30天学习时长' };
+        let cap = document.getElementById('trendCaption');
+        if (!cap) {
+            cap = document.createElement('div');
+            cap.id = 'trendCaption';
+            cap.style.cssText = 'text-align:center;font-size:12px;color:' + cssVar('--text-light', '#999') + ';margin-top:6px;';
+            canvas.parentElement.appendChild(cap);
+        }
+        if (metric === 'checkin') {
+            const checkedDays = values.filter(v => v > 0).length;
+            cap.textContent = titleMap[metric] + '：' + checkedDays + ' 天 / 共 30 天';
+        } else {
+            cap.textContent = titleMap[metric] + '：' + total + unit;
+        }
+    } catch (e) {
+        console.error('[renderGrowthTrend] canvas error:', e);
+        // Canvas 失败时降级为文字摘要
+        canvas.style.display = 'none';
+        let fallback = document.getElementById('trendFallback');
+        if (!fallback) {
+            fallback = document.createElement('div');
+            fallback.id = 'trendFallback';
+            fallback.style.cssText = 'padding:20px;text-align:center;color:' + cssVar('--text-light','#999') + ';font-size:13px;';
+            canvas.parentElement.insertBefore(fallback, canvas.nextSibling);
+        }
+        const metric = currentTrendMetric;
+        const { values } = buildTrendData(metric);
+        const total = values.reduce((a, b) => a + b, 0);
+        const map = { gold: total + ' 🪙', checkin: values.filter(v=>v>0).length + '/30 天', study: total + ' 分钟' };
+        fallback.textContent = '📈 ' + (metric === 'gold' ? '金币' : metric === 'checkin' ? '打卡' : '学习') + '趋势：' + (map[metric] || '暂无数据') + '（图表渲染中…）';
     }
 }
 /* 通用折线趋势图（v66：智能Y轴 + 打卡语义化 + 渐变填充美化） */
 function drawTrendChart(ctx, W, H, labels, values, color, metric) {
+    if (!ctx || !labels || !values || !values.length) return;
     const pad = { top: 18, right: 16, bottom: 28, left: 38 };
     const w = W - pad.left - pad.right, h = H - pad.top - pad.bottom;
+    if (w <= 0 || h <= 0) return;  // 防止零宽高崩溃
     const isCheckin = metric === 'checkin';
     const nonZero = values.some(v => v > 0);
-    const axis = niceAxis(Math.max(...values), isCheckin && nonZero);
+    const maxVal = Math.max(...values, 1);  // 防止全0时 Math.max(...[]) = -Infinity
+    const axis = niceAxis(maxVal, isCheckin && nonZero);
 
     // 网格 + Y 轴
     ctx.strokeStyle = cssVar('--border-color', '#eee');
