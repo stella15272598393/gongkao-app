@@ -1,5 +1,5 @@
 /* ========================================
-   考公工作台 - Service Worker（v83 离线缓存版）
+   考公工作台 - Service Worker（v86 离线缓存增强版）
    --------------------------------------------------------
    策略：
    - 静态资源（HTML/CSS/JS/图片）：Cache First（缓存优先）
@@ -20,7 +20,7 @@
    ======================================== */
 
 const CACHE_PREFIX = 'gongkao-v';
-const CACHE_VERSION = '85';          // ← 与 APP_VERSION 同步，发版时改这里
+const CACHE_VERSION = '86';          // ← 与 APP_VERSION 同步，发版时改这里
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
 // 需要预缓存的静态资源（安装时一次性缓存）
@@ -150,11 +150,18 @@ async function networkFirst(request) {
         // 完全没有缓存 → 返回一个友好的离线响应（仅对 HTML 请求）
         if (request.headers.get('Accept').includes('text/html')) {
             return new Response(
-                '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+                '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+                '<meta name="theme-color" content="#FFB6C1">' +
                 '<title>考公工作台 - 离线模式</title>' +
-                '<style>body{display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:sans-serif;background:#f5f5f5;color:#333;text-align:center;padding:20px}' +
-                '.offline-icon{font-size:64px;margin-bottom:20px}h1{font-size:20px}p{color:#888}</style></head>' +
-                '<body><div class="offline-icon">☁️</div><h1>当前网络不可用</h1><p>考公工作台正在使用离线缓存运行<br>请检查网络连接后刷新获取最新内容</p></body></html>',
+                '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,sans-serif;background:#FFF5F7;display:flex;align-items:center;justify-content:center;min-height:100vh;color:#333;padding:20px;text-align:center}' +
+                '.card{background:#fff;border-radius:16px;padding:40px 30px;max-width:380px;box-shadow:0 4px 20px rgba(255,182,193,.25)}' +
+                '.icon{font-size:52px;margin-bottom:16px}h1{font-size:18px;color:#E91E63;margin-bottom:12px}' +
+                'p{font-size:14px;color:#888;line-height:1.7;margin-bottom:24px}' +
+                '.btn{display:inline-block;background:linear-gradient(135deg,#FFB6C1,#FF8FAB);color:#fff;padding:11px 32px;border-radius:22px;text-decoration:none;font-size:14px;font-weight:600;box-shadow:0 2px 10px rgba(255,107,129,.3)}' +
+                '.tip{margin-top:20px;font-size:12px;color:#ccc}}</style></head>' +
+                '<body><div class="card"><div class="icon">🌸</div><h1>当前网络不可用</h1>' +
+                '<p>考公工作台正在使用<br><b>离线缓存</b>运行<br>部分内容可能不是最新</p>' +
+                '<a class="btn" href="./">重新加载</a><p class="tip">Service Worker 缓存 · 网络恢复后自动更新</p></div></body></html>',
                 { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
             );
         }
