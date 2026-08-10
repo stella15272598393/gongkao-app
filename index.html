@@ -7,8 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v87.2 内联版本号 -->
-    <meta name="app-version" content="2026-08-10-v87.2">
+    <!-- ★ v87.3 内联版本号 -->
+    <meta name="app-version" content="2026-08-10-v87.3">
     <title>🪷 莲莲工作台</title>
     <!-- ★ v83: 启动自清理 + Service Worker 离线缓存 -->
     <script>
@@ -30,15 +30,19 @@
         // 第二波：2秒后再清一次（干掉 scheduleDailyPush 在 1.5s 后弹出的推送遮罩）
         setTimeout(function(){
           ['welcomeScreen','dailyPushOverlay','sidebarOverlay'].forEach(killOverlay);
-          // 兜底：把所有 z-index > 9000 的 fixed 元素全部禁用交互（topBar 除外）
+          // 兜底：把所有 z-index >= 899 的 fixed 元素全部禁用交互（topBar/sidebar除外）
           document.querySelectorAll('*').forEach(function(el){
             try{
               var s = getComputedStyle(el);
-              if(s.position==='fixed' && parseInt(s.zIndex||0)>9000 && el.id!=='topBar'){
+              if(s.position==='fixed' && parseInt(s.zIndex||0)>=899 && el.id!=='topBar' && el.id!=='sidebar'){
                 el.style.pointerEvents='none';
               }
             }catch(e){}
           });
+          // ★ v87.2: 确保侧边栏在本地文件协议下也处于收起状态
+          var sb = document.getElementById('sidebar');
+          if (sb) sb.classList.add('collapsed');
+          document.body.classList.add('sidebar-collapsed');
         }, 2000);
         // ★ v87: 已移除旧版 SW 清理代码（v82-v86 的 unregister+delete caches）。
         //    原因：版本化缓存名(gongkao-v{N})已解决旧SW死循环问题，
@@ -61,9 +65,9 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=87.2">
+    <link rel="stylesheet" href="./css/style.css?v=87.3">
 </head>
-<body>
+<body class="sidebar-collapsed">
     <!-- 顶部状态栏 -->
     <header class="top-bar" id="topBar">
         <div class="top-bar-left">
@@ -97,7 +101,7 @@
         <!-- 侧边栏遮罩（手机端收起时点击关闭） -->
         <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
         <!-- 左侧导航栏 -->
-        <nav class="sidebar" id="sidebar">
+        <nav class="sidebar collapsed" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-kitty">🎀</div>
                 <span class="logo-text">莲莲工作台</span>
@@ -919,10 +923,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=87.2"></script>
-    <script src="./js/data-modules.js?v=87.2"></script>
-    <script src="./js/app.js?v=87.2"></script>
-    <script src="./js/loader.js?v=87.2"></script>
+    <script src="./js/data.js?v=87.3"></script>
+    <script src="./js/data-modules.js?v=87.3"></script>
+    <script src="./js/app.js?v=87.3"></script>
+    <script src="./js/loader.js?v=87.3"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
