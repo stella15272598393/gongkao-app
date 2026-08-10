@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
     <!-- ★ v87.2 内联版本号 -->
-    <meta name="app-version" content="2026-08-10-v87.2.2">
+    <meta name="app-version" content="2026-08-10-v87.2.3">
     <title>🪷 莲莲工作台</title>
     <!-- ★ v83: 启动自清理 + Service Worker 离线缓存 -->
     <script>
@@ -27,9 +27,27 @@
         }
         // 第一波：立即清除（HTML 解析阶段就执行，比任何外部 JS 都早）
         ['welcomeScreen','updateBanner','backupReminder','dailyPushOverlay','sidebarOverlay','appModalOverlay'].forEach(killOverlay);
+        // ★ 强制收起侧边栏（防止旧SW缓存导致侧边栏默认展开挡住页面）
+        (function(){
+          try {
+            var sb = document.getElementById('sidebar');
+            if (sb) sb.classList.add('collapsed');
+            document.body.classList.add('sidebar-collapsed');
+            var ov = document.getElementById('sidebarOverlay');
+            if (ov) { ov.classList.remove('show'); ov.style.display='none'; }
+          } catch(e){}
+        })();
         // 第二波：2秒后再清一次（干掉 scheduleDailyPush 在 1.5s 后弹出的推送遮罩）
         setTimeout(function(){
           ['welcomeScreen','dailyPushOverlay','sidebarOverlay'].forEach(killOverlay);
+          // ★ 兜底：再次强制收起侧边栏（防止JS初始化又展开）
+          try {
+            var sb2 = document.getElementById('sidebar');
+            if (sb2) sb2.classList.add('collapsed');
+            document.body.classList.add('sidebar-collapsed');
+            var ov2 = document.getElementById('sidebarOverlay');
+            if (ov2) { ov2.classList.remove('show'); ov2.style.display='none'; }
+          } catch(e){}
           // 兜底：把所有 z-index > 9000 的 fixed 元素全部禁用交互（topBar 除外）
           document.querySelectorAll('*').forEach(function(el){
             try{
