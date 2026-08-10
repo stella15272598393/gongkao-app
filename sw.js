@@ -20,7 +20,7 @@
    ======================================== */
 
 const CACHE_PREFIX = 'gongkao-v';
-const CACHE_VERSION = '87';          // ← 与 APP_VERSION 同步，发版时改这里
+const CACHE_VERSION = '87.1';          // ← 与 APP_VERSION 同步，发版时改这里
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
 // 需要预缓存的静态资源（安装时一次性缓存）

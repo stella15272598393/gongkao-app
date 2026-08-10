@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-10-v87';
+const APP_VERSION = '2026-08-10-v87.1';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -347,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scheduleDailyPush();
     syncChangshiFavToFavBox();   // 常识收藏同步进「我的收藏」模块
     renderMotto();               // ★ v87: 渲染置顶激励语录
+    initPWAInstall();           // ★ v87.1: PWA安装提示
 });
 
 // ========== Service Worker 注册 ==========
@@ -1206,6 +1207,89 @@ function confirmMotto() {
 function resetMotto() {
     var input = document.getElementById('mottoInput');
     if (input) { input.value = MOTTO_DEFAULT; input.select(); }
+}
+
+// ========== ★ v87.1: PWA 安装提示 ==========
+var deferredPrompt = null;  // 保存 beforeinstallprompt 事件
+
+/** 初始化PWA安装检测 */
+function initPWAInstall() {
+    // 监听安装事件（浏览器认为可安装时触发）
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();           // 阻止浏览器默认的安装横幅
+        deferredPrompt = e;          // 保存事件供后续手动触发
+        console.log('[PWA] 可安装，显示安装按钮');
+        showInstallButton();
+    });
+
+    // 监听安装完成
+    window.addEventListener('appinstalled', function() {
+        deferredPrompt = null;
+        hideInstallButton();
+        showToast('✅ 已安装到桌面！以后可以直接从桌面图标打开啦');
+        // 隐藏侧边栏中的安装入口
+        var btn = document.getElementById('pwaInstallSidebarBtn');
+        if (btn) btn.style.display = 'none';
+    });
+
+    // 检查是否已经以独立模式运行（已安装）
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('[PWA] 已在独立模式下运行');
+        return;
+    }
+
+    // 延迟检查：SW 注册完成后再次尝试显示安装按钮
+    setTimeout(function() {
+        if (!deferredPrompt && navigator.serviceWorker && navigator.serviceWorker.controller) {
+            // SW已控制页面但还没收到beforeinstallprompt → 可能不支持安装或已安装
+            console.log('[PWA] SW已激活，等待安装事件...');
+        }
+    }, 3000);
+}
+
+/** 显示安装按钮（在侧边栏末尾） */
+function showInstallButton() {
+    var existing = document.getElementById('pwaInstallEntry');
+    if (existing) return;
+
+    var sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
+    var li = document.createElement('li');
+    li.id = 'pwaInstallEntry';
+    li.className = 'nav-item';
+    li.id = 'pwaInstallSidebarBtn';
+    li.innerHTML = '<div class="nav-icon">📱</div><span>安装到桌面</span>';
+    li.onclick = promptInstallPWA;
+    li.style.cursor = 'pointer';
+
+    // 找到侧边栏 nav-menu 的末尾
+    var navMenu = sidebar.querySelector('.nav-menu') || sidebar;
+    navMenu.appendChild(li);
+}
+
+/** 隐藏安装按钮 */
+function hideInstallButton() {
+    var el = document.getElementById('pwaInstallEntry');
+    if (el) el.remove();
+}
+
+/** 手动触发安装弹窗 */
+function promptInstallPWA() {
+    if (!deferredPrompt) {
+        // 没有缓存的事件 → 尝试用 Web API 触发
+        showToast('💡 请使用浏览器的"添加到主屏幕"功能安装\n（菜单 → 添加到主屏幕）');
+        return;
+    }
+    deferredPrompt.prompt();         // 显示浏览器安装对话框
+    deferredPrompt.userChoice.then(function(choiceResult) {
+        if (choiceResult.outcome === 'accepted') {
+            console.log('[PWA] 用户接受了安装');
+        } else {
+            console.log('[PWA] 用户拒绝了安装');
+        }
+        deferredPrompt = null;
+    });
 }
 
 function _renderHomeCore(statsEl) {
