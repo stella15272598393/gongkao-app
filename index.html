@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
     <!-- ★ v87.2 内联版本号 -->
-    <meta name="app-version" content="2026-08-10-v87.2.5">
+    <meta name="app-version" content="2026-08-10-v87.2.6">
     <title>🪷 莲莲工作台</title>
     <!-- ★ v83: 启动自清理 + Service Worker 离线缓存 -->
     <script>
@@ -27,19 +27,21 @@
         }
         // 第一波：立即清除（HTML 解析阶段就执行，比任何外部 JS 都早）
         ['welcomeScreen','updateBanner','backupReminder','dailyPushOverlay','sidebarOverlay','appModalOverlay'].forEach(killOverlay);
-        // ★ v87.2.5: 强制注销所有 Service Worker（清浏览器数据不会清SW！旧SW持续用坏缓存控制页面）
-        //    注销后自动刷新一次（sessionStorage 防循环），确保页面干净加载
+        // ★ 僵尸 SW 一次性清理（排障用，绝不是常态开机逻辑）
+        //   仅在「确实检测到旧注册」时：注销并刷新一次；sessionStorage 标记防刷新死循环。
+        //   清理后 SW 由 app.js 正常注册并长期保留 —— 这样浏览器才能满足 PWA 安装条件。
+        //   若本就干净（无注册），只打标记、不刷新、不干扰，PWA 正常可用。
         try {
-          var _swKilled = sessionStorage.getItem('_sw_killed_v87');
-          if ('serviceWorker' in navigator && !_swKilled) {
+          var _swClean = sessionStorage.getItem('sw_zombie_cleaned');
+          if ('serviceWorker' in navigator && !_swClean) {
             navigator.serviceWorker.getRegistrations().then(function(regs){
-              var p = Promise.resolve();
-              regs.forEach(function(r){ p = p.then(function(){ return r.unregister(); }); });
-              return p;
-            }).then(function(){
-              sessionStorage.setItem('_sw_killed_v87', '1');
-              window.location.reload(true);
-            }).catch(function(){});
+              var has = regs && regs.length > 0;
+              try { sessionStorage.setItem('sw_zombie_cleaned', '1'); } catch(e){}
+              if (has) {
+                regs.forEach(function(r){ try { r.unregister(); } catch(e){} });
+                window.location.reload(true); // 仅此一次：清掉坏缓存后干净加载
+              }
+            }).catch(function(){ try { sessionStorage.setItem('sw_zombie_cleaned','1'); }catch(e){} });
           }
         } catch(e){}
         // ★ 强制收起侧边栏（防止旧SW缓存导致侧边栏默认展开挡住页面）
@@ -78,7 +80,7 @@
             }catch(e){}
           });
         }, 2000);
-        // ★ v87.2.5: 5秒终极保底 —— 核选项：强制恢复页面可用性
+        // ★ v87.2.6: 5秒终极保底 —— 移除所有可能遮挡点击的全屏遮罩，恢复页面可用性
         setTimeout(function(){
           try {
             // 隐藏"正在加载数据..."
@@ -128,7 +130,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=87.2.1">
+    <link rel="stylesheet" href="./css/style.css?v=87.2.6">
 </head>
 <body class="sidebar-collapsed">
     <!-- 顶部状态栏 -->
@@ -986,10 +988,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=87.2.1"></script>
-    <script src="./js/data-modules.js?v=87.2.1"></script>
-    <script src="./js/app.js?v=87.2.1"></script>
-    <script src="./js/loader.js?v=87.2.1"></script>
+    <script src="./js/data.js?v=87.2.6"></script>
+    <script src="./js/data-modules.js?v=87.2.6"></script>
+    <script src="./js/app.js?v=87.2.6"></script>
+    <script src="./js/loader.js?v=87.2.6"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
