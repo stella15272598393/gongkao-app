@@ -1,12 +1,1 @@
-{
-  "version": "2026-08-10-v87.2.6",
-  "date": "2026-08-10",
-  "changelog": [
-    "v87.2.6: 按用户要求精准修复",
-    "1) 僵尸SW清理改为真正一次性（sessionStorage防刷新死循环，仅当存在旧注册时才注销+刷新一次；之后SW由app.js正常注册并保留，PWA安装条件得以满足）",
-    "2) 修复manifest图标尺寸声明错误（icon-coin-192/512 改为512x512，统一purpose格式），保证浏览器正常触发PWA安装",
-    "3) 保留启动脚本对全屏遮罩DOM的检测与移除（welcomeScreen/dailyPushOverlay/sidebarOverlay等），解决按钮偶尔点击失灵",
-    "4) 打卡/金币/学习时长/各业务模块逻辑与页面配色布局UI原样保留，未做大范围重写",
-    "5) 修正卡死已久的 ?v= 版本戳（87.2.1→87.2.6），确保静态资源缓存正确失效"
-  ]
-}
+{"version": "2026-08-10-v87.3.0", "date": "2026-08-10", "changelog": ["v87.3.0: 网络优先缓存策略 + PWA图标修复 + 版本同步", "1) SW缓存策略重构：页面主体(HTML/CSS/JS/图片)全部改为Network First，每次启动优先拉取最新版，失败才读离线缓存兜底", "2) manifest.json移除金币图标(icon-coin)，PWA安装桌面快捷方式只使用HelloKitty小兔子logo", "3) 版本号全量同步：APP_VERSION/version.json/index.html meta/sw.js CACHE_VERSION 统一为87.3.0，修复之前版本不一致导致版本检测失效", "4) content/*.json保持Network First不变（爬虫数据每次校验更新）", "5) 保留脏数据容错+一次性僵尸SW清理逻辑不变，UI/打卡/金币等业务逻辑零改动"]}
