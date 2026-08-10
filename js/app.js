@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-10-v87.1';
+const APP_VERSION = '2026-08-10-v87.2';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -1173,21 +1173,34 @@ function openMottoEditor() {
     var old = document.getElementById('mottoEditOverlay');
     if (old) old.remove();
 
+    // 使用与快捷入口/底部栏编辑器相同的 modal-overlay 模式
     var overlay = document.createElement('div');
     overlay.id = 'mottoEditOverlay';
+    overlay.className = 'modal-overlay';
+    overlay.style.cssText = 'z-index:200003;display:flex;align-items:center;justify-content:center;position:fixed;inset:0;background:rgba(0,0,0,.5);';
+    overlay.onclick = function(e) { if (e.target === overlay) closeMottoEditor(); };
+
     overlay.innerHTML =
-        '<div class="overlay-backdrop" onclick="this.parentElement.remove()"></div>' +
-        '<div class="overlay-panel" style="max-width:420px;width:90%">' +
-        '<h3 style="margin:0 0 14px;font-size:17px;color:#C2185B;">✏️ 编辑激励语录</h3>' +
-        '<textarea id="mottoInput" rows="3" style="width:100%;padding:12px;border:2px solid #FFB6C1;border-radius:10px;font-size:15px;line-height:1.6;resize:vertical;box-sizing:border-box;font-family:inherit;color:#333;outline:none;" placeholder="写下激励自己的话...">' + getMotto().replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</textarea>' +
-        '<div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end;">' +
-        '<button onclick="resetMotto()" style="padding:8px 18px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#888;cursor:pointer;font-size:13px;">恢复默认</button>' +
-        '<button onclick="confirmMotto()" style="padding:8px 24px;border:none;border-radius:10px;background:linear-gradient(135deg,#FFB6C1,#FF8FAB);color:#fff;cursor:pointer;font-size:13px;font-weight:600;">保存</button>' +
+        '<div class="modal-content" style="max-width:420px;width:90%;padding:24px 20px 18px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">' +
+        '<h3 style="margin:0;font-size:17px;color:#C2185B;">✏️ 编辑激励语录</h3>' +
+        '<span onclick="closeMottoEditor()" style="cursor:pointer;font-size:22px;color:#999;line-height:1;padding:4px;">&times;</span>' +
+        '</div>' +
+        '<textarea id="mottoInput" rows="3" style="width:100%;padding:12px;border:2px solid #FFB6C1;border-radius:10px;font-size:15px;line-height:1.6;resize:vertical;box-sizing:border-box;font-family:inherit;color:#333;outline:none;background:#fff;" placeholder="写下激励自己的话...">' + getMotto().replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</textarea>' +
+        '<div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end;">' +
+        '<button onclick="resetMotto()" style="padding:9px 20px;border:1px solid #e0e0e0;border-radius:10px;background:#fff;color:#888;cursor:pointer;font-size:13px;">恢复默认</button>' +
+        '<button onclick="confirmMotto()" style="padding:9px 24px;border:none;border-radius:10px;background:linear-gradient(135deg,#FFB6C1,#FF8FAB);color:#fff;cursor:pointer;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(255,107,129,.3);">保存</button>' +
         '</div></div>';
     document.body.appendChild(overlay);
 
     var input = document.getElementById('mottoInput');
     if (input) { input.focus(); input.select(); }
+}
+
+/** 关闭编辑弹窗 */
+function closeMottoEditor() {
+    var el = document.getElementById('mottoEditOverlay');
+    if (el) el.remove();
 }
 
 function confirmMotto() {
@@ -1200,8 +1213,7 @@ function confirmMotto() {
     var el = document.getElementById('mottoText');
     if (el) el.textContent = text;
 
-    var overlay = document.getElementById('mottoEditOverlay');
-    if (overlay) overlay.remove();
+    closeMottoEditor();
 }
 
 function resetMotto() {
