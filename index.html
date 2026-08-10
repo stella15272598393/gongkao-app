@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
     <!-- ★ v87.2 内联版本号 -->
-    <meta name="app-version" content="2026-08-10-v87.2.4">
+    <meta name="app-version" content="2026-08-10-v87.2.5">
     <title>🪷 莲莲工作台</title>
     <!-- ★ v83: 启动自清理 + Service Worker 离线缓存 -->
     <script>
@@ -27,6 +27,21 @@
         }
         // 第一波：立即清除（HTML 解析阶段就执行，比任何外部 JS 都早）
         ['welcomeScreen','updateBanner','backupReminder','dailyPushOverlay','sidebarOverlay','appModalOverlay'].forEach(killOverlay);
+        // ★ v87.2.5: 强制注销所有 Service Worker（清浏览器数据不会清SW！旧SW持续用坏缓存控制页面）
+        //    注销后自动刷新一次（sessionStorage 防循环），确保页面干净加载
+        try {
+          var _swKilled = sessionStorage.getItem('_sw_killed_v87');
+          if ('serviceWorker' in navigator && !_swKilled) {
+            navigator.serviceWorker.getRegistrations().then(function(regs){
+              var p = Promise.resolve();
+              regs.forEach(function(r){ p = p.then(function(){ return r.unregister(); }); });
+              return p;
+            }).then(function(){
+              sessionStorage.setItem('_sw_killed_v87', '1');
+              window.location.reload(true);
+            }).catch(function(){});
+          }
+        } catch(e){}
         // ★ 强制收起侧边栏（防止旧SW缓存导致侧边栏默认展开挡住页面）
         (function(){
           try {
@@ -63,7 +78,7 @@
             }catch(e){}
           });
         }, 2000);
-        // ★ v87.2.4: 5秒终极保底 —— 不管 app.js 是否报错/卡死，强制恢复页面可用性
+        // ★ v87.2.5: 5秒终极保底 —— 核选项：强制恢复页面可用性
         setTimeout(function(){
           try {
             // 隐藏"正在加载数据..."
@@ -74,7 +89,18 @@
             if (bt && window.innerWidth <= 768) bt.style.cssText = 'display:flex;position:fixed;left:0;right:0;bottom:0;z-index:950;background:#fff;border-top:1px solid #eee;';
             // 清掉可能残留的欢迎屏
             var ws = document.getElementById('welcomeScreen');
-            if (ws) { ws.style.pointerEvents='none'; ws.style.opacity='0'; setTimeout(function(){try{ws.remove();}catch(e){},400); }
+            if (ws) { ws.style.pointerEvents='none'; ws.style.opacity='0'; try{ws.remove();}catch(e){} }
+            // ★ 核选项：移除所有可能挡点击的全屏遮罩（不管 id 是什么）
+            document.querySelectorAll('div').forEach(function(el){
+              try {
+                var s = getComputedStyle(el);
+                if(s.position==='fixed' && el.offsetWidth > window.innerWidth*0.8 && el.offsetHeight > window.innerHeight*0.5) {
+                  el.style.display='none';
+                }
+              } catch(e){}
+            });
+            // 确保 body 本身可点击
+            document.body.style.pointerEvents = 'auto';
             // 再次强制收起侧边栏
             var sb3 = document.getElementById('sidebar');
             if (sb3) sb3.classList.add('collapsed');

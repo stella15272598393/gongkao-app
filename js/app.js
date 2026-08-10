@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-10-v87.2.4';
+const APP_VERSION = '2026-08-10-v87.2.5';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -906,7 +906,7 @@ function renderHome() {
         if (tip) tip.style.display = 'none';
     } catch (e) {
         console.error('[renderHome] 主体异常，降级显示:', e.message || e, e.stack);
-        // v87.2.4: 必须隐藏 loading 提示（否则用户看到卡死的"正在加载..."）
+        // v87.2.5: 必须隐藏 loading 提示（否则用户看到卡死的"正在加载..."）
         var _tip = document.getElementById('homeLoadingTip');
         if (_tip) _tip.style.display = 'none';
         // v74: 降级内容也要可交互 —— 显示基本打卡 + 刷新按钮
