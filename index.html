@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
     <!-- ★ v87.2 内联版本号 -->
-    <meta name="app-version" content="2026-08-10-v87.2.3">
+    <meta name="app-version" content="2026-08-10-v87.2.4">
     <title>🪷 莲莲工作台</title>
     <!-- ★ v83: 启动自清理 + Service Worker 离线缓存 -->
     <script>
@@ -35,6 +35,11 @@
             document.body.classList.add('sidebar-collapsed');
             var ov = document.getElementById('sidebarOverlay');
             if (ov) { ov.classList.remove('show'); ov.style.display='none'; }
+            // 确保手机端底部导航栏可见
+            if (window.innerWidth <= 768) {
+              var bt = document.getElementById('bottomTab');
+              if (bt) bt.style.display = 'flex';
+            }
           } catch(e){}
         })();
         // 第二波：2秒后再清一次（干掉 scheduleDailyPush 在 1.5s 后弹出的推送遮罩）
@@ -58,6 +63,24 @@
             }catch(e){}
           });
         }, 2000);
+        // ★ v87.2.4: 5秒终极保底 —— 不管 app.js 是否报错/卡死，强制恢复页面可用性
+        setTimeout(function(){
+          try {
+            // 隐藏"正在加载数据..."
+            var lt = document.getElementById('homeLoadingTip');
+            if (lt) lt.style.display = 'none';
+            // 确保底部导航栏在手机端可见
+            var bt = document.getElementById('bottomTab');
+            if (bt && window.innerWidth <= 768) bt.style.cssText = 'display:flex;position:fixed;left:0;right:0;bottom:0;z-index:950;background:#fff;border-top:1px solid #eee;';
+            // 清掉可能残留的欢迎屏
+            var ws = document.getElementById('welcomeScreen');
+            if (ws) { ws.style.pointerEvents='none'; ws.style.opacity='0'; setTimeout(function(){try{ws.remove();}catch(e){},400); }
+            // 再次强制收起侧边栏
+            var sb3 = document.getElementById('sidebar');
+            if (sb3) sb3.classList.add('collapsed');
+            document.body.classList.add('sidebar-collapsed');
+          } catch(e){}
+        }, 5000);
         // ★ v87: 已移除旧版 SW 清理代码（v82-v86 的 unregister+delete caches）。
         //    原因：版本化缓存名(gongkao-v{N})已解决旧SW死循环问题，
         //          此处再杀SW会导致离线缓存永远无法生效（github.io被reset时白屏）。
