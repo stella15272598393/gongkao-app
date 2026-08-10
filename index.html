@@ -8,9 +8,17 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
     <!-- ★ v87.2 内联版本号 -->
-    <meta name="app-version" content="2026-08-10-v87.2.6">
+    <meta name="app-version" content="2026-08-10-v87.2.7">
     <title>🪷 莲莲工作台</title>
-    <!-- ★ v83: 启动自清理 + Service Worker 离线缓存 -->
+    <!-- ★ v87.2.7: 启动自清理 + 遮罩封死 + 脏数据急救 -->
+    <style>
+      /* 从 CSS 源头封死所有可能遮挡点击的遮罩元素（!important 覆盖行内样式） */
+      #welcomeScreen, #dailyPushOverlay, #sidebarOverlay,
+      #appModalOverlay, #updateBanner, #backupReminder { pointer-events: none !important; }
+      .modal-content { pointer-events: auto !important; }
+      #goldFxLayer { pointer-events: none !important; }
+      body { pointer-events: auto !important; }
+    </style>
     <script>
       (function () {
         // 工具函数：强制移除或隐藏一个元素（不管它在哪、什么状态）
@@ -25,23 +33,58 @@
             if (el.parentNode) el.parentNode.removeChild(el);
           } catch(e){}
         }
+        // ★ v87.2.7: 核心急救 —— 扫描并禁用所有可能遮挡点击的 fixed/absolute 元素
+        function nukeOverlays() {
+          try {
+            document.querySelectorAll('*').forEach(function(el){
+              try {
+                var s = getComputedStyle(el);
+                var isFixed = (s.position === 'fixed' || s.position === 'absolute');
+                var zi = parseInt(s.zIndex) || 0;
+                var ow = el.offsetWidth, oh = el.offsetHeight;
+                var isSafeUI = (el.id === 'topBar' || el.id === 'bottomTab' ||
+                  el.id === 'sidebar' || el.tagName === 'HEADER' || el.tagName === 'NAV' ||
+                  el.tagName === 'MAIN' || el.tagName === 'FOOTER' || el.tagName === 'BUTTON' ||
+                  (el.className && String(el.className).indexOf('collapsed') >= 0 &&
+                   String(el.className).indexOf('sidebar') >= 0));
+                if (!isSafeUI && isFixed && zi > 800 && ow > 100 && oh > 100) {
+                  el.style.pointerEvents = 'none';
+                  if (ow > window.innerWidth * 0.7 && oh > window.innerHeight * 0.4) {
+                    el.style.display = 'none';
+                  }
+                }
+              } catch(e){}
+            });
+          } catch(e){}
+        }
+        // ★ v87.2.7: 脏数据容错 —— 仅重置出错的"弹窗/遮罩"模块，绝不碰金币/打卡历史
+        //   禁区（绝对不清理）：gk_gold_checkins, gk_gold_tasks, gk_gold_ledger,
+        //   gk_gold_moduleDefault, gk_gold_override, gk_gold_taskDone, gk_streak
+        try {
+          var _safeResetKeys = ['gk_daily_push']; // 仅这些弹窗类模块允许在格式异常时重置
+          _safeResetKeys.forEach(function(k){
+            var v = localStorage.getItem(k);
+            if (v) { try { JSON.parse(v); } catch(e) { localStorage.removeItem(k); } }
+          });
+        } catch(e){}
         // 第一波：立即清除（HTML 解析阶段就执行，比任何外部 JS 都早）
         ['welcomeScreen','updateBanner','backupReminder','dailyPushOverlay','sidebarOverlay','appModalOverlay'].forEach(killOverlay);
         // ★ 僵尸 SW 一次性清理（排障用，绝不是常态开机逻辑）
-        //   仅在「确实检测到旧注册」时：注销并刷新一次；sessionStorage 标记防刷新死循环。
-        //   清理后 SW 由 app.js 正常注册并长期保留 —— 这样浏览器才能满足 PWA 安装条件。
+        //   使用 localStorage 标记：仅首次进入执行一次 unregister 旧注册并刷新，
+        //   之后标记已存在 → 不再销毁 SW，保障 PWA 能正常注册并安装到桌面。
         //   若本就干净（无注册），只打标记、不刷新、不干扰，PWA 正常可用。
         try {
-          var _swClean = sessionStorage.getItem('sw_zombie_cleaned');
+          var _swClean = localStorage.getItem('sw_zombie_cleaned');
           if ('serviceWorker' in navigator && !_swClean) {
+            // 先打标记（防刷新死循环），再检测旧注册
+            try { localStorage.setItem('sw_zombie_cleaned', '1'); } catch(e){}
             navigator.serviceWorker.getRegistrations().then(function(regs){
               var has = regs && regs.length > 0;
-              try { sessionStorage.setItem('sw_zombie_cleaned', '1'); } catch(e){}
               if (has) {
                 regs.forEach(function(r){ try { r.unregister(); } catch(e){} });
                 window.location.reload(true); // 仅此一次：清掉坏缓存后干净加载
               }
-            }).catch(function(){ try { sessionStorage.setItem('sw_zombie_cleaned','1'); }catch(e){} });
+            }).catch(function(){});
           }
         } catch(e){}
         // ★ 强制收起侧边栏（防止旧SW缓存导致侧边栏默认展开挡住页面）
@@ -59,9 +102,23 @@
             }
           } catch(e){}
         })();
+        // ★ v87.2.7: MutationObserver —— 实时监控 DOM，新增的高 z-index 遮罩立即禁用点击
+        var _obs = null;
+        try {
+          _obs = new MutationObserver(function(){
+            requestAnimationFrame(function(){ nukeOverlays(); });
+          });
+          document.addEventListener('DOMContentLoaded', function(){
+            try { _obs.observe(document.body, { childList: true, subtree: true }); } catch(e){}
+            setTimeout(nukeOverlays, 50);
+            setTimeout(nukeOverlays, 300);
+            setTimeout(nukeOverlays, 1000);
+          });
+        } catch(e){}
         // 第二波：2秒后再清一次（干掉 scheduleDailyPush 在 1.5s 后弹出的推送遮罩）
         setTimeout(function(){
           ['welcomeScreen','dailyPushOverlay','sidebarOverlay'].forEach(killOverlay);
+          nukeOverlays();
           // ★ 兜底：再次强制收起侧边栏（防止JS初始化又展开）
           try {
             var sb2 = document.getElementById('sidebar');
@@ -80,33 +137,23 @@
             }catch(e){}
           });
         }, 2000);
-        // ★ v87.2.6: 5秒终极保底 —— 移除所有可能遮挡点击的全屏遮罩，恢复页面可用性
+        // ★ v87.2.7: 3.5秒保底（welcomeScreen 3秒自动关闭后的确认清理）
+        setTimeout(function(){ nukeOverlays(); killOverlay('welcomeScreen'); }, 3500);
+        // ★ v87.2.7: 5秒终极保底 —— 移除所有可能遮挡点击的全屏遮罩
         setTimeout(function(){
           try {
-            // 隐藏"正在加载数据..."
-            var lt = document.getElementById('homeLoadingTip');
-            if (lt) lt.style.display = 'none';
-            // 确保底部导航栏在手机端可见
-            var bt = document.getElementById('bottomTab');
-            if (bt && window.innerWidth <= 768) bt.style.cssText = 'display:flex;position:fixed;left:0;right:0;bottom:0;z-index:950;background:#fff;border-top:1px solid #eee;';
-            // 清掉可能残留的欢迎屏
-            var ws = document.getElementById('welcomeScreen');
-            if (ws) { ws.style.pointerEvents='none'; ws.style.opacity='0'; try{ws.remove();}catch(e){} }
-            // ★ 核选项：移除所有可能挡点击的全屏遮罩（不管 id 是什么）
-            document.querySelectorAll('div').forEach(function(el){
-              try {
-                var s = getComputedStyle(el);
-                if(s.position==='fixed' && el.offsetWidth > window.innerWidth*0.8 && el.offsetHeight > window.innerHeight*0.5) {
-                  el.style.display='none';
-                }
-              } catch(e){}
-            });
-            // 确保 body 本身可点击
+            killOverlay('welcomeScreen');
+            nukeOverlays();
             document.body.style.pointerEvents = 'auto';
-            // 再次强制收起侧边栏
             var sb3 = document.getElementById('sidebar');
             if (sb3) sb3.classList.add('collapsed');
             document.body.classList.add('sidebar-collapsed');
+            try { if (_obs) _obs.disconnect(); } catch(e){}
+            // 隐藏加载提示 & 确保底部导航栏可见
+            var lt = document.getElementById('homeLoadingTip');
+            if (lt) lt.style.display = 'none';
+            var bt = document.getElementById('bottomTab');
+            if (bt && window.innerWidth <= 768) bt.style.display = 'flex';
           } catch(e){}
         }, 5000);
         // ★ v87: 已移除旧版 SW 清理代码（v82-v86 的 unregister+delete caches）。
@@ -130,7 +177,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=87.2.6">
+    <link rel="stylesheet" href="./css/style.css?v=87.2.7">
 </head>
 <body class="sidebar-collapsed">
     <!-- 顶部状态栏 -->
@@ -988,10 +1035,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=87.2.6"></script>
-    <script src="./js/data-modules.js?v=87.2.6"></script>
-    <script src="./js/app.js?v=87.2.6"></script>
-    <script src="./js/loader.js?v=87.2.6"></script>
+    <script src="./js/data.js?v=87.2.7"></script>
+    <script src="./js/data-modules.js?v=87.2.7"></script>
+    <script src="./js/app.js?v=87.2.7"></script>
+    <script src="./js/loader.js?v=87.2.7"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">
