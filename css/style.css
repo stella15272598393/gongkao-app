@@ -249,6 +249,45 @@ body.sidebar-collapsed .content-area {
     font-size: 13px; color: var(--text-secondary);
 }
 
+/* ★ v87: 置顶激励语录/便签卡片 */
+.motto-card {
+    background: linear-gradient(135deg, #FFF0F5, #FFE4EC);
+    border: 1px solid rgba(255,182,193,.35);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: all .25s ease;
+    position: relative;
+    overflow: hidden;
+}
+.motto-card::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, rgba(255,182,193,.15), rgba(255,107,129,.1));
+    border-radius: 14px;
+    z-index: -1;
+}
+.motto-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(255,107,129,.18);
+    border-color: rgba(255,107,129,.45);
+}
+.motto-text {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #C2185B;
+    font-weight: 500;
+    word-break: break-word;
+}
+.motto-hint {
+    font-size: 11px;
+    color: #bbb;
+    margin-top: 6px;
+    text-align: right;
+}
+
 /* 操作栏 */
 .action-bar {
     display: flex; align-items: center; gap: 12px;

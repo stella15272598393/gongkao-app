@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-09-v86';
+const APP_VERSION = '2026-08-10-v87';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -346,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initGoldLedger();
     scheduleDailyPush();
     syncChangshiFavToFavBox();   // 常识收藏同步进「我的收藏」模块
+    renderMotto();               // ★ v87: 渲染置顶激励语录
 });
 
 // ========== Service Worker 注册 ==========
@@ -1147,6 +1148,64 @@ function resetQuickEntries() {
         cb.checked = shouldBeDefault;
         toggleQuickEditItem(cb);
     });
+}
+
+// ========== ★ v87: 置顶激励语录/便签 ==========
+var MOTTO_STORAGE_KEY = 'gk_motto';
+var MOTTO_DEFAULT = '🌟 加油！今天的努力是明天的底气。';
+
+function getMotto() {
+    try { return localStorage.getItem(MOTTO_STORAGE_KEY) || MOTTO_DEFAULT; }
+    catch(e) { return MOTTO_DEFAULT; }
+}
+
+function saveMotto(text) {
+    try { localStorage.setItem(MOTTO_STORAGE_KEY, text); } catch(e) {}
+}
+
+function renderMotto() {
+    var el = document.getElementById('mottoText');
+    if (el) el.textContent = getMotto();
+}
+
+function openMottoEditor() {
+    var old = document.getElementById('mottoEditOverlay');
+    if (old) old.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'mottoEditOverlay';
+    overlay.innerHTML =
+        '<div class="overlay-backdrop" onclick="this.parentElement.remove()"></div>' +
+        '<div class="overlay-panel" style="max-width:420px;width:90%">' +
+        '<h3 style="margin:0 0 14px;font-size:17px;color:#C2185B;">✏️ 编辑激励语录</h3>' +
+        '<textarea id="mottoInput" rows="3" style="width:100%;padding:12px;border:2px solid #FFB6C1;border-radius:10px;font-size:15px;line-height:1.6;resize:vertical;box-sizing:border-box;font-family:inherit;color:#333;outline:none;" placeholder="写下激励自己的话...">' + getMotto().replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</textarea>' +
+        '<div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end;">' +
+        '<button onclick="resetMotto()" style="padding:8px 18px;border:1px solid #ddd;border-radius:10px;background:#fff;color:#888;cursor:pointer;font-size:13px;">恢复默认</button>' +
+        '<button onclick="confirmMotto()" style="padding:8px 24px;border:none;border-radius:10px;background:linear-gradient(135deg,#FFB6C1,#FF8FAB);color:#fff;cursor:pointer;font-size:13px;font-weight:600;">保存</button>' +
+        '</div></div>';
+    document.body.appendChild(overlay);
+
+    var input = document.getElementById('mottoInput');
+    if (input) { input.focus(); input.select(); }
+}
+
+function confirmMotto() {
+    var input = document.getElementById('mottoInput');
+    if (!input) return;
+    var text = input.value.trim();
+    if (!text) text = MOTTO_DEFAULT;
+    saveMotto(text);
+
+    var el = document.getElementById('mottoText');
+    if (el) el.textContent = text;
+
+    var overlay = document.getElementById('mottoEditOverlay');
+    if (overlay) overlay.remove();
+}
+
+function resetMotto() {
+    var input = document.getElementById('mottoInput');
+    if (input) { input.value = MOTTO_DEFAULT; input.select(); }
 }
 
 function _renderHomeCore(statsEl) {

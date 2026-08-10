@@ -7,8 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="🪷 莲莲工作台 - 国考/湖北省考备考助手">
-    <!-- ★ v86 内联版本号 -->
-    <meta name="app-version" content="2026-08-09-v86">
+    <!-- ★ v87 内联版本号 -->
+    <meta name="app-version" content="2026-08-10-v87">
     <title>🪷 莲莲工作台</title>
     <!-- ★ v83: 启动自清理 + Service Worker 离线缓存 -->
     <script>
@@ -40,30 +40,10 @@
             }catch(e){}
           });
         }, 2000);
-        // SW 清理
-        try {
-          if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function (regs) {
-              var list = regs || [];
-              if (list.length) {
-                list.forEach(function (r) { try { r.unregister(); } catch (e) {} });
-                try {
-                  if (!sessionStorage.getItem('__sw_cleared_once__')) {
-                    sessionStorage.setItem('__sw_cleared_once__', '1');
-                    location.reload(true);
-                  }
-                } catch (e) { location.reload(true); }
-              }
-            });
-          }
-        } catch (e) {}
-        try {
-          if ('caches' in window) {
-            caches.keys().then(function (ks) {
-              (ks || []).forEach(function (k) { try { caches.delete(k); } catch (e) {} });
-            });
-          }
-        } catch (e) {}
+        // ★ v87: 已移除旧版 SW 清理代码（v82-v86 的 unregister+delete caches）。
+        //    原因：版本化缓存名(gongkao-v{N})已解决旧SW死循环问题，
+        //          此处再杀SW会导致离线缓存永远无法生效（github.io被reset时白屏）。
+        //    仅保留遮罩层清理（overlay kill）和5连击紧急出口。
         // 紧急出口：连续快速点 5 次页面任意位置 → 强制清除所有遮挡（用户最后手段）
         (function(){
           var _c=0,_t=0;
@@ -81,7 +61,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon-512.svg">
-    <link rel="stylesheet" href="./css/style.css?v=86">
+    <link rel="stylesheet" href="./css/style.css?v=87">
 </head>
 <body>
     <!-- 顶部状态栏 -->
@@ -208,6 +188,11 @@
                 <div class="module-header">
                     <h2>🪷 莲莲工作台</h2>
                     <p class="module-desc">坚持每日打卡，积累申论素材，祝你早日上岸！</p>
+                </div>
+                <!-- ★ v87: 置顶激励语录/便签（可编辑） -->
+                <div class="motto-card" id="mottoCard" onclick="openMottoEditor()">
+                    <div class="motto-text" id="mottoText">🌟 加油！今天的努力是明天的底气。</div>
+                    <div class="motto-hint">点击编辑</div>
                 </div>
                 <!-- 打卡与数据概览（v78: 内联脚本计算倒计时，不依赖外部JS） -->
                 <div class="home-stats" id="homeStats">
@@ -934,10 +919,10 @@
         </div>
     </div>
 
-    <script src="./js/data.js?v=86"></script>
-    <script src="./js/data-modules.js?v=86"></script>
-    <script src="./js/app.js?v=86"></script>
-    <script src="./js/loader.js?v=86"></script>
+    <script src="./js/data.js?v=87"></script>
+    <script src="./js/data-modules.js?v=87"></script>
+    <script src="./js/app.js?v=87"></script>
+    <script src="./js/loader.js?v=87"></script>
 
     <!-- 移动端底部 Tab 栏 -->
     <nav class="bottom-tab" id="bottomTab">

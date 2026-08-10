@@ -1,5 +1,5 @@
 /* ========================================
-   考公工作台 - Service Worker（v86 离线缓存增强版）
+   考公工作台 - Service Worker（v87 修复版）
    --------------------------------------------------------
    策略：
    - 静态资源（HTML/CSS/JS/图片）：Cache First（缓存优先）
@@ -20,7 +20,7 @@
    ======================================== */
 
 const CACHE_PREFIX = 'gongkao-v';
-const CACHE_VERSION = '86';          // ← 与 APP_VERSION 同步，发版时改这里
+const CACHE_VERSION = '87';          // ← 与 APP_VERSION 同步，发版时改这里
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
 // 需要预缓存的静态资源（安装时一次性缓存）
