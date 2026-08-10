@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-10-v87.2';
+const APP_VERSION = '2026-08-10-v87.2.1';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -1228,8 +1228,7 @@ var deferredPrompt = null;  // 保存 beforeinstallprompt 事件
 function initPWAInstall() {
     // 监听安装事件（浏览器认为可安装时触发）
     window.addEventListener('beforeinstallprompt', function(e) {
-        e.preventDefault();           // 阻止浏览器默认的安装横幅
-        deferredPrompt = e;          // 保存事件供后续手动触发
+        deferredPrompt = e;          // 保存事件供后续手动触发（不再 preventDefault，保留浏览器原生"安装应用"入口）
         console.log('[PWA] 可安装，显示安装按钮');
         showInstallButton();
     });
@@ -1259,14 +1258,36 @@ function initPWAInstall() {
     }, 3000);
 }
 
-/** 显示安装按钮（在侧边栏末尾） */
+/** 显示安装入口：顶部醒目横幅（主）+ 侧边栏入口（备） */
 function showInstallButton() {
+    // 1) 顶部醒目安装横幅（固定在内容区顶部，不埋在侧边栏里）
+    if (!document.getElementById('pwaInstallBanner')) {
+        var b = document.createElement('div');
+        b.id = 'pwaInstallBanner';
+        b.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;' +
+            'margin:8px 12px 0;padding:10px 14px;border-radius:14px;' +
+            'background:linear-gradient(135deg,#FFB6C1,#FF8FAB);color:#fff;' +
+            'font-size:14px;box-shadow:0 2px 10px rgba(231,84,128,.3);';
+        b.innerHTML = '<span>📱 备考工作台可安装到桌面，随时离线打开</span>';
+        var btn = document.createElement('button');
+        btn.textContent = '安装';
+        btn.style.cssText = 'border:none;background:#fff;color:#E91E63;font-weight:700;' +
+            'padding:7px 18px;border-radius:18px;cursor:pointer;font-size:13px;flex-shrink:0;';
+        btn.onclick = promptInstallPWA;
+        var close = document.createElement('span');
+        close.textContent = '✕';
+        close.style.cssText = 'cursor:pointer;opacity:.85;margin-left:2px;flex-shrink:0;';
+        close.onclick = function () { b.remove(); };
+        b.appendChild(btn); b.appendChild(close);
+        var mc = document.querySelector('.main-container');
+        if (mc) mc.insertBefore(b, mc.firstChild);
+    }
+
+    // 2) 侧边栏入口（备用）
     var existing = document.getElementById('pwaInstallEntry');
     if (existing) return;
-
     var sidebar = document.getElementById('sidebar');
     if (!sidebar) return;
-
     var li = document.createElement('li');
     li.id = 'pwaInstallEntry';
     li.className = 'nav-item';
@@ -1274,8 +1295,6 @@ function showInstallButton() {
     li.innerHTML = '<div class="nav-icon">📱</div><span>安装到桌面</span>';
     li.onclick = promptInstallPWA;
     li.style.cursor = 'pointer';
-
-    // 找到侧边栏 nav-menu 的末尾
     var navMenu = sidebar.querySelector('.nav-menu') || sidebar;
     navMenu.appendChild(li);
 }
