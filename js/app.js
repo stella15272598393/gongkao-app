@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-10-v87.3.0';
+const APP_VERSION = '2026-08-10-v87.4.0';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -240,10 +240,14 @@ function showBackupBanner() {
     const btn = document.createElement('button');
     btn.textContent = '立即备份';
     btn.style.cssText = 'border:none;background:#ff9800;color:#fff;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;';
+    // ★ v87.4: 启动脚本 CSS 把 #backupReminder 设为 pointer-events:none!important，
+    //   导致整条栏（含本按钮与关闭✕）不可点击。此处显式打开按钮自身点击（仅这一行UI，不改动其他全局逻辑）
+    btn.style.pointerEvents = 'auto';
     btn.onclick = function () { if (typeof exportFavTxt === 'function') exportFavTxt(); touchBackup(); b.remove(); };
     const close = document.createElement('span');
     close.textContent = '✕';
     close.style.cssText = 'cursor:pointer;color:#999;font-size:16px;';
+    close.style.pointerEvents = 'auto';
     close.onclick = function () { try { localStorage.setItem('backupDismissUntil', new Date(Date.now() + 7 * 86400000).toISOString()); } catch(e){} b.remove(); };
     b.appendChild(btn); b.appendChild(close);
     document.body.appendChild(b);
@@ -3775,17 +3779,35 @@ function savePracticeRecord(record) {
 // 模块6: 每日计划
 // ================================================================
 function initPlan() {
-    loadPlanItems();
-    renderPlanStats();
-    renderHistoryStats();
+    try {
+        loadPlanItems();
+        renderPlanStats();
+        renderHistoryStats();
+    } catch (e) {
+        console.error('[initPlan] 初始化失败（已容错，不影响其他模块）:', e);
+    }
 }
 
 // 每日计划的日期键（北京时间，工具函数见文件顶部「全局时间基准」）
 function getTodayKey() { return bjToday(); }
 
+// ★ v87.4: 安全读取计划（脏数据容错）——损坏的 plan_ 键返回 []，缺失返回 null，绝不抛异常
+//   避免 corrupt localStorage 导致 switchModule('plan') / initPlan 中断、整页卡死在启动闪屏。
+function safePlanItems(dateKey) {
+    var raw;
+    try { raw = localStorage.getItem('plan_' + dateKey); } catch (e) { return []; }
+    if (raw === null) return null;
+    try {
+        var a = JSON.parse(raw);
+        return Array.isArray(a) ? a.filter(function (i) { return i && typeof i === 'object'; }) : [];
+    } catch (e) {
+        console.warn('[safePlanItems] 跳过损坏的 plan_' + dateKey);
+        return [];
+    }
+}
 function loadPlanItems() {
     const key = getTodayKey();
-    let items = JSON.parse(localStorage.getItem(`plan_${key}`));
+    let items = safePlanItems(key);
     if (!items) {
         items = DEFAULT_PLAN_ITEMS.map(i => ({ ...i }));
         localStorage.setItem(`plan_${key}`, JSON.stringify(items));
@@ -3836,7 +3858,7 @@ function updatePlanGold(id, val) {
     const n = Number(val);
     if (isNaN(n) || n < 0) { appAlert('金币需为非负数字'); loadPlanItems(); return; }
     const key = getTodayKey();
-    let items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
+    let items = safePlanItems(key) || [];
     const item = items.find(i => String(i.id) === String(id));
     if (item) {
         item.gold = n;
@@ -3852,24 +3874,28 @@ function getCategoryColor(cat) {
 }
 
 function togglePlanDone(id, done) {
-    const key = getTodayKey();
-    let items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
-    const item = items.find(i => String(i.id) === String(id));
-    if (item) { item.done = done; localStorage.setItem(`plan_${key}`, JSON.stringify(items)); }
-    renderPlanStats();
-    if (!planStatMonth) renderHistoryStats(); // 完成率随勾选实时更新
-    // v57：完成任务即得金币，实时同步到「考公金币台账」
-    loadPlanItems();
-    if (typeof renderGoldLedger === 'function') renderGoldLedger();
-    if (item && typeof showToast === 'function') {
-        const g = Number(item.gold) || 0;
-        if (g > 0) showToast(done ? `完成「${item.task}」 +${g} 金币` : `已取消「${item.task}」 -${g} 金币`);
+    try {
+        const key = getTodayKey();
+        let items = safePlanItems(key) || [];
+        const item = items.find(i => String(i.id) === String(id));
+        if (item) { item.done = done; try { localStorage.setItem(`plan_${key}`, JSON.stringify(items)); } catch (e) {} }
+        if (typeof renderPlanStats === 'function') renderPlanStats();
+        if (!planStatMonth && typeof renderHistoryStats === 'function') renderHistoryStats(); // 完成率随勾选实时更新
+        // v57：完成任务即得金币，实时同步到「考公金币台账」
+        loadPlanItems();
+        if (typeof renderGoldLedger === 'function') renderGoldLedger();
+        if (item && typeof showToast === 'function') {
+            const g = Number(item.gold) || 0;
+            if (g > 0) showToast(done ? `完成「${item.task}」 +${g} 金币` : `已取消「${item.task}」 -${g} 金币`);
+        }
+    } catch (e) {
+        console.error('[togglePlanDone] 勾选失败（已容错，不影响页面）:', e);
     }
 }
 
 function updatePlanProgress(id, progress) {
     const key = getTodayKey();
-    let items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
+    let items = safePlanItems(key) || [];
     const item = items.find(i => String(i.id) === String(id));
     if (item) { item.progress = parseInt(progress); localStorage.setItem(`plan_${key}`, JSON.stringify(items)); }
     loadPlanItems(); // 刷新显示
@@ -3892,7 +3918,7 @@ function addPlanItem() {
             let gold = Number(v.gold);
             if (isNaN(gold) || gold < 0) gold = 0;
             const key = getTodayKey();
-            let items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
+            let items = safePlanItems(key) || [];
             items.push({ id: Date.now(), category: cat, task, done: false, progress: 0, gold });
             localStorage.setItem(`plan_${key}`, JSON.stringify(items));
             loadPlanItems();
@@ -3904,7 +3930,7 @@ function addPlanItem() {
 
 function deletePlanItem(id) {
     const key = getTodayKey();
-    let items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
+    let items = safePlanItems(key) || [];
     items = items.filter(i => String(i.id) !== String(id));
     localStorage.setItem(`plan_${key}`, JSON.stringify(items));
     loadPlanItems();
@@ -3914,7 +3940,7 @@ function deletePlanItem(id) {
 
 function renderPlanStats() {
     const key = getTodayKey();
-    const items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
+    const items = safePlanItems(key) || [];
     const doneCount = items.filter(i => i.done).length;
     const avgProgress = items.length > 0 ? Math.round(items.reduce((s, i) => s + i.progress, 0) / items.length) : 0;
 
@@ -3941,7 +3967,7 @@ function getStreakDays() {
     const base = getBJNow(); // 北京时间基准，避免凌晨算成前一天
     for (let i = 0; i < 365; i++) {
         const d = new Date(base); d.setDate(d.getDate() - i);
-        const items = JSON.parse(localStorage.getItem(`plan_${fmtYMD(d)}`) || '[]');
+        const items = safePlanItems(fmtYMD(d)) || [];
         if (items.some(i => i.done)) streak++;
         else break;
     }
@@ -3999,7 +4025,7 @@ function renderHistoryStats() {
     let totalDone = 0, totalTasks = 0, daysActive = 0;
     for (let d = 1; d <= lastDay; d++) {
         const key = `${monthKey}-${String(d).padStart(2, '0')}`;
-        const items = JSON.parse(localStorage.getItem(`plan_${key}`) || '[]');
+        const items = safePlanItems(key) || [];
         if (items.length > 0) {
             daysActive++;
             totalTasks += items.length;
@@ -5322,9 +5348,31 @@ function buildDailyPush() {
     dailyPushData.interview = ivC.slice(0, Math.min(5, ivC.length));
     try { localStorage.setItem('gk_daily_push', JSON.stringify({ date: today, idiomIds: dailyPushData.idioms.map(x => String(x.id)), interviewIds: dailyPushData.interview.map(x => String(x.id)), checked: false })); } catch (e) {}
 }
+// ★ v87.4: 启动脚本的 cleanup 会把 #dailyPushOverlay 从 DOM 移除（killOverlay→removeChild），
+//   导致进入首页不再弹出「每日言语」卡片。这里在元素缺失时按需重建，恢复自动弹窗。
+const DAILY_PUSH_HTML = '<div class="modal-overlay" id="dailyPushOverlay" style="display:none">'
+    + '<div class="modal-content daily-push-modal">'
+    + '<div class="modal-header"><h3 id="dailyPushTitle">🌟 今日碎片推送</h3>'
+    + '<button class="modal-close" onclick="closeDailyPush()">&times;</button></div>'
+    + '<div class="modal-body"><div class="daily-push-tabs">'
+    + '<button class="dp-tab active" data-dptab="idiom" onclick="switchDailyPushTab(\'idiom\')">🀄 成语 10 条</button>'
+    + '<button class="dp-tab" data-dptab="interview" onclick="switchDailyPushTab(\'interview\')">🎤 面试 5 条</button>'
+    + '</div><div class="daily-push-body" id="dailyPushBody"></div>'
+    + '<div class="daily-push-actions">'
+    + '<button class="btn-pink btn-sm" onclick="reshuffleDailyPush()">🎲 换一批</button>'
+    + '<button class="btn-outline btn-sm" id="btnDailyCheckin" onclick="checkinDailyPush()">✅ 打卡</button>'
+    + '<button class="btn-outline btn-sm" onclick="closeDailyPush()">稍后</button>'
+    + '</div></div></div></div>';
+
 function showDailyPush() {
     buildDailyPush();
-    const ov = document.getElementById('dailyPushOverlay'); if (!ov) return;
+    let ov = document.getElementById('dailyPushOverlay');
+    if (!ov) {
+        // 元素被启动脚本移除时，重建它（仅恢复弹窗，不改动其他逻辑）
+        try { document.body.insertAdjacentHTML('beforeend', DAILY_PUSH_HTML); } catch (e) {}
+        ov = document.getElementById('dailyPushOverlay');
+    }
+    if (!ov) return;
     const title = document.getElementById('dailyPushTitle');
     const h = getBJNow().getHours(); // v34：按北京时间判断早/晚安
     if (title) title.textContent = (h < 12 ? '🌅 早安 · ' : '🌙 晚安 · ') + '今日碎片推送';
@@ -5371,12 +5419,14 @@ function checkinDailyPush() {
 function closeDailyPush() { const ov = document.getElementById('dailyPushOverlay'); if (ov) ov.style.display = 'none'; }
 function scheduleDailyPush() {
     // 内容由 loader 异步加载，延迟触发，确保用最新数据生成今日推送
+    // ★ v87.4: 延后到 5.5s（过启动脚本的 nukeOverlays 窗口 + MutationObserver 断开之后），
+    //   这样重建的「每日言语」弹窗不会被再次误杀，进入首页自动弹出。
     setTimeout(() => {
         const today = getTodayStr();
         let rec = null; try { rec = JSON.parse(localStorage.getItem('gk_daily_push') || 'null'); } catch (e) {}
         // 当天未生成过，或生成了未打卡，都弹出（每天最多一次视觉提醒）
         if (!rec || rec.date !== today || !rec.checked) showDailyPush();
-    }, 1500);
+    }, 5500);
 }
 
 /* ================================================================
@@ -5422,7 +5472,7 @@ let goldModuleDefault = loadGold('gk_gold_moduleDefault', { susuan: 5, morning: 
 // 同时兼容 v56 遗留的 gk_gold_tasks 数据，避免用户已录入的金币丢失
 function planDoneItems(dateKey) {
     try {
-        const items = JSON.parse(localStorage.getItem('plan_' + dateKey) || '[]');
+        const items = safePlanItems(dateKey) || [];
         return Array.isArray(items) ? items.filter(i => i && i.done) : [];
     } catch (e) { return []; }
 }
@@ -5453,11 +5503,15 @@ function dayTotal(dateKey) {
 
 // ---- 初始化 ----
 function initGoldLedger() {
-    const dEl = document.getElementById('goldLedgerDate');
-    if (dEl && !dEl.value) dEl.value = bjToday();
-    renderGoldLedger();
-    renderAllCheckinBars();
-    loadContentMetaForBadges();
+    try {
+        const dEl = document.getElementById('goldLedgerDate');
+        if (dEl && !dEl.value) dEl.value = bjToday();
+        renderGoldLedger();
+        renderAllCheckinBars();
+        loadContentMetaForBadges();
+    } catch (e) {
+        console.error('[initGoldLedger] 初始化失败（已容错，不影响其他模块）:', e);
+    }
 }
 
 // ---- 渲染：金币台账主模块 ----
@@ -5488,7 +5542,7 @@ function renderGoldPlanSummary() {
     if (!wrap) return;
     const today = bjToday();
     let items = [];
-    try { items = JSON.parse(localStorage.getItem('plan_' + today) || '[]'); } catch (e) { items = []; }
+    try { items = safePlanItems(today) || []; } catch (e) { items = []; }
     if (!Array.isArray(items) || items.length === 0) {
         wrap.innerHTML = '<div class="gold-empty">今天还没有计划任务，去「每日计划」添加吧～</div>';
         return;
