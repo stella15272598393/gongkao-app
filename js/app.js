@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-10-v87.4.0';
+const APP_VERSION = '2026-08-12-v87.5.0';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -1651,13 +1651,20 @@ function renderStreakHeatmap() {
 
     // 统计
     var totalDays = 0, streak = 0;
+    // ★ v87.5: 修复打卡后整页卡死的元凶 —— 原条件 `dTmp >= hist[0] || hist.length > 0`
+    //   中 Date 对象与字符串比较恒为 false，且 hist.length 在循环内从不变化，
+    //   因此只要 history 非空（有过≥1天打卡）就无限循环 → 事件循环冻结 → 所有按钮失效、重进一直加载。
+    //   改为：从今天往前数到「最早打卡日」即停，并加硬上限(4000)兜底，绝不死循环。
     var dTmp = new Date(now);
-    while (dTmp >= hist[0] || hist.length > 0) {  // simplified
+    var earliestStr = hist.length ? hist.reduce(function (a, b) { return a < b ? a : b; }) : null;
+    var _guard = 0;
+    while (earliestStr && _guard < 4000) {
         var dk = fmtYMD(dTmp);
         if (checked[dk]) { streak++; if (dTmp <= now) totalDays++; }
         else { streak = 0; }
+        if (dk <= earliestStr) break; // 已覆盖到最早打卡日（含当天）即停止
         dTmp.setDate(dTmp.getDate() - 1);
-        if (streak > 365) break;
+        _guard++;
     }
     // 更准确的连续天数
     streak = _calcStreak(hist);
