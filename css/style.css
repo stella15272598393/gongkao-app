@@ -1716,7 +1716,7 @@ input[type="range"]::-webkit-slider-thumb {
 .yhm-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 3px; }
 .yhm-wd { text-align: center; font-size: 10px; font-weight: 600; color: #bbb; padding: 2px 0; }
 .yhm-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-.yhm-cell { aspect-ratio: 1; border-radius: 3px; min-width: 10px; min-height: 10px; cursor: default; transition: transform .15s; }
+.yhm-cell { border-radius: 3px; cursor: default; transition: transform .15s; flex-shrink: 0; }
 .yhm-cell:hover { transform: scale(1.4); z-index: 2; }
 .yhm-cell.on { box-shadow: 0 1px 4px rgba(0,0,0,.12); }
 .yhm-cell.today { position: relative; }
@@ -1725,12 +1725,6 @@ input[type="range"]::-webkit-slider-thumb {
 .yhm-legend { display: flex; align-items: center; gap: 10px; margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--border-soft); flex-wrap: wrap; }
 .yhm-leg-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #999; }
 .yhm-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
-
-/* 全年 = 12 个月历年历（带日期数字，复用 .cal-* 样式） */
-.ycm-scroll { max-height: 62vh; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px 0 4px; }
-.ycm-wrap { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
-.ycm-month { flex: 1 1 200px; min-width: 168px; max-width: 260px; background: var(--bg-soft, #faf7f9); border: 1px solid var(--border-soft, #f0e6ea); border-radius: 10px; padding: 8px 10px; }
-@media (max-width: 480px) { .ycm-month { flex: 1 1 100%; max-width: 100%; min-width: 0; } }
 .home-todo {
     margin-top: 22px; background: #fff; border: 1px solid var(--border-soft); border-radius: 14px; padding: 16px;
 }
