@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-15-v87.6.1';
+const APP_VERSION = '2026-08-16-v87.6.2';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -1703,7 +1703,7 @@ function renderStreakHeatmap() {
     html += '<div class="hm-body' + (window.heatmapExpanded ? '' : ' collapsed') + '" id="hmBody">';
 
     if (window.heatmapViewMode === 'year') {
-        html += renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT);
+        html += renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD);
     } else {
         // 月历视图（原有逻辑）
         html += renderMonthHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD);
@@ -1718,96 +1718,86 @@ function renderStreakHeatmap() {
 // 全局状态：当前查看的年份（null=近半年模式）
 if (typeof window._heatmapGridYear === 'undefined') window._heatmapGridYear = null; // null=近半年, number=某年全年
 
-function renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT) {
+// ★ 全年热力图 = 12 个月历年历（带日期数字，与「月历」风格一致）
+// 旧版是 GitHub 色带（依赖 aspect-ratio 保持正方形），在部分安卓浏览器上 aspect-ratio 对 grid 项
+// 不生效 → 格子塌成 10px 高的扁条堆叠 → 看起来「一条一条」。月历 .cal-day 有固定 min-height 才正常。
+// 故全年视图改为和「月历」同款的带日期数字年历，彻底告别色带。
+// 全局状态：当前查看的年份（null/undefined = 今年）
+function renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD) {
+    if (!WD) WD = ['日','一','二','三','四','五','六'];
+    var currentYear = now.getFullYear();
+    var viewYear = window._heatmapGridYear;
+    if (viewYear === null || viewYear === undefined) viewYear = currentYear; // 默认今年
+
     var html = '';
 
-    // 年份选择器 + 标题
-    var currentYear = now.getFullYear();
-    var viewYear = window._heatmapGridYear; // null = 近半年
-    var viewLabel = viewYear ? viewYear + '年' : '近半年';
+    // 年份导航（今年 / 去年 / 前年 / 大前年）
     html += '<div class="yhm-year-nav">';
-    html += '<button class="hm-tab' + (!viewYear ? ' active' : '') + '" onclick="setHeatmapGridYear(null)">近半年</button>';
-    // 历史年份按钮：从今年往前推（有打卡数据的年份）
-    var yearsWithData = [];
-    Object.keys(checked).forEach(function(k) {
-        if (k && k.length >= 4) { var y = parseInt(k.substring(0,4)); if (y && y < currentYear && !yearsWithData.includes(y)) yearsWithData.push(y); }
-    });
-    yearsWithData.sort(function(a,b){return b-a;});
-    // 确保至少显示最近3年供选择
-    for (var yi = 1; yi <= 3; yi++) { var y = currentYear - yi; if (!yearsWithData.includes(y)) yearsWithData.push(y); }
-    yearsWithData.sort(function(a,b){return b-a;}).slice(0,5).forEach(function(y){
+    for (var yi = 0; yi <= 3; yi++) {
+        var y = currentYear - yi;
         html += '<button class="hm-tab' + (viewYear === y ? ' active' : '') + '" onclick="setHeatmapGridYear(' + y + ')">' + y + '年</button>';
-    });
-    html += '</div>';
-
-    // 计算日期范围
-    var weeks = [];
-    var startDate, endDate;
-
-    if (viewYear) {
-        // 查看某一年全年
-        startDate = new Date(viewYear, 0, 1);
-        endDate = new Date(viewYear, 11, 31);
-    } else {
-        // 近半年（约26周）
-        startDate = new Date(now);
-        startDate.setDate(startDate.getDate() - 180);
-        endDate = new Date(now);
-    }
-    startDate.setHours(0,0,0,0);
-    endDate.setHours(23,59,59,999);
-    // 对齐到周日
-    startDate.setDate(startDate.getDate() - startDate.getDay());
-
-    var cur = new Date(startDate);
-    var weekIdx = 0;
-    while (cur <= endDate || weekIdx === 0) {
-        if (!weeks[weekIdx]) weeks[weekIdx] = [];
-        var dk = fmtYMD(cur);
-        var isFuture = cur > now;
-        var isToday = dk === fmtYMD(now);
-        var done = !!checked[dk] && !isFuture;
-        weeks[weekIdx].push({ d: dk, done: done, isToday: isToday, isFuture: isFuture, date: new Date(cur) });
-        if (cur.getDay() === 6) weekIdx++;
-        cur.setDate(cur.getDate() + 1);
-        if (weekIdx > 62) break;
-    }
-
-    // 星期头
-    html += '<div class="yhm-grid">';
-    html += '<div class="yhm-weekdays">';
-    var WD = ['日','一','二','三','四','五','六'];
-    for (var wi = 0; wi < 7; wi++) {
-        html += '<span class="yhm-wd">' + WD[wi] + '</span>';
     }
     html += '</div>';
 
-    // 周行
-    for (var w = 0; w < weeks.length; w++) {
-        html += '<div class="yhm-week">';
-        for (var d = 0; d < weeks[w].length; d++) {
-            var cell = weeks[w][d];
-            var cls = 'yhm-cell';
-            var bg = C_OFF;
-            var title = cell.d + (cell.done ? ' ✅' : (cell.isFuture ? ' · 未到' : ' · 未打卡'));
-            if (cell.isFuture) { bg = C_FUT; cls += ' fut'; }
-            else if (cell.isToday) { bg = C_TODAY; cls += ' today'; }
-            else if (cell.done) { bg = C_ON; cls += ' on'; }
-            html += '<div class="' + cls + '" style="background:' + bg + ';" title="' + title + '"></div>';
-        }
-        html += '</div>';
+    // 12 个月历（带日期数字，复用 .cal-* 样式，不会塌成扁条）
+    var monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    html += '<div class="ycm-scroll"><div class="ycm-wrap">';
+    for (var m = 0; m < 12; m++) {
+        html += renderOneMonthCalendar(viewYear, m, checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD, monthNames);
     }
-    html += '</div>'; // yhm-grid
+    html += '</div></div>';
 
     // 图例
     html += '<div class="yhm-legend">';
-    html += '<span class="yhm-leg-item"><span class="yhm-dot" style="background:' + C_FUT + ';"></span>未到</span>';
     html += '<span class="yhm-leg-item"><span class="yhm-dot" style="background:' + C_OFF + ';"></span>未打卡</span>';
     html += '<span class="yhm-leg-item"><span class="yhm-dot" style="background:' + C_ON + ';"></span>已打卡</span>';
     html += '<span class="yhm-leg-item"><span class="yhm-dot" style="background:' + C_TODAY + ';border:1px solid ' + cssVar('--accent','#E75480') + ';"></span>今天</span>';
     html += '</div>';
 
     return html;
+}
+
+// 渲染单个月历（与「月历」视图同款，带日期数字，绝不塌成扁条）
+function renderOneMonthCalendar(year, month, checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD, monthNames) {
+    var firstDay = new Date(year, month, 1);
+    var lastDay = new Date(year, month + 1, 0);
+    var startDow = firstDay.getDay();
+    var daysInMonth = lastDay.getDate();
+    var isCurrentMonth = (year === now.getFullYear() && month === now.getMonth());
+
+    var monthPinkCnt = 0;
+    for (var di = 1; di <= daysInMonth; di++) {
+        var dDate = new Date(year, month, di);
+        var dk = fmtYMD(dDate);
+        if (checked[dk] && dDate <= now) monthPinkCnt++;
+    }
+
+    var h = '<div class="ycm-month">';
+    h += '<div class="cal-header"><span class="cal-title">' + year + '年 ' + monthNames[month] + '</span>';
+    h += '<span class="cal-count">打卡 <b>' + monthPinkCnt + '</b>/' + daysInMonth + '</span></div>';
+    h += '<div class="cal-weekdays">';
+    for (var wi = 0; wi < 7; wi++) {
+        h += '<div class="cal-wd' + (wi === 0 || wi === 6 ? ' weekend' : '') + '">' + WD[wi] + '</div>';
+    }
+    h += '</div>';
+    h += '<div class="cal-days">';
+    for (var ei = 0; ei < startDow; ei++) h += '<div class="cal-day empty"></div>';
+    for (var di = 1; di <= daysInMonth; di++) {
+        var dDate = new Date(year, month, di);
+        var dk = fmtYMD(dDate);
+        var isFuture = dDate > now;
+        var isTod = isCurrentMonth && di === now.getDate();
+        var done = !!checked[dk];
+        var cls = 'cal-day';
+        if (isFuture) cls += ' future';
+        else if (isTod) cls += ' today';
+        else if (done) cls += ' done';
+        var bg = isFuture ? C_FUT : (isTod ? C_TODAY : (done ? C_ON : C_OFF));
+        h += '<div class="' + cls + '" style="background:' + bg + ';" title="' + dk + (done ? ' ✅' : (isFuture ? ' · 未到' : ' · 未打卡')) + '">' + di + '</div>';
+    }
+    h += '</div>';
+    h += '</div>';
+    return h;
 }
 
 // ★ 月历热力图（原有逻辑提取为独立函数）
