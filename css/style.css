@@ -1711,12 +1711,12 @@ input[type="range"]::-webkit-slider-thumb {
 .yhm-year-nav { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
 .yhm-year-nav .hm-tab { font-size: 11px; padding: 3px 10px; }
 
-/* 全年格子 */
-.yhm-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0; }
-.yhm-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 3px; }
-.yhm-wd { text-align: center; font-size: 10px; font-weight: 600; color: #bbb; padding: 2px 0; }
-.yhm-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-.yhm-cell { border-radius: 3px; cursor: default; transition: transform .15s; flex-shrink: 0; }
+/* 全年格子 —— GitHub 风格：每周为一列(竖7格)、各列横排并排，方块固定正方形 */
+.yhm-grid { display: flex; flex-direction: row; gap: 3px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 4px 0; align-items: flex-start; }
+.yhm-weekdays { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.yhm-wd { width: 14px; height: 11px; line-height: 11px; text-align: center; font-size: 9px; font-weight: 600; color: #bbb; }
+.yhm-week { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.yhm-cell { width: 11px; height: 11px; border-radius: 2px; cursor: default; transition: transform .15s; flex-shrink: 0; }
 .yhm-cell:hover { transform: scale(1.4); z-index: 2; }
 .yhm-cell.on { box-shadow: 0 1px 4px rgba(0,0,0,.12); }
 .yhm-cell.today { position: relative; }
