@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-15-v87.6.0';
+const APP_VERSION = '2026-08-15-v87.6.1';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -764,41 +764,6 @@ function _saveStreakData(d) {
     try { localStorage.setItem('gk_streak', JSON.stringify(d)); } catch (e) {}
 }
 
-// ★ v87.6: 睡眠目标时间管理
-function getSleepGoal() {
-    var d = _getStreakData();
-    return (d && d.sleepGoal) || '01:00';  // 默认目标 01:00
-}
-function setSleepGoal(timeStr) {
-    var d = _getStreakData();
-    if (!d) d = {};
-    d.sleepGoal = timeStr;
-    _saveStreakData(d);
-}
-// 把 "HH:mm" 转成当天分钟数（0~1439）
-function timeToMinutes(t) {
-    if (!t || typeof t !== 'string') return 9999;
-    var m = t.match(/^(\d{1,2}):(\d{2})$/);
-    if (!m) return 9999;
-    return parseInt(m[1]) * 60 + parseInt(m[2]);
-}
-// 判定是否熬夜：实际时间 > 目标时间 → 熬夜（00:04 < 01:00 = 不熬夜 = 达标）
-function isLateNight(actualTimeStr, goalTimeStr) {
-    return timeToMinutes(actualTimeStr) > timeToMinutes(goalTimeStr);
-}
-// 获取当前北京时间 HH:mm 格式
-function getNowTimeStr() {
-    var n = getBJNow();
-    var p = function(x){return String(x).padStart(2,'0');};
-    return p(n.getHours()) + ':' + p(n.getMinutes());
-}
-// 获取某天的打卡详情（含时间、熬夜判定）
-function getCheckinDetail(dateStr) {
-    var d = _getStreakData();
-    if (!(d && d.checkins)) return null;
-    return d.checkins[dateStr] || null;
-}
-
 // 计算连续打卡天数（从今天往前数连续的天数）
 function _calcStreak(history) {
     if (!history || !history.length) return 0;
@@ -813,7 +778,6 @@ function _calcStreak(history) {
 }
 
 // 手动打卡：直接往 history 里追加今天，然后重新计算连续天数
-// ★ v87.6: 同时记录实际打卡时间，与目标时间比较判定达标/熬夜
 function manualCheckin() {
     const d = _getStreakData();
     if (!Array.isArray(d.history)) d.history = [];
@@ -825,24 +789,16 @@ function manualCheckin() {
         return;
     }
 
-    // ★ 记录实际时间 + 熬夜判定
-    const nowStr = getNowTimeStr();
-    const goal = getSleepGoal();
-    const late = isLateNight(nowStr, goal);
-    if (!d.checkins) d.checkins = {};
-    d.checkins[today] = { time: nowStr, isLate: late };
-
-    // ★ 直接写入 history
+    // ★ 直接写入，不经过任何可能提前返回的逻辑
     d.history.push(today);
     // 保持排序（去重+排序）
     const uniq = [...new Set(d.history)].sort();
     d.history = uniq;
     _saveStreakData(d);
 
-    var msg = late ? '🌙 打卡成功（熬夜了，早点睡哦）' : '✅ 打卡成功！已记录到热力图 🔥';
-    if (window.__DEBUG__) console.log('[checkin v87] 打卡成功, time=', nowStr, 'goal=', goal, 'late=', late, ', history=', JSON.stringify(d.history));
+    if (window.__DEBUG__) console.log('[checkin v28] 打卡成功, history=', JSON.stringify(d.history), ', 连续=', _calcStreak(d.history));
     renderHome();
-    if (typeof showToast === 'function') showToast(msg);
+    if (typeof showToast === 'function') showToast('✅ 打卡成功！已记录到热力图 🔥');
 }
 
 // 取消今日打卡（仅允许撤回今天，历史的不让改）
@@ -1854,7 +1810,7 @@ function renderYearHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT) {
     return html;
 }
 
-// ★ v87.6: 月历热力图（支持达标/熬夜分色 + 打卡历史）
+// ★ 月历热力图（原有逻辑提取为独立函数）
 function renderMonthHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD) {
     // 初始化为当前月（仅首次）
     if (heatmapViewYear === undefined) {
@@ -1869,31 +1825,18 @@ function renderMonthHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD) {
     var daysInMonth = lastDay.getDate();
     var isCurrentMonth = (heatmapViewYear === now.getFullYear() && heatmapViewMonth === now.getMonth());
 
-    // ★ v87.6: 颜色定义 —— 达标(金黄)、熬夜(粉红)、未打卡(浅灰)
-    var C_GOLD = '#FFD54F';  // 达标：金黄色
-    // C_ON = 熬夜粉色（已有，#E75480）
-
-    var monthDoneCnt = 0, monthLateCnt = 0;
+    var monthPinkCnt = 0;
     for (var di = 1; di <= daysInMonth; di++) {
         var dk = fmtYMD(new Date(heatmapViewYear, heatmapViewMonth, di));
-        if (checked[dk] && new Date(heatmapViewYear, heatmapViewMonth, di) <= now) {
-            var detail = getCheckinDetail(dk);
-            if (detail && detail.isLate) monthLateCnt++;
-            else monthDoneCnt++;
-        }
+        if (checked[dk] && new Date(heatmapViewYear, heatmapViewMonth, di) <= now) monthPinkCnt++;
     }
 
     var monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-    var goalStr = getSleepGoal();
-
-    // ====== 标题栏（含目标时间设置）======
-    html += '<div class="cal-header">';
+    var html = '<div class="cal-header">';
     html += '<button class="cal-nav-btn" onclick="heatmapShiftMonth(-1)" title="上个月">◀</button>';
     html += '<span class="cal-title">' + heatmapViewYear + '年 ' + monthNames[heatmapViewMonth] + '</span>';
     html += '<button class="cal-nav-btn" onclick="heatmapShiftMonth(1)" title="下个月">▶</button>';
     if (!isCurrentMonth) html += '<button class="cal-today-btn" onclick="heatmapGoToday()">今</button>';
-    // 目标睡觉时间设置
-    html += '<span id="sleepGoalDisplay" style="font-size:11px;color:#888;margin-left:6px;cursor:pointer;" onclick="promptSleepGoal()" title="点击修改目标睡觉时间">🌙 目标 ' + goalStr + '</span>';
     html += '</div>';
 
     html += '<div class="cal-weekdays">';
@@ -1910,88 +1853,25 @@ function renderMonthHeatmapGrid(checked, now, C_ON, C_OFF, C_TODAY, C_FUT, WD) {
         var isFuture = dDate > now;
         var isTod = isCurrentMonth && di === now.getDate();
         var done = !!checked[dk];
-        var detail = done ? getCheckinDetail(dk) : null;
-        var isLate = !!(detail && detail.isLate);
-
         var cls = 'cal-day';
         if (isFuture) cls += ' future';
         else if (isTod) cls += ' today';
-        else if (done) cls += (isLate ? ' late' : ' done');
-
-        // ★ 分色：达标=金黄 / 熬夜=粉红 / 今天=深粉边框 / 未来=极淡 / 未打卡=浅灰
-        var bg;
-        if (isFuture) bg = C_FUT;
-        else if (isTod) bg = C_TODAY;
-        else if (!done) bg = C_OFF;
-        else if (isLate) bg = C_ON;   // 熬夜：粉色
-        else bg = C_GOLD;             // 达标：金色
-
-        var zZicon = (done && isLate && !isFuture) ? '<span style="font-size:9px;position:absolute;top:1px;right:2px;">💤</span>' : '';
-        var tip = dk + (isFuture ? ' · 未到' : (!done ? ' · 未打卡' : (isLate ? ' 熬夜 ' + (detail&&detail.time||'') : ' 达标 ' + (detail&&detail.time||''))));
-
-        html += '<div class="' + cls + '" style="background:' + bg + ';position:relative;" title="' + tip + '">' + di + zZicon + '</div>';
+        else if (done) cls += ' done';
+        var bg = isFuture ? C_FUT : (isTod ? C_TODAY : (done ? C_ON : C_OFF));
+        html += '<div class="' + cls + '" style="background:' + bg + ';" title="' + dk + (done ? ' ✅' : (isFuture ? ' · 未到' : ' · 未打卡')) + '">' + di + '</div>';
     }
     html += '</div>';
 
-    // ====== 图例（达标/熬夜/未打卡）======
-    html += '<div class="cal-footer" style="flex-wrap:wrap;">';
-    html += '<span class="cal-legend"><span class="cal-dot" style="background:' + C_GOLD + ';"></span>达标</span>';
-    html += '<span class="cal-legend"><span class="cal-dot" style="background:' + C_ON + ';"></span>熬夜</span>';
+    html += '<div class="cal-footer">';
     html += '<span class="cal-legend"><span class="cal-dot" style="background:' + C_OFF + ';"></span>未打卡</span>';
-    html += '<span class="cal-count">本月 达标 <b>' + monthDoneCnt + '</b> · 熬夜 <b>' + monthLateCnt + '</b></span>';
+    html += '<span class="cal-legend"><span class="cal-dot" style="background:' + C_ON + ';"></span>已打卡</span>';
+    html += '<span class="cal-count">本月打卡 <b>' + monthPinkCnt + '</b> / ' + daysInMonth + ' 天</span>';
     html += '</div>';
-
-    // ====== 打卡历史（最近7条）======
-    html += renderCheckinHistory();
 
     return html;
 }
 
-// ★ v87.6: 渲染打卡历史列表（目标/实际/判定）
-function renderCheckinHistory() {
-    var d = _getStreakData();
-    var checkins = (d && d.checkins) || {};
-    var keys = Object.keys(checkins).sort().reverse(); // 最新在前
-    var goal = getSleepGoal();
 
-    if (keys.length === 0) return '';
-
-    var html = '<div class="checkin-history-section" style="margin-top:10px;padding:10px;background:#FFF5F8;border-radius:10px;">';
-    html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#E75480;">● 打卡历史</div>';
-
-    var showCnt = Math.min(keys.length, 7);
-    for (var i = 0; i < showCnt; i++) {
-        var k = keys[i];
-        var ci = checkins[k];
-        var late = !!ci.isLate;
-        var lbl = late ? '熬夜' : '达标';
-        var lblClr = late ? '#E75480' : '#FFA000';
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0e6ea;font-size:13px;">';
-        html += '<span><b>' + k + '</b></span>';
-        html += '<span style="color:#666;">目标 ' + goal + ' · 实际 ' + (ci.time || '--:--') + '</span>';
-        html += '<span style="color:' + lblClr + ';font-weight:600;white-space:nowrap;">' + lbl + ' ' + (late ? '✕' : '✓') + '</span>';
-        html += '</div>';
-    }
-
-    if (keys.length > 7) html += '<div style="text-align:center;font-size:11px;color:#999;padding-top:4px;">还有 ' + (keys.length - 7) + ' 条记录...</div>';
-    html += '</div>';
-    return html;
-}
-
-// ★ v87.6: 弹窗让用户设置目标睡觉时间
-function promptSleepGoal() {
-    var current = getSleepGoal();
-    var val = prompt('设置目标睡觉时间\n当前：' + current + '\n\n请输入时间（格式 HH:mm，如 23:30 或 01:00）：', current);
-    if (val === null) return;  // 取消
-    val = (val || '').trim();
-    if (!/^\d{1,2}:\d{2}$/.test(val)) { alert('格式不对哦，请用 HH:mm（比如 23:30 或 01:00）'); return; }
-    var m = val.match(/^(\d{1,2}):(\d{2})$/);
-    var h = parseInt(m[1]), mi = parseInt(m[2]);
-    if (h > 23 || mi > 59) { alert('时间超出范围了'); return; }
-    setSleepGoal(val);
-    renderStreakHeatmap();  // 刷新热力图显示新目标
-    showToast('🌙 目标已设为 ' + val);
-}
 
 // 查看所有打卡日期（弹窗展示，可单条删除错误的记录）
 function showStreakDates() {
