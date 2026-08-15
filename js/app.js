@@ -14,7 +14,7 @@ let currentQuote = null; // 当前显示的金句（供搜索原文用）
 let currentMorningSource = 'all';
 
 // 版本号：每次改动 JS 后 +1，用于确认手机端是否加载到最新代码
-const APP_VERSION = '2026-08-12-v87.5.0';
+const APP_VERSION = '2026-08-15-v87.6.0';
 
 // 调试开关：默认关闭生产环境日志。URL 加 ?debug=1 可重新打开（如 https://.../?debug=1）
 window.__DEBUG__ = /[?&]debug=1(\b|&|$)/.test(location.search);
@@ -1643,7 +1643,8 @@ function renderStreakHeatmap() {
     var WD = ['日','一','二','三','四','五','六'];
 
     // ====== 视图模式：year(全年格子) / month(月历) ======
-    if (typeof window.heatmapViewMode === 'undefined') window.heatmapViewMode = 'year';
+    // ★ v87.6: 默认改为 month（日历样式），用户更习惯看带日期数字的月历
+    if (typeof window.heatmapViewMode === 'undefined') window.heatmapViewMode = 'month';
     if (typeof window.heatmapExpanded === 'undefined') window.heatmapExpanded = true;
 
     var now = getBJNow();
@@ -5387,9 +5388,9 @@ function showDailyPush() {
     ov.style.display = 'flex';
     // ★ v77: 防止遮罩永久拦截点击 —— 点背景任意处即关闭（点内容内部不关）
     ov.onclick = function (e) { if (e.target === ov) closeDailyPush(); };
-    // ★ v77: 自动消失（10秒）——用户没操作时不再永久挡住整个页面
-    clearTimeout(ov._autoTimer);
-    ov._autoTimer = setTimeout(closeDailyPush, 10000);
+    // ★ v87.6: 不再自动消失 —— 用户需要学完才关，只有点「稍后」/背景/打卡完成才关闭
+    // clearTimeout(ov._autoTimer);
+    // ov._autoTimer = setTimeout(closeDailyPush, 10000);
 }
 function switchDailyPushTab(tab) {
     document.querySelectorAll('.dp-tab').forEach(b => b.classList.toggle('active', b.dataset.dptab === tab));
