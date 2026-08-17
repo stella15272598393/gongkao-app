@@ -1,7 +1,967 @@
 {
- "updatedAt": "2026-08-16T17:00:00.186Z",
+ "updatedAt": "2026-08-17T12:08:58.291Z",
  "count": 500,
  "items": [
+  {
+   "id": "q_161j8va",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "健全主体功能区战略及其制度体系，深化“多规合一”改革，推动形成主体功能约束有效、国土开发有序的空间发展格局",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1npy5ea",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "深化要素市场化改革，健全要素市场制度和规则，全面摸清存量资源资产底数，盘活利用存量资源",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_4d36zp",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "坚持山水林田湖草沙一体化保护和系统治理，健全生态保护机制，更加注重提质兴业利民，构建从山顶到海洋的保护治理大格局",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1rbr4tu",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "研究制定全国主体功能区战略优化实施方案，推动形成若干综合性空间发展单元，促进国家重大战略深度融合",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_wuq95f",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "拓展自然资源确权登记范围，巩固不动产统一登记改革成果，深化登记成果在自然资源资产管理中的广泛应用",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_14aobhu",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "规范表述",
+   "text": "加快推进人与自然和谐共生的现代化，具有重大而深远的意义。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1sp471l",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "规范表述",
+   "text": "完善治理体系、提升治理能力，以高水平保护推动经济社会高质量发展。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_boik65",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "规范表述",
+   "text": "坚持做优增量、盘活存量，“十四五”时期全国单位GDP建设用地使用面积下降19.36%。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1gwajpv",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "当千家万户坐拥空调凉意，清凉背后，是电力抢修人员浸透工装的坚守；整洁街巷背后，是环卫工人凌晨劳作的付出",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1u7ohna",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "在铝业生产车间，常态环境温度超50℃，设备表面温度最高可达200℃，高温作业环境考验着每一名一线职工",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_l2s2v0",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "不用居民掏一分现金、无需住户分摊费用，武汉老旧小区电梯焕新改造，让街坊们的日常出行，迎来了暖心质变",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143745.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1bimepl",
+   "theme": "jiceng",
+   "themeName": "基层治理",
+   "kind": "金句",
+   "text": "多年来，电梯钢丝绳磨损、导向轮老化、开关门失灵等故障频发，运行时异响、卡顿是常态",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143745.html",
+   "category": "基层治理"
+  },
+  {
+   "id": "q_1hh30oo",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "夯实国家安全基础保障，确保粮食、能源资源、重要产业链供应链、重大基础设施安全，加强战略性矿产资源勘探开发和储备",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_69eyts",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "AI产业浪潮之下，武汉产业势能持续释放，也带动鄂州配套产业加速升温",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143742.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1sswqwm",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "依托成本比较优势，天门对照武汉“光芯屏端网”产业链图谱，从产业链不可或缺、技术门槛相对适中的环节切入",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143742.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_10tu5vc",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "推动科创资源共享、产业协同联动，加快构建“头部在武汉、链条在周边”的产业发展格局。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143742.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1dpl7h5",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "从“化工围江”到“江豚逐浪”，从传统产业转型到新兴产业崛起，湖北正在回答一道时代命题：保护与发展，如何相得益彰",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20126423.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_q75ujg",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "8月，湖北将重点面向先进制造业、现代服务业产业集群以及各地特色优势产业，吸纳符合条件的经营主体进入培育库",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126559.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_17e88i0",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "”维智捷全球副总裁兼中国区总裁祁松表示，持续追投武汉，得益于雄厚的产业基础、优质的人才储备和高效的企业服务",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126511.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_165a00m",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "提升智能传感器领域创新能力和产业竞争力。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126557.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_kjo9q3",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "此外，HKT还计划将网络延伸至沙岭数据园区集群，支持香港推动其成为先进算力产业基地",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126560.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_5a3gyq",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "推动其成为先进算力产业基地。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126560.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_37x1ar",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "“最近领到4万多元生活补贴，随州尊才爱才重才的优良环境，激励我在这里深耕产业、施展才干",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126553.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_19qkcks",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "他服务的随州海富特五金有限公司，深耕金属3D打印，长期为路易威登、都彭等品牌提供定制服务，产业前景广阔",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126553.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_rlyzhl",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "本期专版，我们把镜头对准烈日之下的奋斗身影，致敬每一位不惧酷暑、默默奉献的城市劳动者",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_1nhlj38",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "”在她的影响下，丈夫、弟弟常年坚持，儿子成年后接力加入，全家累计献血超11万毫升，让热血家风在平凡中传承",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143571.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_1iz14gn",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "规范表述",
+   "text": "坚持，儿子成年后接力加入，全家累计献血超11万毫升，让热血家风在平凡中传承。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143571.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_1jomf96",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "红砖墙旁飘出咖啡香，老厂房里亮起暖黄的灯，既有老武汉韵味、又有新潮氛围感，一跃成为年轻人打卡的热门地",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125667.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_11st6ax",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "为此，改造刻不容缓，分为上段和下段接力推进",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124257.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_1a014qg",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "”团员侯敏慧则表示，高铁站里的星巴克等国际连锁门店，让她倍感熟悉",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_svrl4x",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "团员们凭栏远眺长江与武汉三镇交融的壮阔景致，课本里的诗词图景跃然眼前，大家纷纷拍照留念",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_o4pa6",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "两地青年开展趣味知识问答互动，武汉大学在校学子分享了学习模式、社团活动、校园运动会等丰富多彩的大学生活，现场气氛热烈融洽",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_19odxe2",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "团员杨靖瑶全程认真倾听，主动提问，收获满满：“通过交流，让我对内地大学校园生活有了全新的认识",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_1fpnjce",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "很少有人能想到，这个三岁就因车祸失去左腿的年轻人，是从被父亲背着上学开始，一步一步走到了今天",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120920.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_1altfv1",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "从档案里的故事，可以找寻当年“丹心向党、舍身为公，艰苦奋斗、求变求新”的引丹渠精神",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/03/content_20119119.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_on0g0y",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "他指出，江泽民同志的一生，是光辉的一生、战斗的一生，他为争取民族独立、人民解放和实现国家富强、人民幸福鞠躬尽瘁、奋斗终身",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0817/c1024-40781085.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_v9urqm",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "统筹生产、生活、生态、文化和安全需求，不断完善城镇功能、优化城镇空间结构和布局，改善城乡人居环境，支撑城市高质量发展",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_oxyih5",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "健全自然资源资产清查统计核算制度，建立核算技术标准体系，既算经济账又算生态账，全面掌握自然资源资产家底",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_1v3x1h3",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "必须始终坚持用最严格制度最严密法治保护生态环境。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_ww0rlb",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "要深刻把握生态环境法典的核心要义，切实提高贯彻实施生态环境法典的质量和水平。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_1ovt3te",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "落实习近平生态文明思想的重大法治成果。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_xd48z8",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "完善了中国特色生态文明法律制度体系。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_ri34rc",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "加强矿产资源节约和综合利用，建成省级以上绿色矿山5500余家。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_174u29t",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "要强化政策支持，深化“高效办成一件事”改革，推动政务服务从“便捷办理”向“增值赋能”升级，实现营商环境全面优化",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/14/content_20138840.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_1qw6xn4",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "我们将对标先进地区，聚力打造市场化法治化国际化一流营商环境，为中交集团等各类企业在鄂发展创造良好条件",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/13/content_20138309.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_1efj5f8",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "”长江大学大二学生蔡雨珊也圆了心愿，“以前总说要看日出，被学业一拖再拖",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/09/content_20129760.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_gxxg1w",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "8月5日夜，宜昌港华灯璀璨，“长江行·极光”号豪华游轮停泊在夜色中，通体暖色灯光宛如一道金色长虹",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/09/content_20129749.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_pvjpkm",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "今年4月“长江行·揽月”号游轮投运以来，已稳定运行32个航次，累计接待游客超1.6万人次，平均床位载客率达95%",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/09/content_20129749.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_15hjwbq",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "保障群众清凉度夏，是我们每一名电力人的使命与承诺。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_uksg25",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "城市更新，从来不是简单的新旧更替，而是留住邻里烟火、安顿百姓生活的温柔升级",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143745.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1rrdltx",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "依托国债惠民政策红利，东西湖区率先发力、精准落地，让老旧小区的民生难题就地化解",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143745.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_id4m87",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "保障使用满15年、故障高发、群众意愿强烈的楼栋。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143745.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_gt8e1t",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "要在群众反映强烈的痛点、堵点、难点中去找，在解决好人民群众的急难愁盼中去找。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143721.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_12btx5p",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "优化巡航航线布局，升级系统功能，深化空地联动机制，全力守护市民生命安全。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20142700.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_16u9muu",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "一道加工工序，留住了就业，也留住了税收",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/09/content_20130764.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1mccz37",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "由于管网老化、跑冒滴漏严重，总表与分表对不上，漏掉的水费全摊到老百姓头上，每吨水要3.5元，有时甚至4元",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/09/content_20129884.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_gbw602",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "保障群众消暑用电、企业生产用电的压力持续加大。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/08/content_20129600.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_fhrecy",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "要格外注意高温和风雨交替带来的健康风险，适时增减衣物，谨防热伤风和肠胃不适。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/08/content_20129588.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_wih2l0",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "要他们立即回去发动群众，协助毛泽东发动秋收起义。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/08/content_20128539.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_o4fcd3",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "此时，7户中苏吉国、苏吉海两户外出务工家中无人，其余5户共14名群众仍在家中",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1b2mpaf",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "我们现在面临的形势是，改革发展行至纵深，各类问题更加错综复杂，涉及经济、政治、文化、社会、生态文明等多个领域",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143721.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_7pcj3l",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "从“烧烤模式”急转“大风大雨”，从防暑降温切换为防风避雨，切换之快、风险叠加，尤须我们打起十二分精神",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/08/content_20129588.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1cyuvjf",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "加强荆楚文化研究阐释，统筹推进文化遗址保护、考古研究和场馆建设。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20126423.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1dbwxsa",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "要阵地，数字技术不断赋能，让文物“活”起来，让历史“近”起来。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20126423.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_l4kaec",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "推动历史文化保护传承与城乡建设深度融合，全省保护更新历史文化街区19片，修缮利用历史建筑1149处。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20126423.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1kdux8d",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "罗弼文说，传统园区往往以办公面积为核心，创业者来了先租一张桌子，企业通过场地租金或配套服务维持运营",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/08/content_20128566.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1s03ils",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "在武汉经开区支持下，维智捷打破传统供应链串行模式，推行“研发并联”和“地理并联”",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126511.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_13fdonb",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "要扎得深，文化的魂必须立得住。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_4zvno2",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "要高度重视历史文化保护，不急功近利，不大拆大建。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125718.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_iliw0g",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "当天下午，香港交流团来到黄鹤楼公园，厚重的诗词文化扑面而来",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_19t1n8",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "该节目属于传统蹬技，创作于 21 世纪初，历经两代演员传承打磨，并融入现代舞台美学与灯光科技，焕发出崭新活力",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122678.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_sik2sp",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "推动非遗杂技传承创新，演出足迹遍布泰国、智利、美国、俄罗斯等二十余个国家和地区。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122678.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_y7ay5k",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "推动高质量发展明确了法律制度依据。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1row6wb",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "“很多网友呼吁追究男方重婚罪，但从司法实务来看，这条路基本走不通",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_oou7f3",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "在谢文敏看来，本案暴露出辅助生殖审查机制、婚外胚胎权利机制等存在空白，相关法律法规、行业监管规则需要与时俱进",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1pn2izi",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "智能时代，朝着“有益、安全、公平”方向前行，我们锚定目标、脚步坚实",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0817/c1001-40780471.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_4xixa9",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "必须依靠制度、依靠法治。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0808/c40531-40776066.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1mks1jo",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "另一方面，社会保障通过缩小民众的收入差距、实现社会公平，能够为推进共同富裕提供动力支撑",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774839.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1ob3kmr",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "保障通过缩小民众的收入差距、实现社会公平，能够为推进共同富裕提供动力支撑。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774839.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_vmgq3j",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "在广东，深圳市冠旭电子相关负责人介绍“扫码入企”前后的变化：以前执法部门分头执法、企业频繁迎检，占用了公司大量人力物力",
+   "source": "人民网",
+   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_oicrl8",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "而且，不同执法部门人员同时在场，一次性告知企业该如何整改，执法更加规范了，企业也能腾出更多精力去做技术升级和市场开拓",
+   "source": "人民网",
+   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_mvdsg9",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "综合执法队执法人员很快上门，根据预约需求，逐一排查客房、大堂、餐饮区等重点区域，并现场讲解最新政策要求",
+   "source": "人民网",
+   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_76zaoe",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "要强化执法监督，集中整治乱收费、乱罚款、乱检查、乱查封，切实依法保护民营企业和民营企业家合法权益。",
+   "source": "人民网",
+   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1cuo1xn",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "要作出部署，明确“健全规范涉企执法长效机制”。",
+   "source": "人民网",
+   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_7xb14p",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "身着厚重劳保防护装备的工作人员坚守岗位，常态化开展设备巡检、动态调节工艺参数，全力保障生产线24小时不间断平稳运行",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_yv2se9",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "针对高温作业风险，企业精准优化作业模式，科学推行错峰作业、轮岗轮休，有效避开正午极端高温时段，降低职工高温作业强度",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_e8wodx",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "“公司防暑保障很到位，降温物资充足、车间降温设备全天候运行，合理的轮班制度也让我们能够充分休息，干活特别踏实",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1gup9ma",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "清晨6时，天色微亮，闷热气息已然笼罩全城，比晨间热浪更早开启忙碌的，是国网潜江市供电公司的带电作业工作人员",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1vd01tx",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "“今天4项作业任务，3项为三级风险作业，需要处置三条10千伏线路开关刀闸隐患",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1az36bl",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "保障生产线24小时不间断平稳运行。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1fgwhbn",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "优化作业模式，科学推行错峰作业、轮岗轮休，有效避开正午极端高温时段，降低职工高温作业强度。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_2wd8o6",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "保障很到位，降温物资充足、车间降温设备全天候运行，合理的轮班制度也让我们能够充分休息，干活特别踏实。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_14fwah2",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "统筹安排隐患处置、线路巡检各项工作。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_iwc1hi",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "要处置三条10千伏线路开关刀闸隐患。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_42nxtt",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "保障用电稳定，再热也值得。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143748.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_14yymq4",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "驱车沿武汉东湖高新区未来三路向东行驶，若不是路牌提示，很难察觉已进入鄂州市华容区",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/17/content_20143742.html",
+   "category": "湖北地域发展"
+  },
   {
    "id": "q_8js6f3",
    "theme": "jiceng",
@@ -123,86 +1083,6 @@
    "category": "基层治理"
   },
   {
-   "id": "q_1dpl7h5",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "从“化工围江”到“江豚逐浪”，从传统产业转型到新兴产业崛起，湖北正在回答一道时代命题：保护与发展，如何相得益彰",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20126423.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_q75ujg",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "8月，湖北将重点面向先进制造业、现代服务业产业集群以及各地特色优势产业，吸纳符合条件的经营主体进入培育库",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126559.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_17e88i0",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "”维智捷全球副总裁兼中国区总裁祁松表示，持续追投武汉，得益于雄厚的产业基础、优质的人才储备和高效的企业服务",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126511.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_165a00m",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "提升智能传感器领域创新能力和产业竞争力。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126557.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_kjo9q3",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "此外，HKT还计划将网络延伸至沙岭数据园区集群，支持香港推动其成为先进算力产业基地",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126560.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_5a3gyq",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动其成为先进算力产业基地。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126560.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_37x1ar",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "“最近领到4万多元生活补贴，随州尊才爱才重才的优良环境，激励我在这里深耕产业、施展才干",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126553.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_19qkcks",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "他服务的随州海富特五金有限公司，深耕金属3D打印，长期为路易威登、都彭等品牌提供定制服务，产业前景广阔",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126553.html",
-   "category": "乡村振兴"
-  },
-  {
    "id": "q_17hkk6q",
    "theme": "xiangcun",
    "themeName": "乡村振兴",
@@ -243,86 +1123,6 @@
    "category": "乡村振兴"
   },
   {
-   "id": "q_1jomf96",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "红砖墙旁飘出咖啡香，老厂房里亮起暖黄的灯，既有老武汉韵味、又有新潮氛围感，一跃成为年轻人打卡的热门地",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125667.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_11st6ax",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "为此，改造刻不容缓，分为上段和下段接力推进",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124257.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_1a014qg",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "”团员侯敏慧则表示，高铁站里的星巴克等国际连锁门店，让她倍感熟悉",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_svrl4x",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "团员们凭栏远眺长江与武汉三镇交融的壮阔景致，课本里的诗词图景跃然眼前，大家纷纷拍照留念",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_o4pa6",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "两地青年开展趣味知识问答互动，武汉大学在校学子分享了学习模式、社团活动、校园运动会等丰富多彩的大学生活，现场气氛热烈融洽",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_19odxe2",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "团员杨靖瑶全程认真倾听，主动提问，收获满满：“通过交流，让我对内地大学校园生活有了全新的认识",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_1fpnjce",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "很少有人能想到，这个三岁就因车祸失去左腿的年轻人，是从被父亲背着上学开始，一步一步走到了今天",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120920.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_1altfv1",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "从档案里的故事，可以找寻当年“丹心向党、舍身为公，艰苦奋斗、求变求新”的引丹渠精神",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/03/content_20119119.html",
-   "category": "青年奋斗"
-  },
-  {
    "id": "q_hqr6wf",
    "theme": "qingnian",
    "themeName": "青年奋斗",
@@ -361,36 +1161,6 @@
    "source": "人民网",
    "url": "http://politics.people.com.cn/n1/2026/0805/c461001-40774553.html",
    "category": "青年奋斗"
-  },
-  {
-   "id": "q_1efj5f8",
-   "theme": "shengtai",
-   "themeName": "生态文明",
-   "kind": "金句",
-   "text": "”长江大学大二学生蔡雨珊也圆了心愿，“以前总说要看日出，被学业一拖再拖",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/09/content_20129760.html",
-   "category": "生态文明"
-  },
-  {
-   "id": "q_gxxg1w",
-   "theme": "shengtai",
-   "themeName": "生态文明",
-   "kind": "金句",
-   "text": "8月5日夜，宜昌港华灯璀璨，“长江行·极光”号豪华游轮停泊在夜色中，通体暖色灯光宛如一道金色长虹",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/09/content_20129749.html",
-   "category": "生态文明"
-  },
-  {
-   "id": "q_pvjpkm",
-   "theme": "shengtai",
-   "themeName": "生态文明",
-   "kind": "金句",
-   "text": "今年4月“长江行·揽月”号游轮投运以来，已稳定运行32个航次，累计接待游客超1.6万人次，平均床位载客率达95%",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/09/content_20129749.html",
-   "category": "生态文明"
   },
   {
    "id": "q_1arad5w",
@@ -483,66 +1253,6 @@
    "category": "生态文明"
   },
   {
-   "id": "q_16u9muu",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "一道加工工序，留住了就业，也留住了税收",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/09/content_20130764.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_1mccz37",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "由于管网老化、跑冒滴漏严重，总表与分表对不上，漏掉的水费全摊到老百姓头上，每吨水要3.5元，有时甚至4元",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/09/content_20129884.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_gbw602",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "规范表述",
-   "text": "保障群众消暑用电、企业生产用电的压力持续加大。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/08/content_20129600.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_fhrecy",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "规范表述",
-   "text": "要格外注意高温和风雨交替带来的健康风险，适时增减衣物，谨防热伤风和肠胃不适。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/08/content_20129588.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_wih2l0",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "规范表述",
-   "text": "要他们立即回去发动群众，协助毛泽东发动秋收起义。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/08/content_20128539.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_o4fcd3",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "此时，7户中苏吉国、苏吉海两户外出务工家中无人，其余5户共14名群众仍在家中",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126514.html",
-   "category": "民生医疗"
-  },
-  {
    "id": "q_1h6e0ap",
    "theme": "minsheng",
    "themeName": "民生医疗",
@@ -603,116 +1313,6 @@
    "category": "民生医疗"
   },
   {
-   "id": "q_7pcj3l",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "从“烧烤模式”急转“大风大雨”，从防暑降温切换为防风避雨，切换之快、风险叠加，尤须我们打起十二分精神",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/08/content_20129588.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1cyuvjf",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "加强荆楚文化研究阐释，统筹推进文化遗址保护、考古研究和场馆建设。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20126423.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1dbwxsa",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要阵地，数字技术不断赋能，让文物“活”起来，让历史“近”起来。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20126423.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_l4kaec",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "推动历史文化保护传承与城乡建设深度融合，全省保护更新历史文化街区19片，修缮利用历史建筑1149处。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20126423.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1kdux8d",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "罗弼文说，传统园区往往以办公面积为核心，创业者来了先租一张桌子，企业通过场地租金或配套服务维持运营",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/08/content_20128566.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1s03ils",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "在武汉经开区支持下，维智捷打破传统供应链串行模式，推行“研发并联”和“地理并联”",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/07/content_20126511.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_13fdonb",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要扎得深，文化的魂必须立得住。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_4zvno2",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要高度重视历史文化保护，不急功近利，不大拆大建。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125718.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_iliw0g",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "当天下午，香港交流团来到黄鹤楼公园，厚重的诗词文化扑面而来",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_19t1n8",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "该节目属于传统蹬技，创作于 21 世纪初，历经两代演员传承打磨，并融入现代舞台美学与灯光科技，焕发出崭新活力",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122678.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_sik2sp",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "推动非遗杂技传承创新，演出足迹遍布泰国、智利、美国、俄罗斯等二十余个国家和地区。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122678.html",
-   "category": "文化传承"
-  },
-  {
    "id": "q_ngjxds",
    "theme": "wenhua",
    "themeName": "文化传承",
@@ -721,106 +1321,6 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-08/04/content_20120959.html",
    "category": "文化传承"
-  },
-  {
-   "id": "q_1row6wb",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "“很多网友呼吁追究男方重婚罪，但从司法实务来看，这条路基本走不通",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_oou7f3",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "在谢文敏看来，本案暴露出辅助生殖审查机制、婚外胚胎权利机制等存在空白，相关法律法规、行业监管规则需要与时俱进",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_4xixa9",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "必须依靠制度、依靠法治。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0808/c40531-40776066.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1mks1jo",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "另一方面，社会保障通过缩小民众的收入差距、实现社会公平，能够为推进共同富裕提供动力支撑",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774839.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1ob3kmr",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "保障通过缩小民众的收入差距、实现社会公平，能够为推进共同富裕提供动力支撑。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0806/c40531-40774839.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_vmgq3j",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "在广东，深圳市冠旭电子相关负责人介绍“扫码入企”前后的变化：以前执法部门分头执法、企业频繁迎检，占用了公司大量人力物力",
-   "source": "人民网",
-   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_oicrl8",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "而且，不同执法部门人员同时在场，一次性告知企业该如何整改，执法更加规范了，企业也能腾出更多精力去做技术升级和市场开拓",
-   "source": "人民网",
-   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_mvdsg9",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "综合执法队执法人员很快上门，根据预约需求，逐一排查客房、大堂、餐饮区等重点区域，并现场讲解最新政策要求",
-   "source": "人民网",
-   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_76zaoe",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "要强化执法监督，集中整治乱收费、乱罚款、乱检查、乱查封，切实依法保护民营企业和民营企业家合法权益。",
-   "source": "人民网",
-   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1cuo1xn",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "要作出部署，明确“健全规范涉企执法长效机制”。",
-   "source": "人民网",
-   "url": "http://society.people.com.cn/n1/2026/0805/c1008-40773989.html",
-   "category": "法治建设"
   },
   {
    "id": "q_1qedeh1",
@@ -4518,507 +5018,6 @@
    "source": "人民网·理论",
    "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772766.html",
    "category": "文化传承"
-  },
-  {
-   "id": "q_1mhki8z",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "阿卜迪卡里莫夫表示，乌中同为文明古国，伟大的丝绸之路见证了两国人民两千多年的友好交往",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772766.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_cqoap5",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "卡特鲁加洛斯认为，文化遗产保护若脱离文明对话，将沦为“对灰烬的膜拜”",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772766.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_q4b8mq",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "中国提出的全球治理倡议和全球文明倡议，为世界文明交流互鉴提供了制度基础，将推动世界文化遗产保护协作迈向实质性治理阶段",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772766.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1spwdpp",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要求，人工智能、大数据等现代科技的快速迭代又为文物保护、研究和利用提供了全新路径。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772766.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_aeny8m",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "推动建立文物科技支撑体系。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772766.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_5qzjvu",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "深化，双方在考古和文化遗产保护领域的合作富有成效，已成为增进两国人民互信、唤醒共同历史记忆的重要纽带。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772766.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_hrpm95",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "唯有整体把握、融会贯通，才能真正吃透精神实质，避免学习流于片面、认识出现偏差",
-   "source": "人民网",
-   "url": "https://cpc.people.com.cn/n1/2026/0728/c462335-40769292.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_8n7szh",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "坚持党中央集中统一领导这一党的领导的最高原则，推动全党更加深刻领悟“两个确立”的决定性意义，增强“四个意识”、坚定“四个自信”、做到“两个维护”。",
-   "source": "人民网",
-   "url": "https://cpc.people.com.cn/n1/2026/0724/c462335-40767133.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_7sdr37",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "加强自身建设、独立自主探索现代化道路提供了有益借鉴，为人类政治文明进步作出重要贡献。",
-   "source": "人民网",
-   "url": "https://cpc.people.com.cn/n1/2026/0724/c462335-40767133.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_x3bqon",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要建设创新、宜居、美丽、韧性、文明、智慧的现代化人民城市，改造城市老旧小区是重要一环。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/467804694009856",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_n42luc",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "必须积极应对前进道路上的风险挑战，强化忧患意识、坚持底线思维，发扬斗争精神、增强斗争本领，更好统筹国内国际两个大局，统筹发展和安全。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/467509908099072",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_mq69y3",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "党的光荣传统和优良作风，是我们党性质和宗旨的集中体现，是我们党区别于其他政党的显著标志",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0630/c40531-40750440.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1zxd2v",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "习近平党建思想，发展脉络清晰，文化底蕴深厚，精神标识鲜明，实践成就非凡",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0630/c40531-40750440.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_159ewxq",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要深入学习贯彻习近平党建思想，以改革精神和严的标准纵深推进全面从严治党，为以中国式现代化全面推进强国建设、民族复兴伟业提供坚强保证。",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0630/c40531-40750440.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_9ez3s7",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "第三，坚持以友谊传承为动力，拉紧民心相通纽带",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/467051793112064",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1795k6w",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "无论时代如何变迁、国际形势如何变化，中朝传统友谊始终牢不可破、历久弥坚，不断焕发蓬勃生机活力",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/467051793112064",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_73gdnw",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "坚持以友谊传承为动力，拉紧民心相通纽带。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/467051793112064",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_bpawiz",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "深化政治互信和战略协作，以“更上一层楼”的精神拓展各领域合作，以“乱云飞渡仍从容”的勇气捍卫国际公道正义、推动构建人类命运共同体。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/466537287540736",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_16f9vrs",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "三是要做相知相亲的文明伙伴，共同践行全球文明倡议，密切人文交流，打造民心相通新亮点",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/466377016625152",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1jnvmp0",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要做相知相亲的文明伙伴，共同践行全球文明倡议，密切人文交流，打造民心相通新亮点。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/466377016625152",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1d12lzp",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "中华文明在漫长的历史进程中，形成了鲜明的价值追求，并在实践中将其转化为经济社会发展的重要导向",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0508/c461530-40715485.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_80ratm",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "从“周虽旧邦，其命维新”“苟日新，日日新，又日新”中，我们可以看到中华文明蕴含着深厚的革新精神",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0508/c461530-40715485.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_pc33i7",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "然而，传统安全体系受制于小农经济基础和技术条件，保障能力有限，作用主要局限于灾荒赈济",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0508/c461530-40715485.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1l9vr9t",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要作用，指明科学技术本身在文明发展过程中越来越成为内在的、作用不断强化的生产力。",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0508/c461530-40715485.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_zk2mh0",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要论断，既高扬中华优秀传统文化中蕴含的革新精神，也实现了对马克思主义关于科学技术是起推动作用的、革命的力量的观点的创新发展。",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0508/c461530-40715485.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_t6w9xc",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "落实习近平总书记关于服务业发展的重要指示和全国服务业大会精神，国务院日前印发《关于推进服务业扩能提质的意见》。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/465925963011072",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1xxs25x",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "”传统上，衡量区域之间的发展是否协调平衡，往往关注经济总量或人均经济指标",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0224/c461530-40668716.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_6lnjav",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "要，将党的主张通过法定程序转化为国家意志；通过国家发展规划法，为更好发挥国家发展规划的战略导向作用提供有力法治保障。",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0804/c461001-40773404.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1k3ha1o",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "要成员，应当坚定站在历史正确和文明进步一边，为改革完善全球治理体系、捍卫国际公平正义发挥更大建设性作用。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/468121408524288",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_lf28lu",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "要求，在民主、法治、公平、正义、安全等方面的需求也日益增长。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772707.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_170pa4o",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "要求我们持续深化改革，将发展成果更多更公平惠及全体人民。",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0802/c461529-40772205.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_pvcrhz",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "第四，坚持以公平正义为理念，丰富战略协作内涵",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/467051793112064",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1her69a",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "坚持以公平正义为理念，丰富战略协作内涵。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/467051793112064",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1p3k5k7",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "坚持和平发展、坚守公理正义有着深刻理解。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/466697275333632",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_uq0jh2",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "中俄两国签署睦邻友好合作条约，以法律形式确立了长期睦邻友好、全面战略协作的制度基础，中俄关系由此实现跨越式发展",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/466537287540736",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_z8it0y",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "坚持平等相待、相互尊重、重信守义、合作共赢，为维护国际公平公道、推动构建新型国际关系作出重要贡献，成为世界百年变局中的关键恒量。",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/466537287540736",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1n6g4u0",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "我国先贤不仅强调物质财富的增长，更注重对社会公平的维护",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0508/c461530-40715485.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_znat4g",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "应当认识到，推动区域协调发展并非简单促进区域之间在经济上平衡发展，而是注重构建更为公平合理的区域发展秩序",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0224/c461530-40668716.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_horldx",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "完善党领导全面依法治国工作法规制度，协同推进立法、执法、司法、守法各环节改革，中国特色社会主义法治体系更加完善",
-   "source": "人民网",
-   "url": "http://finance.people.com.cn/n1/2025/1229/c1004-40634090.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_uqj49z",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "深化提升行动，着力破除制约民营企业公平参与市场竞争的壁垒，出台实施民营经济促进法，促进各种所有制经济优势互补、共同发展。",
-   "source": "人民网",
-   "url": "http://finance.people.com.cn/n1/2025/1229/c1004-40634090.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1rk2vqm",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "加快推动全国统一大市场建设，建立健全市场基础制度、市场准入退出机制和联合执法体系。",
-   "source": "人民网",
-   "url": "http://finance.people.com.cn/n1/2025/1229/c1004-40634090.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_yqzlq6",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "深化民主法治领域改革，进一步深化党和国家机构改革，推动社会主义民主政治更加完善。",
-   "source": "人民网",
-   "url": "http://finance.people.com.cn/n1/2025/1229/c1004-40634090.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_pdxd2i",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "自1986年以来，我国已连续实施完成了8个五年普法规划，不断推动全社会树立法治意识、增强法治观念",
-   "source": "求是网",
-   "url": "https://www.qstheory.cn/20260730/86ba7c4938dd4ef8b876f63050b42d47/c.html",
-   "category": "法治建设",
-   "excludeFromDaily": true
-  },
-  {
-   "id": "q_1xoeo9x",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "在我们这样一个人口规模巨大的国家持续开展全民普法，让人民信仰法治，是人类法治史上的一大创举",
-   "source": "求是网",
-   "url": "https://www.qstheory.cn/20260730/86ba7c4938dd4ef8b876f63050b42d47/c.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1juquvi",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "要持续深化学习宣传，强化法治实践和成就宣传，深入推进国际传播，把习近平法治思想贯彻落实到全民普法全过程各方面",
-   "source": "求是网",
-   "url": "https://www.qstheory.cn/20260730/86ba7c4938dd4ef8b876f63050b42d47/c.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1oxhhk7",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "推动全社会树立法治意识、增强法治观念。",
-   "source": "求是网",
-   "url": "https://www.qstheory.cn/20260730/86ba7c4938dd4ef8b876f63050b42d47/c.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_9hnduw",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "深化，针对性、实效性还不够强，工作保障机制还不够完善等问题，迟滞了法治社会建设的步伐。",
-   "source": "求是网",
-   "url": "https://www.qstheory.cn/20260730/86ba7c4938dd4ef8b876f63050b42d47/c.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1fj61ud",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "推动全民守法，建设法治社会是一项需要顶层设计、多方协同的系统工程。",
-   "source": "求是网",
-   "url": "https://www.qstheory.cn/20260730/86ba7c4938dd4ef8b876f63050b42d47/c.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1a1p5p",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "推动习近平法治思想深入人心是首要任务。",
-   "source": "求是网",
-   "url": "https://www.qstheory.cn/20260730/86ba7c4938dd4ef8b876f63050b42d47/c.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_qqfj78",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "要持续深化学习宣传，强化法治实践和成就宣传，深入推进国际传播，把习近平法治思想贯彻落实到全民普法全过程各方面。",
-   "source": "求是网",
-   "url": "https://www.qstheory.cn/20260730/86ba7c4938dd4ef8b876f63050b42d47/c.html",
-   "category": "法治建设"
   }
  ]
 }

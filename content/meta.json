@@ -1,15 +1,15 @@
 {
- "updatedAt": "2026-08-16T17:01:49.189Z",
- "updatedAtLocal": "2026/08/17 01:01:49",
- "todayNew": 1080,
+ "updatedAt": "2026-08-17T12:10:22.192Z",
+ "updatedAtLocal": "2026/08/17 20:10:22",
+ "todayNew": 1135,
  "totals": {
-  "shizheng": 159,
-  "qiushi": 32,
+  "shizheng": 186,
+  "qiushi": 40,
   "renwu": 29,
   "essays": 80,
   "quotes": 500,
   "morning": 60,
-  "susuan": 220
+  "susuan": 240
  },
  "dailyNew": {
   "2026-08-07": {
@@ -40,12 +40,12 @@
    "susuan": 20
   },
   "2026-08-17": {
-   "shizheng": 0,
-   "qiushi": 0,
+   "shizheng": 27,
+   "qiushi": 8,
    "renwu": 0,
-   "quotes": 0,
-   "essays": 7,
-   "morning": 9,
+   "quotes": 50,
+   "essays": 10,
+   "morning": 5,
    "susuan": 20
   }
  }
