@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-12T12:06:34.246Z",
+ "updatedAt": "2026-10-18T18:28:32.099Z",
  "count": 500,
  "items": [
   {
@@ -153,6 +153,76 @@
    "category": "乡村振兴"
   },
   {
+   "id": "q_bp86zh",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "评选中国重要农业文化遗产，旨在推进中华优秀农耕文化保护传承，赋能乡村全面振兴",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1x1ujfw",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "要农业文化遗产，湖北共4项（蕲春蕲艾文化系统、房县黑木耳栽培系统、五峰茶文化系统、沙洋油菜水稻轮作系统）入选，至此全省已有9项中国重要农业文化遗产。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1w6pbkd",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "要农业文化遗产，旨在推进中华优秀农耕文化保护传承，赋能乡村全面振兴。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1itm1si",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "完善农业文化遗产与农民群众利益联结机制，助力乡村全面振兴。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_b3tqhz",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "北京主攻原始创新策源，上海发力全链条产业化，深圳依托制造优势攻坚工程化落地，国内各大城市纷纷闯入这条未来赛道",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240772.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_plm3rd",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "今年，武汉市委十四届十三次全会提出健全产业牵引的人才培育体系、创新产教融合机制，大力培育科学企业家人才队伍",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/17/content_20240648.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_z2vyet",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "健全产业牵引的人才培育体系、创新产教融合机制，大力培育科学企业家人才队伍。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/17/content_20240648.html",
+   "category": "乡村振兴"
+  },
+  {
    "id": "q_1dw1bnk",
    "theme": "xiangcun",
    "themeName": "乡村振兴",
@@ -173,74 +243,34 @@
    "category": "乡村振兴"
   },
   {
-   "id": "q_1umacoq",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
+   "id": "q_1pbx95c",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
    "kind": "规范表述",
-   "text": "落实产业图谱，更大力度延链补链强链。",
+   "text": "必须是孝感》惊艳全场，融合董永传说、云梦竹简、孝感麻糖等本土特色元素，尽显孝感人文底蕴与青春活力。",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/24/content_20209193.html",
-   "category": "乡村振兴"
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240800.html",
+   "category": "青年奋斗"
   },
   {
-   "id": "q_ml3hf3",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "要夯实算力、算法、数据支撑，纵深开展“人工智能+制造”行动，促进产业体系升级和融合发展。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/24/content_20209193.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1iwx5rg",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动文化事业与文化产业发展。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/19/content_20199584.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1wzvh05",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "要打造世界知名的文化旅游目的地，推动“文旅体+行动”，把文化旅游业培育成支柱产业。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/19/content_20199584.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_knqyis",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动网络文学AI转化与影视产业深度对接，走进大别山革命老区汲取红色创作养分。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/19/content_20199584.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1bvub6y",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "完善本地产业链生态，带动武汉都市圈产业集群发展。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/07/content_20177968.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1d1fdc4",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
+   "id": "q_t224i7",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
    "kind": "金句",
-   "text": "几乎在同一时间，几公里外的中国（鄂州）跨境电商产业园直播间里，来自索马里的主播木海正对着镜头向海外网友展示“中国造”",
+   "text": "这里最年轻的是一位五十多岁的阿姨，脑肿瘤手术之后大脑严重退化，刚来的时候智力还不到一岁，听不懂任何人说话",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/07/content_20177955.html",
-   "category": "乡村振兴"
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_1iwqumh",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "此后，浙江每年都会公布科学企业家和青年科学企业家名单，还建立了千人级动态人才库，并成立科技型企业家联合会",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/17/content_20240648.html",
+   "category": "青年奋斗"
   },
   {
    "id": "q_1o2td6j",
@@ -330,36 +360,6 @@
    "text": "红砖墙旁飘出咖啡香，老厂房里亮起暖黄的灯，既有老武汉韵味、又有新潮氛围感，一跃成为年轻人打卡的热门地",
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-08/06/content_20125667.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_11st6ax",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "为此，改造刻不容缓，分为上段和下段接力推进",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124257.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_1a014qg",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "”团员侯敏慧则表示，高铁站里的星巴克等国际连锁门店，让她倍感熟悉",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
-   "category": "青年奋斗"
-  },
-  {
-   "id": "q_svrl4x",
-   "theme": "qingnian",
-   "themeName": "青年奋斗",
-   "kind": "金句",
-   "text": "团员们凭栏远眺长江与武汉三镇交融的壮阔景致，课本里的诗词图景跃然眼前，大家纷纷拍照留念",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
    "category": "青年奋斗"
   },
   {
@@ -453,6 +453,616 @@
    "category": "生态文明"
   },
   {
+   "id": "q_nizo7o",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "加快打造国内知名生态文旅康养目的地。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240751.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_31cv8g",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "要在恩施的群山中狠狠敲上几锤，把敌人的兵力继续钉在长江以南。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/17/content_20240651.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_wh4ohc",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "相关部门接到诉求后，迅速关闭了此处的违章拍照闪光灯，并计划更换为环保补光灯",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/17/content_20240642.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_7auvid",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "深化养老服务改革发展的意见》等一系列政策文件先后出台。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/1018/c461001-40816916.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_tggz8u",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "解决老城区居民“拎马桶”问题，是上海这座超大城市的“民生一号工程”，也是历经数十年才彻底翻越的一座“大山”",
+   "source": "人民网",
+   "url": "http://opinion.people.com.cn/n1/2026/0924/c461530-40804635.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_w90f6k",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "对高收益地块趋之若鹜，而对投资大、周期长、收益低的民生短板视而不见，“市场失灵”导致民生缺位",
+   "source": "人民网",
+   "url": "http://opinion.people.com.cn/n1/2026/0924/c461530-40804635.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1u6w9ek",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "自承办本届省运会以来，孝感践行“办好一次盛会、提升一座城市、惠及一方百姓”理念，交出了一份“办赛精彩、参赛出彩”的答卷",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240800.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_75y93h",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "提升一座城市、惠及一方百姓”理念，交出了一份“办赛精彩、参赛出彩”的答卷。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240800.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_14r4bbu",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "目前，同济医院、协和医院等顶尖医疗机构已开展脑机接口临床试验超过60项，其中超过60%为外省企业委托",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240772.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_42tfn9",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "当时，国内还没有脑机接口医疗器械获批上市，湖北先行一步，将过去纯科研性质的治疗打通了市场化通道",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240772.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1a6fyqd",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "要落到老百姓实实在在的获得感上。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/17/content_20240672.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_e8ovz6",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "一座小桥静卧溪上，桥畔古木参天，百姓把这座桥唤作“红军桥”",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/17/content_20240651.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1fvytjf",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "热线的作用，就是把这些“看似不大”的烦心事，当成一件必须办好的民生实事",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/17/content_20240642.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1i83x96",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "要不断增强人民群众的获得感、幸福感、安全感。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/19/content_20199584.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_12u1xcc",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "优化落户到创业扶持，从住房保障到就业对接，试图回答这道必答题。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/07/content_20177961.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_13pgk44",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "应当公平对待中国企业，秉持平等、尊重、互惠的精神，通过对话谈判找到解决问题的出路。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0926/c1001-40806014.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1vjpaz5",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "在金砖精神鼓舞下，金砖机制不断发展壮大，成为当今世界最具影响力的新兴市场和发展中国家合作组织",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0914/c461001-40797888.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_owvyj3",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "12年前，习近平主席在金砖国家领导人第六次会晤上提出金砖精神，为金砖合作机制发展壮大明确了方向",
+   "source": "人民网",
+   "url": "http://theory.people.com.cn/n1/2026/0920/c40531-40802082.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_o7u6oy",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "中国将同“上合大家庭”成员携手努力，将上合组织做实做强，以“上海精神”照亮人类命运共同体的前路",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1bddxvj",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "如今，五峰正以茶为媒，将自然生态、传统技艺与民俗文化紧密相连，绘就茶文旅深度融合的壮美画卷",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_8aflen",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "坚持传统有机种植，恪守天时采收与阴干陈化工序，守护蕲艾道地品质。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_go6v0f",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "要深入了解这里的人民、文化、美食和日常生活。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/16/content_20239418.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_j39xe0",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "它线条飘逸、工艺精湛，被誉为“中华第一凤”，是中国凤文化的重要源头",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222928.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_13ihhss",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "《先民奇遇记》NPC互动正在上演，游客不再是隔着展柜看文物，而是和来自石家河古国的“先民”面对面聊天、做游戏",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222928.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_t8gc4t",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "要石刻文物“请”进开放区，就是想让文物从库房和展板里走出来。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222928.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_8uy640",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "湖北各大文博场馆深挖馆藏资源，以科技赋能传统文化，让沉睡的文物“活起来”，让八方游客“走进去”",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222932.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_lfabxd",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "国庆长假期间，以艺术季活动为引领，荆楚大地掀起阵阵文化热潮",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222932.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1shkpao",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "深化各领域合作，增强经济韧性，推动形成更加公平包容的国际秩序，建设一个安全繁荣的多极世界。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0914/c461001-40797888.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1oh6nvw",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "坚决打击一切形式恐怖主义，充分发挥金砖国家反恐工作组作用，加强信息分享、经验交流，促进执法合作与能力建设",
+   "source": "人民网",
+   "url": "http://theory.people.com.cn/n1/2026/0920/c40531-40802082.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_za5vk7",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "此访以团结协作为主线，聚焦命运与共、倡导公平正义，对凝聚各方合作共识、改革完善全球治理具有重要现实和深远意义",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1969qse",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "深化多边协作、携手捍卫国际公平正义提供了重要契机。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_y7ay5k",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "推动高质量发展明确了法律制度依据。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1bmgk23",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "在法治服务工作室，法院把企业重组服务中心设在了服务中心，让司法服务离企业更进一步，将风险化解在前头",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/30/content_20165816.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1row6wb",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "“很多网友呼吁追究男方重婚罪，但从司法实务来看，这条路基本走不通",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_oou7f3",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "在谢文敏看来，本案暴露出辅助生殖审查机制、婚外胚胎权利机制等存在空白，相关法律法规、行业监管规则需要与时俱进",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_10s0js6",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "当前国际形势持续复杂变化，中塔同为全球南方重要成员，应当更加紧密团结协作，维护两国共同利益，捍卫国际公平正义",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/1018/c1024-40816923.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_yli5ux",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "要成员，应当更加紧密团结协作，维护两国共同利益，捍卫国际公平正义。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/1018/c1024-40816923.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1b0nw7e",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "要求落实到法律规定中，通过法定程序使党的主张成为国家意志，成为全体人民的共识和共同行动。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/1015/c461001-40814883.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_4yqqie",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "保障公民的选举权和被选举权，早已写进法律。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/1015/c461001-40814883.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_jtbbuc",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "你以为他们是老人，实际上他们也是小孩",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1tk67z2",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "你有没有想过，有一种老去，就是逐步失去这辈子自己曾经拥有的东西：思维、记忆、嗅觉、触觉、行动能力，甚至是亲人",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1fktyrs",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "84岁的王爷爷曾经是很厉害的仪表工程师，患上认知症后在家频繁走失，最多两个月就要走失一次",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_13b85ow",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "年纪大了的老伴也无力看护，女儿万般无奈，把父亲送到这里",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1grwutj",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "送来5个多月，爷爷在大多数时刻已经认不出自己的女儿，但只要听到老伴的声音，还是会“牛头不对马嘴”地跟她打电话",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1dide8k",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "在工作人员日复一日的陪伴下，她的话渐渐多了起来，遇到爱吃的食物，还会亲手喂到工作人员嘴里",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1cymlnb",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "要听到老伴的声音，还是会“牛头不对马嘴”地跟她打电话。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_fb5g5s",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "要能自己做的，就鼓励他们亲手去完成，哪怕饭撒一身、动作笨拙，也想留住那一点点“我还可以”的成就感。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240850.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1a04vv4",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "房县素有“黑木耳之乡”美誉，自古享有“房耳”盛名，唐代即被列为贡品",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_6m41zb",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "据史料记载，当地黑木耳人工栽培历史可追溯至清同治年间，至今已有150余年",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_an4mjn",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "房县黑木耳栽培系统拥有完善的种质资源体系，坚持本地种保特色、引进种补短板，依托标准化菌种繁育保障种质纯正与适应性",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_14ad1vh",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "作为中俄万里茶道重要源头，五峰古茶道承载厚重历史，采花古茶园已列入万里茶道申遗点",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1umacoq",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "落实产业图谱，更大力度延链补链强链。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/24/content_20209193.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_ml3hf3",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "要夯实算力、算法、数据支撑，纵深开展“人工智能+制造”行动，促进产业体系升级和融合发展。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/24/content_20209193.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1iwx5rg",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "推动文化事业与文化产业发展。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/19/content_20199584.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1wzvh05",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "要打造世界知名的文化旅游目的地，推动“文旅体+行动”，把文化旅游业培育成支柱产业。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/19/content_20199584.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_knqyis",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "推动网络文学AI转化与影视产业深度对接，走进大别山革命老区汲取红色创作养分。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/19/content_20199584.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1bvub6y",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "规范表述",
+   "text": "完善本地产业链生态，带动武汉都市圈产业集群发展。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/07/content_20177968.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_1d1fdc4",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "几乎在同一时间，几公里外的中国（鄂州）跨境电商产业园直播间里，来自索马里的主播木海正对着镜头向海外网友展示“中国造”",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-09/07/content_20177955.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_11st6ax",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "为此，改造刻不容缓，分为上段和下段接力推进",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124257.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_1a014qg",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "”团员侯敏慧则表示，高铁站里的星巴克等国际连锁门店，让她倍感熟悉",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
+   "category": "青年奋斗"
+  },
+  {
+   "id": "q_svrl4x",
+   "theme": "qingnian",
+   "themeName": "青年奋斗",
+   "kind": "金句",
+   "text": "团员们凭栏远眺长江与武汉三镇交融的壮阔景致，课本里的诗词图景跃然眼前，大家纷纷拍照留念",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/05/content_20122696.html",
+   "category": "青年奋斗"
+  },
+  {
    "id": "q_1jalzbu",
    "theme": "shengtai",
    "themeName": "生态文明",
@@ -481,46 +1091,6 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-10/05/content_20223532.html",
    "category": "生态文明"
-  },
-  {
-   "id": "q_tggz8u",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "解决老城区居民“拎马桶”问题，是上海这座超大城市的“民生一号工程”，也是历经数十年才彻底翻越的一座“大山”",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0924/c461530-40804635.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_w90f6k",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "对高收益地块趋之若鹜，而对投资大、周期长、收益低的民生短板视而不见，“市场失灵”导致民生缺位",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0924/c461530-40804635.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_1i83x96",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "规范表述",
-   "text": "要不断增强人民群众的获得感、幸福感、安全感。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/19/content_20199584.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_12u1xcc",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "规范表述",
-   "text": "优化落户到创业扶持，从住房保障到就业对接，试图回答这道必答题。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-09/07/content_20177961.html",
-   "category": "民生医疗"
   },
   {
    "id": "q_1chwq04",
@@ -603,96 +1173,6 @@
    "category": "民生医疗"
   },
   {
-   "id": "q_13pgk44",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "应当公平对待中国企业，秉持平等、尊重、互惠的精神，通过对话谈判找到解决问题的出路。",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0926/c1001-40806014.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_1vjpaz5",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "在金砖精神鼓舞下，金砖机制不断发展壮大，成为当今世界最具影响力的新兴市场和发展中国家合作组织",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0914/c461001-40797888.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_owvyj3",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "12年前，习近平主席在金砖国家领导人第六次会晤上提出金砖精神，为金砖合作机制发展壮大明确了方向",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0920/c40531-40802082.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_o7u6oy",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "中国将同“上合大家庭”成员携手努力，将上合组织做实做强，以“上海精神”照亮人类命运共同体的前路",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_j39xe0",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "它线条飘逸、工艺精湛，被誉为“中华第一凤”，是中国凤文化的重要源头",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222928.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_13ihhss",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "《先民奇遇记》NPC互动正在上演，游客不再是隔着展柜看文物，而是和来自石家河古国的“先民”面对面聊天、做游戏",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222928.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_t8gc4t",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "规范表述",
-   "text": "要石刻文物“请”进开放区，就是想让文物从库房和展板里走出来。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222928.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_8uy640",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "湖北各大文博场馆深挖馆藏资源，以科技赋能传统文化，让沉睡的文物“活起来”，让八方游客“走进去”",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222932.html",
-   "category": "文化传承"
-  },
-  {
-   "id": "q_lfabxd",
-   "theme": "wenhua",
-   "themeName": "文化传承",
-   "kind": "金句",
-   "text": "国庆长假期间，以艺术季活动为引领，荆楚大地掀起阵阵文化热潮",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/05/content_20222932.html",
-   "category": "文化传承"
-  },
-  {
    "id": "q_acs0",
    "theme": "wenhua",
    "themeName": "文化传承",
@@ -721,86 +1201,6 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-09/27/content_20211835.html",
    "category": "文化传承"
-  },
-  {
-   "id": "q_1shkpao",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "深化各领域合作，增强经济韧性，推动形成更加公平包容的国际秩序，建设一个安全繁荣的多极世界。",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0914/c461001-40797888.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1oh6nvw",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "坚决打击一切形式恐怖主义，充分发挥金砖国家反恐工作组作用，加强信息分享、经验交流，促进执法合作与能力建设",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0920/c40531-40802082.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_za5vk7",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "此访以团结协作为主线，聚焦命运与共、倡导公平正义，对凝聚各方合作共识、改革完善全球治理具有重要现实和深远意义",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1969qse",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "深化多边协作、携手捍卫国际公平正义提供了重要契机。",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_y7ay5k",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "推动高质量发展明确了法律制度依据。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1bmgk23",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "在法治服务工作室，法院把企业重组服务中心设在了服务中心，让司法服务离企业更进一步，将风险化解在前头",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/30/content_20165816.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1row6wb",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "“很多网友呼吁追究男方重婚罪，但从司法实务来看，这条路基本走不通",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_oou7f3",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "在谢文敏看来，本案暴露出辅助生殖审查机制、婚外胚胎权利机制等存在空白，相关法律法规、行业监管规则需要与时俱进",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
-   "category": "法治建设"
   },
   {
    "id": "q_zxht13",
@@ -4607,409 +5007,6 @@
    "source": "人民网",
    "url": "http://society.people.com.cn/n1/2026/0804/c1008-40773867.html",
    "category": "基层治理"
-  },
-  {
-   "id": "q_1h3h3fo",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "构建了基于星载、航空、地面的“天—空—地”立体调查观测体系，不断增强易发区内隐患识别能力。",
-   "source": "人民网",
-   "url": "http://society.people.com.cn/n1/2026/0804/c1008-40773867.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_154elig",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "要深化专群结合，推动人防技防深度融合。",
-   "source": "人民网",
-   "url": "http://society.people.com.cn/n1/2026/0804/c1008-40773867.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_1ai3b0e",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "健全完善“技防预警、人防核实、专业研判”闭环机制，大幅提升风险识别精准度和预警有效性。",
-   "source": "人民网",
-   "url": "http://society.people.com.cn/n1/2026/0804/c1008-40773867.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_kdacdf",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "从高校原创技术突破、中试平台迭代验证，到本地光电子产业配套，湖北已搭建起高纯石英砂国产化培育链条",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20122490.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1ked24j",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "要素保障体系，进一步优化产业链、创新链、人才链、资金链、服务链深度融合的人工智能生态，努力推动全省“人工智能+”行动取得更多突破性进展。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20121491.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_12u0yrc",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "加快突破船舶制造核心技术，促进绿色船舶产业集群发展。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/03/content_20120702.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1vnf7s6",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "湖北坐拥科技、交通、产业等多重优势，若金融服务无法有效满足科技与产业的发展需求，便可能在这场竞逐中陷入被动",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/03/content_20119358.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_9tba6z",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "全力做强县域经济，因地制宜发展特色主导产业，毫不放松做好“三农”工作，持续巩固拓展脱贫攻坚成果",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/01/content_20117531.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1uaiqtw",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动前沿技术突破和未来产业发展，着力打造新兴支柱产业，持续推动传统产业改造升级。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/01/content_20117531.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_s8vcve",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "人工智能是推动科技创新和产业升级的关键力量，也是培育发展新质生产力的重要引擎，事关我们能否赢得全球科技竞争主动权",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773475.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_8qaksm",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "人工智能作为通用技术，能够全面赋能智能制造、智慧城市、智慧医疗、现代农业等各领域，重塑生产生活方式、提升全要素生产率",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773475.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1i7wtu9",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "需要看到的是，人工智能产业具有轻资产、高投入、长周期、高风险的特征，与传统产业金融服务需求存在显著差异",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773475.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_ociq1e",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "近年来，全球人工智能产业竞争日趋激烈，我国在关键核心技术等方面还存在短板弱项，行业发展也面临概念炒作、资本投机等隐患",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773475.html",
-   "category": "乡村振兴",
-   "excludeFromDaily": true
-  },
-  {
-   "id": "q_1ush6c7",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动科技创新和产业升级的关键力量，也是培育发展新质生产力的重要引擎，事关我们能否赢得全球科技竞争主动权。",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773475.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1s0g7pt",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "要看到的是，人工智能产业具有轻资产、高投入、长周期、高风险的特征，与传统产业金融服务需求存在显著差异。",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773475.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1vxx8w9",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动前沿科技成果落地转化、规模化应用，加速人工智能与实体经济深度融合，形成以科技突破带动产业升级、产业收益反哺科技创新的良性循环。",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773475.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1wfdbfn",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "第二，多元主体协同创新，打通从技术到产业的通道",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773454.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_iso56e",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "第三，全球创新资源汇聚，为提升产业竞争力注入持续动力",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773454.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1tdc1xe",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "坚持有效市场和有为政府相结合，加强人工智能科技创新，积极推进‘人工智能+’行动，培育各类主体共生共荣的健康生态，智能经济核心产业规模已经超过万亿元人民币”。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773454.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_14hzp8g",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "提升产业竞争力注入持续动力。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773454.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1bdahfk",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动创新链、产业链、供应链、价值链实现更深层次的开放协同。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773454.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1srryv4",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "能源绿色转型不仅关乎能源体系自身的重构，更会对产业结构、生产方式、生活方式的系统性变革形成牵引，具有全局带动作用",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773457.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1yyxpwh",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "到2030年，我国节能环保产业规模将达15万亿元左右，新能源产业将始终是其中的重要组成部分",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0804/c40531-40773457.html",
-   "category": "乡村振兴",
-   "excludeFromDaily": true
-  },
-  {
-   "id": "q_9h4biv",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "8年攻坚，5年巩固，近1亿人全部脱贫，中国为什么能",
-   "source": "人民网",
-   "url": "http://opinion.people.com.cn/n1/2026/0804/c461529-40773253.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_tx7zrf",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "1月，中共中央政治局开年首次集体学习，聚焦前瞻布局和发展未来产业",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0804/c461001-40773404.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_10co4de",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "他强调，“这些年我国经济顶风破浪、保持强大韧性和活力，战略依托就是完整的产业体系”",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0804/c461001-40773404.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1ctpcma",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "要活动，凸显建设现代化产业体系、加快高水平科技自立自强的紧迫性。",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0804/c461001-40773404.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1gezczt",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "上半年，机器人、人工智能、创新药等代表未来产业方向的“新新三样”出口增速明显，正在成为中国出口的新名片",
-   "source": "粉笔·时政热点",
-   "url": "https://www.fenbi.com/page/exam-preparation-material-detail/12/468121408524288",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1ks7yk8",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "加快实施，“六张网”建设扎实推进，城市更新、加快农业农村现代化、扩大消费等国家级“十五五”专项规划陆续落地实施……政策合力加速形成，为经济行稳致远保驾护航。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772718.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_849k7i",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "加快发展新一代人工智能是事关我国能否抓住新一轮科技革命和产业变革机遇的战略问题”。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772708.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_14ewxcd",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "近年来，我国人工智能、量子科技、生命科学、物质科学等领域重大原创成果不断涌现，但科技成果转化率仍亟待提高",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴",
-   "excludeFromDaily": true
-  },
-  {
-   "id": "q_gmg46",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "答好这道必答题，关键在于立足科技供给与产业需求双向发力，打通科技成果向现实生产力转化的全链条通道",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_j25056",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "有调研显示，经中试的科技成果产业化成功率可达50%至80%，未经中试仅30%",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_mhfah0",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "持续推行“先转化后奖励”与“先赋权后转化”并行模式，扩大覆盖面，从源头为成果转化松绑减负",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_flbx3a",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "通过全生命周期金融赋能，助力科技企业攻克核心技术、拓展产业版图，持续夯实新质生产力发展的产业根基",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_pnfbd5",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "推动科技创新与产业创新深度融合，是一项系统工程，也是一场深刻变革",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_9q4fr6",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动科技创新和产业创新深度融合。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1g6bxvs",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "要论述深刻阐明了科技创新、产业创新与新质生产力的内在逻辑，为培育壮大新质生产力提供了根本遵循。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_1rj946c",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动科技创新与产业创新从“物理结合”升级为“化学反应”，以高水平科技自立自强引领发展新质生产力，是摆在我们面前的一道必答题。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_jf7smm",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "规范表述",
-   "text": "推动创新链与产业链深度融合，让更多创新成果从实验室走向生产线。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0803/c40531-40772701.html",
-   "category": "乡村振兴"
   }
  ]
 }
