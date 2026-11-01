@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-26T12:06:13.196Z",
+ "updatedAt": "2026-11-01T20:03:21.543Z",
  "count": 500,
  "items": [
   {
@@ -153,6 +153,16 @@
    "category": "乡村振兴"
   },
   {
+   "id": "q_12051ol",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "依托这些单项冠军产品，该集团正持续发力，助力湖北打造世界级万亿汽车产业集群",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/30/content_20261377.html",
+   "category": "乡村振兴"
+  },
+  {
    "id": "q_57jbha",
    "theme": "xiangcun",
    "themeName": "乡村振兴",
@@ -230,16 +240,6 @@
    "text": "加快集聚，新的产业动能正在积蓄。",
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-10/24/content_20251712.html",
-   "category": "乡村振兴"
-  },
-  {
-   "id": "q_bp86zh",
-   "theme": "xiangcun",
-   "themeName": "乡村振兴",
-   "kind": "金句",
-   "text": "评选中国重要农业文化遗产，旨在推进中华优秀农耕文化保护传承，赋能乡村全面振兴",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
    "category": "乡村振兴"
   },
   {
@@ -453,6 +453,16 @@
    "category": "生态文明"
   },
   {
+   "id": "q_1kogdgm",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "金句",
+   "text": "东湖是国家级风景名胜区、国家5A级旅游景区，也是武汉的城市生态绿心和亮丽名片",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/30/content_20261119.html",
+   "category": "生态文明"
+  },
+  {
    "id": "q_16g9zcl",
    "theme": "shengtai",
    "themeName": "生态文明",
@@ -470,16 +480,6 @@
    "text": "要扩大有效投资，聚焦城市更新、“六张网”、交通基础设施、生态保护修复等领域，加强项目储备，优化项目服务，积蓄发展后劲",
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-10/23/content_20250803.html",
-   "category": "生态文明"
-  },
-  {
-   "id": "q_nizo7o",
-   "theme": "shengtai",
-   "themeName": "生态文明",
-   "kind": "规范表述",
-   "text": "加快打造国内知名生态文旅康养目的地。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240751.html",
    "category": "生态文明"
   },
   {
@@ -510,6 +510,26 @@
    "text": "对高收益地块趋之若鹜，而对投资大、周期长、收益低的民生短板视而不见，“市场失灵”导致民生缺位",
    "source": "人民网",
    "url": "http://opinion.people.com.cn/n1/2026/0924/c461530-40804635.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1vxfs4r",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "在草棚里批阅文书的县长，白天安抚流亡群众、减免田赋、整训部队；深夜里，他把物资、经费和情报一批批送到新四军手里",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/31/content_20261992.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_hygckc",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "这些真实、权威、有出处的行业语料，是主流媒体开展GEO服务的独特基础，可以服务文旅、政务、教育、医疗、品牌企业等不同对象",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/30/content_20261504.html",
    "category": "民生医疗"
   },
   {
@@ -583,26 +603,6 @@
    "category": "民生医疗"
   },
   {
-   "id": "q_fm7kek",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "规范表述",
-   "text": "落实学前一年免费政策，推进义务教育优质均衡发展，改善普通高中办学条件。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/25/content_20251945.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_1xr3laf",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "要加强民生保障，主动倾听企业和百姓声音，真心实意办实事解难题",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/23/content_20250803.html",
-   "category": "民生医疗"
-  },
-  {
    "id": "q_13pgk44",
    "theme": "wenhua",
    "themeName": "文化传承",
@@ -643,6 +643,66 @@
    "category": "文化传承"
   },
   {
+   "id": "q_1sxumx2",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "扩大会议，传达学习党的二十届五中全会精神，落实省委常委会扩大会议要求，部署政府系统学习宣传贯彻工作。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/31/content_20262113.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1r7w0ye",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "10月30日，省委常委会召开扩大会议，传达学习党的二十届五中全会精神，研究部署我省贯彻落实工作",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/30/content_20261594.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1ki7ofo",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "金句",
+   "text": "会议强调，要准确把握党的二十届五中全会精神的丰富内涵和核心要义，在深学细悟笃行上下功夫",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/30/content_20261594.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_8r0uuy",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "扩大会议，传达学习党的二十届五中全会精神，研究部署我省贯彻落实工作。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/30/content_20261594.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_co86nx",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "要准确把握党的二十届五中全会精神的丰富内涵和核心要义，在深学细悟笃行上下功夫。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/30/content_20261594.html",
+   "category": "文化传承"
+  },
+  {
+   "id": "q_1yzwx17",
+   "theme": "wenhua",
+   "themeName": "文化传承",
+   "kind": "规范表述",
+   "text": "要文化的植入，需要有情感、有温度。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/30/content_20261513.html",
+   "category": "文化传承"
+  },
+  {
    "id": "q_m7jbgp",
    "theme": "wenhua",
    "themeName": "文化传承",
@@ -661,6 +721,286 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-10/25/content_20252194.html",
    "category": "文化传承"
+  },
+  {
+   "id": "q_1shkpao",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "深化各领域合作，增强经济韧性，推动形成更加公平包容的国际秩序，建设一个安全繁荣的多极世界。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0914/c461001-40797888.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1oh6nvw",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "坚决打击一切形式恐怖主义，充分发挥金砖国家反恐工作组作用，加强信息分享、经验交流，促进执法合作与能力建设",
+   "source": "人民网",
+   "url": "http://theory.people.com.cn/n1/2026/0920/c40531-40802082.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_za5vk7",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "此访以团结协作为主线，聚焦命运与共、倡导公平正义，对凝聚各方合作共识、改革完善全球治理具有重要现实和深远意义",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1969qse",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "深化多边协作、携手捍卫国际公平正义提供了重要契机。",
+   "source": "人民网",
+   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_y7ay5k",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "推动高质量发展明确了法律制度依据。",
+   "source": "人民网·理论",
+   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_hakyxe",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "要求贯彻到政府工作各方面全过程，努力建设让人民满意的法治型服务型政府。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/31/content_20262113.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1bmgk23",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "在法治服务工作室，法院把企业重组服务中心设在了服务中心，让司法服务离企业更进一步，将风险化解在前头",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/30/content_20165816.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_1row6wb",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "“很多网友呼吁追究男方重婚罪，但从司法实务来看，这条路基本走不通",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_oou7f3",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "在谢文敏看来，本案暴露出辅助生殖审查机制、婚外胚胎权利机制等存在空白，相关法律法规、行业监管规则需要与时俱进",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_ltoy0k",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "单边排他做法压缩多边协商空间，不断放大信任赤字，冲击国际法治与主权平等原则",
+   "source": "人民网",
+   "url": "http://opinion.people.com.cn/n1/2026/1101/c461529-40825189.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_11wjsz7",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "金句",
+   "text": "没有党规党法，国法就很难保障”，精辟揭示了党章的崇高地位，以及党规党法与国家法律的关系",
+   "source": "人民网",
+   "url": "http://opinion.people.com.cn/n1/2026/1030/c461530-40824177.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_rbvp5r",
+   "theme": "fazhi",
+   "themeName": "法治建设",
+   "kind": "规范表述",
+   "text": "保障”，精辟揭示了党章的崇高地位，以及党规党法与国家法律的关系。",
+   "source": "人民网",
+   "url": "http://opinion.people.com.cn/n1/2026/1030/c461530-40824177.html",
+   "category": "法治建设"
+  },
+  {
+   "id": "q_2dg1x8",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "一些未成年人犯罪是从很小的违法行为开始，如果“惩”“救”不及时，容易走向严重刑事犯罪",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1sxs62x",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "不久前，两名未成年人到湖北宜昌的一家无人值守超市里，在确认店内无人后，开始疯狂“扫荡”货架上的商品",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_f0oj33",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "在此期间，值班店员通过后台监控发现了异常，立即通过店内广播发出警告",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_10ojuwe",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "然而这二人却毫不收敛，反而加快了作案速度，得手后便迅速乘车逃离现场",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1gjk9wg",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "他会认为这个事情不是我一个人做的，法不责众，道德的这种负罪感内疚感会减轻",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1lay6x1",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "这个警报响起之后，明明已经有语音提醒他了，但是两名未成年人没有停止作案，很多时候未成年人犯罪它有一种冲动性",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1lel7jn",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "两名未成年人不久前在湖北宜昌的一个地下车库里，对多辆汽车实施撬锁等行为，盗取车内物资",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_en1au2",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "金句",
+   "text": "经现场调查，民警很快确认了嫌疑人的身份，锁定其逃跑轨迹，开展跨省追捕",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_17320et",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "加快了作案速度，得手后便迅速乘车逃离现场。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_rjkc4q",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "要求转移到指定地点并收取好处费。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_bk87gh",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "构建“亲情修复”家事审判新模式。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_10nb4pj",
+   "theme": "hubei",
+   "themeName": "湖北地域发展",
+   "kind": "规范表述",
+   "text": "保障部门，对接辖区相关企业，为他开展职业技能培训。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-11/01/content_20263002.html",
+   "category": "湖北地域发展"
+  },
+  {
+   "id": "q_bp86zh",
+   "theme": "xiangcun",
+   "themeName": "乡村振兴",
+   "kind": "金句",
+   "text": "评选中国重要农业文化遗产，旨在推进中华优秀农耕文化保护传承，赋能乡村全面振兴",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240761.html",
+   "category": "乡村振兴"
+  },
+  {
+   "id": "q_nizo7o",
+   "theme": "shengtai",
+   "themeName": "生态文明",
+   "kind": "规范表述",
+   "text": "加快打造国内知名生态文旅康养目的地。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/18/content_20240751.html",
+   "category": "生态文明"
+  },
+  {
+   "id": "q_fm7kek",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "规范表述",
+   "text": "落实学前一年免费政策，推进义务教育优质均衡发展，改善普通高中办学条件。",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/25/content_20251945.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1xr3laf",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "要加强民生保障，主动倾听企业和百姓声音，真心实意办实事解难题",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/23/content_20250803.html",
+   "category": "民生医疗"
   },
   {
    "id": "q_1j0sc3n",
@@ -721,86 +1061,6 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-10/05/content_20222928.html",
    "category": "文化传承"
-  },
-  {
-   "id": "q_1shkpao",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "深化各领域合作，增强经济韧性，推动形成更加公平包容的国际秩序，建设一个安全繁荣的多极世界。",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0914/c461001-40797888.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1oh6nvw",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "坚决打击一切形式恐怖主义，充分发挥金砖国家反恐工作组作用，加强信息分享、经验交流，促进执法合作与能力建设",
-   "source": "人民网",
-   "url": "http://theory.people.com.cn/n1/2026/0920/c40531-40802082.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_za5vk7",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "此访以团结协作为主线，聚焦命运与共、倡导公平正义，对凝聚各方合作共识、改革完善全球治理具有重要现实和深远意义",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1969qse",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "深化多边协作、携手捍卫国际公平正义提供了重要契机。",
-   "source": "人民网",
-   "url": "http://politics.people.com.cn/n1/2026/0903/c1001-40791946.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_y7ay5k",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "规范表述",
-   "text": "推动高质量发展明确了法律制度依据。",
-   "source": "人民网·理论",
-   "url": "http://theory.people.com.cn/n1/2026/0817/c40531-40780854.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1bmgk23",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "在法治服务工作室，法院把企业重组服务中心设在了服务中心，让司法服务离企业更进一步，将风险化解在前头",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/30/content_20165816.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_1row6wb",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "“很多网友呼吁追究男方重婚罪，但从司法实务来看，这条路基本走不通",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
-   "category": "法治建设"
-  },
-  {
-   "id": "q_oou7f3",
-   "theme": "fazhi",
-   "themeName": "法治建设",
-   "kind": "金句",
-   "text": "在谢文敏看来，本案暴露出辅助生殖审查机制、婚外胚胎权利机制等存在空白，相关法律法规、行业监管规则需要与时俱进",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125245.html",
-   "category": "法治建设"
   },
   {
    "id": "q_1kl3fuv",
@@ -4741,269 +5001,6 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
    "category": "湖北地域发展"
-  },
-  {
-   "id": "q_12l07w9",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "规范表述",
-   "text": "构建起多层次的人才培养体系。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_w8i2xk",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "规范表述",
-   "text": "深化校企合作，扩大职教中心吉他制造工匠班招生规模，增设吉他设计、调音、维修等专业方向。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_uielrz",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "规范表述",
-   "text": "扩大松滋吉他线上市场占有率。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_1tx1je7",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "规范表述",
-   "text": "完善食堂、人才公寓等配套设施，让员工“愿意来、融得入、扎下根”。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_1a757wd",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "规范表述",
-   "text": "保障伊司地曼项目投产冲刺，专班高效完成安评、环评、消防整改和电力增容等系列工程。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125757.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_87h3u4",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "金句",
-   "text": "在襄阳古城卫场子巷，它曾挡住过救护车的呼啸、消防车的鸣笛，也挡住过邻里间一碗热汤的距离",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125718.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_1inybd4",
-   "theme": "hubei",
-   "themeName": "湖北地域发展",
-   "kind": "金句",
-   "text": "今年夏天，伴随着挖掘机的轰鸣，这些矗立了几十年的水泥壁垒应声倒下",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/06/content_20125718.html",
-   "category": "湖北地域发展"
-  },
-  {
-   "id": "q_16cdb8u",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "从江岸到社区，从红色宣讲到应急救援，他们以志愿服务的方式，践行着为人民服务的入伍誓言",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20122484.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_m12zq1",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "谁家遇到困难，哪栋楼有矛盾，群众可以坐下来商量，老兵们能办的马上办，需要协调的就往社区反映",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20122484.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_10hn3e6",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "如今在谷城县石花镇，像李孟兆玉这样拜企业家为师的年轻干部，已有27人",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20122475.html",
-   "category": "基层治理",
-   "excludeFromDaily": true
-  },
-  {
-   "id": "q_zir3cs",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "”石花镇党委书记尚安礼说，如果石花镇还有干部对企业的痛点、困难不了解，那就是寸步难行",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20122475.html",
-   "category": "基层治理",
-   "excludeFromDaily": true
-  },
-  {
-   "id": "q_1sdytgv",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "建立需求清单、解决棘手难题，以此破除年轻干部“懂政务、不懂经济，善服务、不善产业”的短板，找到服务企业的“金钥匙”。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20122475.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_1bxaysb",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "落实的本事，正是年轻干部最需要的“真经”。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20122475.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_15j0py",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "坚持需求牵引和创新驱动，以更加科学务实的举措，深入实施“人工智能+”行动，更加有力有效地“为经济发展赋能、为社会治理增效、为人民生活添彩”。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20121491.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_afsg5p",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "原有东启街平交道口是城区东西通行的关键要道，过往列车频繁停靠、编组，道口单次封闭拥堵可达二三十分钟",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120908.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_8twppl",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "站在新建好的房屋前，民生路135号业主王斌望着眼前熟悉的街巷，感慨万千",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120959.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_1wyp88s",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "一间不到50平方米的老房，背后可能牵涉多个家庭；一条承载城市记忆的街区，如何既改善生活又留下历史，都是摆在面前的难题",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120959.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_1xorqsl",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "7月底，武汉市江汉区民生路改造基本完工，曾经的“空中蛛网”不见踪影，老街重露历史肌理，亮起新招牌",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120959.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_vm7ykj",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "从2025年10月至今年4月，街道、社区召开20余次协调会，逐一沟通产权人意见",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120959.html",
-   "category": "基层治理",
-   "excludeFromDaily": true
-  },
-  {
-   "id": "q_x2w137",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "在充分协商基础上，街道探索“以租代建”模式——引入社会资本先行建设，后续通过出租收益逐步抵扣建房款",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120959.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_1wfuog4",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "优化沿街店招色彩与尺度，让老汉口风貌重新呈现。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120959.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_1k6l87r",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "随着农村高龄群体持续增多，老人身体机能不断衰退，子女很难长期贴身照料",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_k6mc8m",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "”湖北炎黄康养集团护理员占红利介绍，年岁越高的农村老人，越难以割舍生活一辈子的村落",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_n1cvkt",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "金句",
-   "text": "面对完善的养老资源，很多农村老人依旧选择观望、拒绝，背后藏着多重心理症结",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_1yuy3gc",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "完善的养老资源，很多农村老人依旧选择观望、拒绝，背后藏着多重心理症结。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
-   "category": "基层治理"
-  },
-  {
-   "id": "q_1yciz8q",
-   "theme": "jiceng",
-   "themeName": "基层治理",
-   "kind": "规范表述",
-   "text": "落实空巢、留守、失能老人常态化探访关爱制度，村干部、互助员定期上门，排查居家安全隐患，及时解决衣食起居、看病就医难题。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/04/content_20120865.html",
-   "category": "基层治理"
   }
  ]
 }
