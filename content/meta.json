@@ -1,7 +1,7 @@
 {
- "updatedAt": "2026-11-08T20:09:21.913Z",
- "updatedAtLocal": "2026/11/09 04:09:21",
- "todayNew": 1640,
+ "updatedAt": "2026-11-09T12:08:21.881Z",
+ "updatedAtLocal": "2026/11/09 20:08:21",
+ "todayNew": 1660,
  "totals": {
   "shizheng": 300,
   "qiushi": 150,
@@ -9,7 +9,7 @@
   "essays": 80,
   "quotes": 500,
   "morning": 60,
-  "susuan": 520
+  "susuan": 540
  },
  "dailyNew": {
   "2026-11-02": {
@@ -22,12 +22,12 @@
    "susuan": 20
   },
   "2026-11-09": {
-   "shizheng": 30,
-   "qiushi": 14,
+   "shizheng": 0,
+   "qiushi": 0,
    "renwu": 0,
-   "quotes": 47,
-   "essays": 9,
-   "morning": 5,
+   "quotes": 0,
+   "essays": 1,
+   "morning": 4,
    "susuan": 20
   }
  }
