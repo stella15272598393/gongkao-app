@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-11-09T12:07:01.476Z",
+ "updatedAt": "2026-11-15T20:46:41.539Z",
  "count": 500,
  "items": [
   {
@@ -583,23 +583,23 @@
    "category": "民生医疗"
   },
   {
-   "id": "q_1esngpy",
+   "id": "q_n0fhvi",
    "theme": "minsheng",
    "themeName": "民生医疗",
    "kind": "金句",
-   "text": "中国教育报评论指出，大量短剧充斥着常识掉线、逻辑“下班”的桥段，“女主复仇逆袭、男主废柴翻身”连台词都像批量生产",
+   "text": "参训学员纷纷表示，将把本次活动所学所思运用到账号运营实践中，持续走好网上群众路线，共同耕耘好网上舆论阵地",
    "source": "湖北日报",
-   "url": "http://www.cnhubei.com/content/2026-11/05/content_20270840.html",
+   "url": "http://news.cnhubei.com/content/2026-11/05/content_20270897.html",
    "category": "民生医疗"
   },
   {
-   "id": "q_1vxfs4r",
+   "id": "q_15o3luu",
    "theme": "minsheng",
    "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "在草棚里批阅文书的县长，白天安抚流亡群众、减免田赋、整训部队；深夜里，他把物资、经费和情报一批批送到新四军手里",
+   "kind": "规范表述",
+   "text": "必须从群众中来，贴近群众、群众认可才是最好的宣传。",
    "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-10/31/content_20261992.html",
+   "url": "http://news.cnhubei.com/content/2026-11/05/content_20270897.html",
    "category": "民生医疗"
   },
   {
@@ -961,6 +961,26 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-11/08/content_20274178.html",
    "category": "湖北地域发展"
+  },
+  {
+   "id": "q_1esngpy",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "中国教育报评论指出，大量短剧充斥着常识掉线、逻辑“下班”的桥段，“女主复仇逆袭、男主废柴翻身”连台词都像批量生产",
+   "source": "湖北日报",
+   "url": "http://www.cnhubei.com/content/2026-11/05/content_20270840.html",
+   "category": "民生医疗"
+  },
+  {
+   "id": "q_1vxfs4r",
+   "theme": "minsheng",
+   "themeName": "民生医疗",
+   "kind": "金句",
+   "text": "在草棚里批阅文书的县长，白天安抚流亡群众、减免田赋、整训部队；深夜里，他把物资、经费和情报一批批送到新四军手里",
+   "source": "湖北日报",
+   "url": "http://news.cnhubei.com/content/2026-10/31/content_20261992.html",
+   "category": "民生医疗"
   },
   {
    "id": "q_1jzjr4n",
@@ -4981,26 +5001,6 @@
    "source": "湖北日报",
    "url": "http://news.cnhubei.com/content/2026-08/03/content_20120702.html",
    "category": "生态文明"
-  },
-  {
-   "id": "q_1kf3o4w",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "规范表述",
-   "text": "保障沿线群众出行顺畅和安全，把细微的便民服务落实到每一趟班次中。",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124278.html",
-   "category": "民生医疗"
-  },
-  {
-   "id": "q_1sz51zn",
-   "theme": "minsheng",
-   "themeName": "民生医疗",
-   "kind": "金句",
-   "text": "学做新菜问豆包，健康养护问豆包，养老政策还是问豆包……这些以前想找你问，却又怕打扰你的问题，现在，全被豆包承包了",
-   "source": "湖北日报",
-   "url": "http://news.cnhubei.com/content/2026-08/05/content_20124254.html",
-   "category": "民生医疗"
   }
  ]
 }
